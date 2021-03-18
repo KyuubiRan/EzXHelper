@@ -1,5 +1,5 @@
 # EzXHelper
-一个使开发Xposed变的更轻松的kotlin库
+一个使Xposed模块开发变的更轻松的kotlin库
 ## 使用方式
 1.下载release中的库  
 2.扔到你的app/libs目录下  
