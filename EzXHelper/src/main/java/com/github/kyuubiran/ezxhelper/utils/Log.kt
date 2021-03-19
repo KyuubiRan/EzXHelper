@@ -3,7 +3,6 @@ package com.github.kyuubiran.ezxhelper.utils
 import android.util.Log
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 
-
 object Log {
     /**
      * 打印日志 等级:Info

@@ -73,7 +73,7 @@ fun Any.getMethodByClzOrObj(
             if (m.name != methodName) continue
             if (returnType != null && m.returnType != returnType) continue
             for (type in m.parameterTypes.withIndex()) {
-                if (type != argTypes[type.index]) continue
+                if (type.value != argTypes[type.index]) continue
             }
             m.isAccessible = true
             return m
