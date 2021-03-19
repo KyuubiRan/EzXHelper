@@ -1,7 +1,7 @@
-package me.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.utils
 
 import android.util.Log
-import me.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 
 
 object Log {

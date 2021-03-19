@@ -1,6 +1,6 @@
-package me.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.utils
 
-import me.kyuubiran.ezxhelper.init.InitFields.mClassLoader
+import com.github.kyuubiran.ezxhelper.init.InitFields.mClassLoader
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method

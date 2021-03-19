@@ -1,4 +1,4 @@
-package me.kyuubiran.ezxhelper.init
+package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 

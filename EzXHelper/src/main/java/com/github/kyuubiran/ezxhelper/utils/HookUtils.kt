@@ -1,4 +1,4 @@
-package me.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.utils
 
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement

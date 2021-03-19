@@ -1,4 +1,4 @@
-package me.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.utils
 
 import android.content.Context
 import android.os.Handler

@@ -1,10 +1,10 @@
-package me.kyuubiran.ezxhelper.init
+package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
+import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import com.github.kyuubiran.ezxhelper.init.InitFields.mClassLoader
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import me.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
-import me.kyuubiran.ezxhelper.init.InitFields.appContext
-import me.kyuubiran.ezxhelper.init.InitFields.mClassLoader
 
 object EzXHelperInit {
     /**
