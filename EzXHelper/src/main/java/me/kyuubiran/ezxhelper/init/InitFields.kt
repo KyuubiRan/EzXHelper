@@ -14,4 +14,10 @@ object InitFields {
      */
     lateinit var mClassLoader: ClassLoader
         internal set
+
+    /**
+     * 日志TAG
+     */
+    var LOG_TAG: String = "EzXHelper"
+        internal set
 }

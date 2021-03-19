@@ -1,17 +1,16 @@
 package me.kyuubiran.ezxhelper.utils
 
 import android.util.Log
+import me.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 
-//仅本模块内部可调用
-internal object Log {
-    private const val TAG = "EzXHelper"
 
+object Log {
     /**
      * 打印日志 等级:Info
      * @param msg 消息
      */
     fun i(msg: String) {
-        Log.i(TAG, msg)
+        Log.i(LOG_TAG, msg)
     }
 
     /**
@@ -19,7 +18,7 @@ internal object Log {
      * @param msg 消息
      */
     fun d(msg: String) {
-        Log.d(TAG, msg)
+        Log.d(LOG_TAG, msg)
     }
 
     /**
@@ -27,7 +26,7 @@ internal object Log {
      * @param msg 消息
      */
     fun w(msg: String) {
-        Log.w(TAG, msg)
+        Log.w(LOG_TAG, msg)
     }
 
     /**
@@ -37,9 +36,9 @@ internal object Log {
      */
     fun e(e: Exception, msg: String = "") {
         if (msg.isEmpty())
-            Log.e(TAG, e.stackTraceToString())
+            Log.e(LOG_TAG, e.stackTraceToString())
         else
-            Log.e(TAG, "$msg\n${e.stackTraceToString()}")
+            Log.e(LOG_TAG, "$msg\n${e.stackTraceToString()}")
     }
 
     /**
@@ -49,9 +48,9 @@ internal object Log {
      */
     fun e(e: Error, msg: String = "") {
         if (msg.isEmpty())
-            Log.e(TAG, e.stackTraceToString())
+            Log.e(LOG_TAG, e.stackTraceToString())
         else
-            Log.e(TAG, "$msg\n${e.stackTraceToString()}")
+            Log.e(LOG_TAG, "$msg\n${e.stackTraceToString()}")
     }
 
     /**
@@ -61,8 +60,8 @@ internal object Log {
      */
     fun t(thr: Throwable, msg: String = "") {
         if (msg.isEmpty())
-            Log.e(TAG, thr.stackTraceToString())
+            Log.e(LOG_TAG, thr.stackTraceToString())
         else
-            Log.e(TAG, "$msg\n${thr.stackTraceToString()}")
+            Log.e(LOG_TAG, "$msg\n${thr.stackTraceToString()}")
     }
 }

@@ -3,6 +3,13 @@ plugins {
     id 'kotlin-android'
 }
 
+ext {
+    PUBLISH_GROUP_ID = "com.github.kyuubiran"		//项目包名
+    PUBLISH_ARTIFACT_ID = 'EzXHelper'		    	//项目名
+    PUBLISH_VERSION = "0.0.1"			        	//版本号
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"

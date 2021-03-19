@@ -2,6 +2,7 @@ package me.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import me.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import me.kyuubiran.ezxhelper.init.InitFields.appContext
 import me.kyuubiran.ezxhelper.init.InitFields.mClassLoader
 
@@ -19,5 +20,12 @@ object EzXHelperInit {
      */
     fun initAppContext(context: Context) {
         appContext = context
+    }
+
+    /**
+     * 设置打印日志的标签
+     */
+    fun setLogTag(tag: String) {
+        LOG_TAG = tag
     }
 }
