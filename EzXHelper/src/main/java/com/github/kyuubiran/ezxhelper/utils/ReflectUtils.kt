@@ -68,12 +68,14 @@ fun Any.getMethodByClzOrObj(
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
     do {
-        for (m in clz.declaredMethods) {
+        method@ for (m in clz.declaredMethods) {
             if ((isStatic && !m.isStatic) || (!isStatic && m.isStatic)) continue
             if (m.name != methodName) continue
             if (returnType != null && m.returnType != returnType) continue
-            for (type in m.parameterTypes.withIndex()) {
-                if (type.value != argTypes[type.index]) continue
+            if (m.parameterTypes.isNotEmpty()) {
+                for (i in m.parameterTypes.indices) {
+                    if (argTypes[i] != m.parameterTypes[i]) continue@method
+                }
             }
             m.isAccessible = true
             return m
@@ -132,6 +134,7 @@ fun getMethod(
 fun Array<Method>.findMethodByCondition(condition: (Method) -> Boolean): Method {
     for (m in this) {
         if (condition(m)) {
+            m.isAccessible = true
             return m
         }
     }
