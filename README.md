@@ -4,3 +4,6 @@
 ## 使用方式
 在build.gradle的dependencies下添加语句implementation 'com.github.kyuubiran:EzXHelper:0.0.3'  
 调用EzXHelper.initHandleLoadPackage(lpparam)初始化 就可以使用大部分工具类啦
+### 使用本库的项目
+[QNotifiedX](https://github.com/QNotifiedX/QNotifiedX)    
+[QQCleaner](https://github.com/KyuubiRan/QQCleaner)
