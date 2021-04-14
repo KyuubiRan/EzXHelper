@@ -61,7 +61,7 @@ fun Method.hookAfter(
  */
 fun Method.replaceHook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: (XC_MethodHook.MethodHookParam) -> Unit
+    hook: (XC_MethodHook.MethodHookParam) -> Any
 ) {
     this.hookMethod(object : XC_MethodReplacement(priority) {
         override fun replaceHookedMethod(param: MethodHookParam): Any {
