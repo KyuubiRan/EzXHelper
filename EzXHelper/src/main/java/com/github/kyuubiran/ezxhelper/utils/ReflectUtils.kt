@@ -1,10 +1,7 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import com.github.kyuubiran.ezxhelper.init.InitFields.mClassLoader
-import java.lang.reflect.Constructor
-import java.lang.reflect.Field
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 
 /**
  * 通过模块加载类
@@ -454,63 +451,33 @@ fun Class<*>.newInstance(
 }
 
 /**
- * 扩展属性 判断方法是否为Static
+ * 扩展属性 判断是否为Static
  */
-val Method.isStatic: Boolean
+val Member.isStatic: Boolean
     get() = Modifier.isStatic(this.modifiers)
 
 /**
- * 扩展属性 判断方法是否为Public
+ * 扩展属性 判断是否为Public
  */
-val Method.isPublic: Boolean
+val Member.isPublic: Boolean
     get() = Modifier.isPublic(this.modifiers)
 
 /**
- * 扩展属性 判断方法是否为Protected
+ * 扩展属性 判断是否为Protected
  */
-val Method.isProtected: Boolean
+val Member.isProtected: Boolean
     get() = Modifier.isProtected(this.modifiers)
 
 /**
- * 扩展属性 判断方法是否为Private
+ * 扩展属性 判断是否为Private
  */
-val Method.isPrivate: Boolean
+val Member.isPrivate: Boolean
     get() = Modifier.isPrivate(this.modifiers)
 
 /**
- * 扩展属性 判断方法是否为Final
+ * 扩展属性 判断是否为Final
  */
-val Method.isFinal: Boolean
-    get() = Modifier.isFinal(this.modifiers)
-
-/**
- * 扩展属性 判断属性是否为Static
- */
-val Field.isStatic: Boolean
-    get() = Modifier.isStatic(this.modifiers)
-
-/**
- * 扩展属性 判断属性是否为Public
- */
-val Field.isPublic: Boolean
-    get() = Modifier.isPublic(this.modifiers)
-
-/**
- * 扩展属性 判断属性是否为Protected
- */
-val Field.isProtected: Boolean
-    get() = Modifier.isProtected(this.modifiers)
-
-/**
- * 扩展属性 判断属性是否为Private
- */
-val Field.isPrivate: Boolean
-    get() = Modifier.isPrivate(this.modifiers)
-
-/**
- * 扩展属性 判断属性是否为Final
- */
-val Field.isFinal: Boolean
+val Member.isFinal: Boolean
     get() = Modifier.isFinal(this.modifiers)
 
 /**
