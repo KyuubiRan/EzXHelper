@@ -1,6 +1,7 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import com.github.kyuubiran.ezxhelper.init.InitFields.mClassLoader
+import de.robv.android.xposed.XposedBridge
 import java.lang.reflect.*
 
 /**
@@ -340,8 +341,8 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
  * 扩展函数 调用对象的方法
  * 注意 请勿对类使用此函数
  * @param methodName 方法名
- * @param args 参数表 可空
- * @param argTypes 参数类型 可空
+ * @param args 形参表 可空
+ * @param argTypes 形参类型 可空
  * @param returnType 返回值类型 为null时无视返回值类型
  * @return 函数调用后的返回值
  * @throws IllegalArgumentException 当方法名为空时
@@ -350,7 +351,7 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
  */
 fun Any.invokeMethod(
     methodName: String,
-    args: Array<out Any> = arrayOf(),
+    args: Array<out Any?> = arrayOf(),
     argTypes: Array<out Class<*>> = arrayOf(),
     returnType: Class<*>? = null
 ): Any? {
@@ -384,15 +385,15 @@ fun Any.invokeMethod(
 /**
  * 扩展函数 调用类的静态方法
  * @param methodName 方法名
- * @param args 参数表 可空
- * @param argTypes 参数类型 可空
+ * @param args 形参表 可空
+ * @param argTypes 形参类型 可空
  * @param returnType 返回值类型 为null时无视返回值类型
  * @return 函数调用后的返回值
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.invokeStaticMethod(
     methodName: String,
-    args: Array<out Any> = arrayOf(),
+    args: Array<out Any?> = arrayOf(),
     argTypes: Array<out Class<*>> = arrayOf(),
     returnType: Class<*>? = null
 ): Any? {
@@ -423,13 +424,13 @@ fun Class<*>.invokeStaticMethod(
 
 /**
  * 扩展函数 创建新的实例化对象
- * @param args 构造函数的参数表
- * @param argTypes 构造函数的参数类型
+ * @param args 构造函数的形参表
+ * @param argTypes 构造函数的形参类型
  * @return 成功时返回实例化的对象 失败时返回null
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.newInstance(
-    args: Array<out Any> = arrayOf(),
+    args: Array<out Any?> = arrayOf(),
     argTypes: Array<out Class<*>> = arrayOf()
 ): Any? {
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
@@ -439,7 +440,7 @@ fun Class<*>.newInstance(
                 this.getDeclaredConstructor(*argTypes)
             else
                 this.getDeclaredConstructor()
-        if (args.isNullOrEmpty()) {
+        if (args.isEmpty()) {
             constructor.newInstance()
         } else {
             constructor.newInstance(*args)
@@ -448,6 +449,16 @@ fun Class<*>.newInstance(
         Log.e(e)
         null
     }
+}
+
+/**
+ * 扩展函数 调用原方法
+ * @param obj 被调用对象
+ * @param args 形参表 为null时则为无参
+ * @return 原方法调用后的返回值
+ */
+fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
+    return XposedBridge.invokeOriginalMethod(this, obj, args)
 }
 
 /**
@@ -480,7 +491,12 @@ val Member.isPrivate: Boolean
 val Member.isFinal: Boolean
     get() = Modifier.isFinal(this.modifiers)
 
-/**
+/**class Test {
+
+override operator fun equals() {
+
+}
+}
  * 深拷贝一个对象
  * @param srcObj 源对象
  * @param newObj 新对象
