@@ -10,9 +10,9 @@ object InitFields {
         internal set
 
     /**
-     * 模块类加载器
+     * 调用本库加载类函数时使用的类加载器
      */
-    lateinit var mClassLoader: ClassLoader
+    lateinit var ezXClassLoader: ClassLoader
         internal set
 
     /**

@@ -1,6 +1,6 @@
 package com.github.kyuubiran.ezxhelper.utils
 
-import com.github.kyuubiran.ezxhelper.init.InitFields.mClassLoader
+import com.github.kyuubiran.ezxhelper.init.InitFields
 import de.robv.android.xposed.XposedBridge
 import java.lang.reflect.*
 
@@ -12,7 +12,7 @@ import java.lang.reflect.*
  * @throws IllegalArgumentException 当类名为空时
  * @throws ClassNotFoundException 当无法找到类时
  */
-fun loadClass(clzName: String, clzLoader: ClassLoader = mClassLoader): Class<*> {
+fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*> {
     if (clzName.isEmpty()) throw  IllegalArgumentException("Class name must not be null or empty!")
     return clzLoader.loadClass(clzName)
 }
@@ -24,7 +24,7 @@ fun loadClass(clzName: String, clzLoader: ClassLoader = mClassLoader): Class<*> 
  * @throws IllegalArgumentException 当类名为空时
  */
 fun getMethods(clzName: String): Array<Method> {
-    if (clzName.isEmpty()) throw  IllegalArgumentException("Class name must not be null or empty!")
+    if (clzName.isEmpty()) throw IllegalArgumentException("Class name must not be null or empty!")
     return loadClass(clzName).declaredMethods
 }
 
@@ -491,12 +491,7 @@ val Member.isPrivate: Boolean
 val Member.isFinal: Boolean
     get() = Modifier.isFinal(this.modifiers)
 
-/**class Test {
-
-override operator fun equals() {
-
-}
-}
+/**
  * 深拷贝一个对象
  * @param srcObj 源对象
  * @param newObj 新对象
