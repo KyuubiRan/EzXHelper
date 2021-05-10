@@ -19,9 +19,9 @@ fun Method.hookMethod(hookCallback: XC_MethodHook) {
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.hookBefore(
+inline fun Method.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: (XC_MethodHook.MethodHookParam) -> Unit
+    crossinline hook: (param: XC_MethodHook.MethodHookParam) -> Unit
 ) {
     this.hookMethod(object : XC_MethodHook(priority) {
         override fun beforeHookedMethod(param: MethodHookParam) {
@@ -39,9 +39,9 @@ fun Method.hookBefore(
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.hookAfter(
+inline fun Method.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: (XC_MethodHook.MethodHookParam) -> Unit
+    crossinline hook: (param: XC_MethodHook.MethodHookParam) -> Unit
 ) {
     this.hookMethod(object : XC_MethodHook(priority) {
         override fun afterHookedMethod(param: MethodHookParam) {
@@ -59,9 +59,9 @@ fun Method.hookAfter(
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.replaceHook(
+inline fun Method.replaceHook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: (XC_MethodHook.MethodHookParam) -> Any
+    crossinline hook: (param: XC_MethodHook.MethodHookParam) -> Any
 ) {
     this.hookMethod(object : XC_MethodReplacement(priority) {
         override fun replaceHookedMethod(param: MethodHookParam): Any {

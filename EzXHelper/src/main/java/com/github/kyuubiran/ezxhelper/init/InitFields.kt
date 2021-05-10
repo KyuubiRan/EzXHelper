@@ -10,7 +10,7 @@ object InitFields {
         internal set
 
     /**
-     * 类加载器
+     * 模块类加载器
      */
     lateinit var mClassLoader: ClassLoader
         internal set
