@@ -4,22 +4,26 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
+import java.lang.reflect.Constructor
+import java.lang.reflect.Member
 import java.lang.reflect.Method
 
 /**
- * 扩展函数 hook方法
+ * 扩展函数 hook方法/构造
  * @param hookCallback XC_MethodHook
+ * @throws IllegalArgumentException Member不为方法/构造
  */
-fun Method.hookMethod(hookCallback: XC_MethodHook) {
+fun Member.hookMethod(hookCallback: XC_MethodHook) {
+    if (this !is Method && this !is Constructor<*>) throw IllegalArgumentException("Only methods and constructors can be hooked!")
     XposedBridge.hookMethod(this, hookCallback)
 }
 
 /**
- * 扩展函数 hook方法执行前
+ * 扩展函数 hook方法/构造执行前
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.hookBefore(
+fun Member.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hook: (param: XC_MethodHook.MethodHookParam) -> Unit
 ) {
@@ -35,11 +39,11 @@ fun Method.hookBefore(
 }
 
 /**
- * 扩展函数 hook方法执行后
+ * 扩展函数 hook方法/构造执行后
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.hookAfter(
+fun Member.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hook: (param: XC_MethodHook.MethodHookParam) -> Unit
 ) {
@@ -55,11 +59,11 @@ fun Method.hookAfter(
 }
 
 /**
- * 扩展函数 替换方法
+ * 扩展函数 替换方法/构造
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.replaceHook(
+fun Member.replaceHook(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hook: (param: XC_MethodHook.MethodHookParam) -> Any
 ) {
