@@ -62,7 +62,7 @@ fun Any.getMethodByClzOrObj(
     methodName: String,
     isStatic: Boolean = false,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = arrayOf()
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
@@ -94,7 +94,7 @@ fun Any.getMethodByClzOrObj(
 fun Class<*>.getStaticMethodByClz(
     methodName: String,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = arrayOf()
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return this.getMethodByClzOrObj(methodName, true, returnType, argTypes)
@@ -114,7 +114,7 @@ fun getMethod(
     isStatic: Boolean = false,
     methodName: String,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = arrayOf()
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return loadClass(clzName).getMethodByClzOrObj(
@@ -457,8 +457,8 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
  */
 fun Any.invokeMethod(
     methodName: String,
-    args: Array<out Any?> = arrayOf(),
-    argTypes: Array<out Class<*>> = arrayOf(),
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
     returnType: Class<*>? = null
 ): Any? {
     if (methodName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
@@ -499,8 +499,8 @@ fun Any.invokeMethod(
  */
 fun Class<*>.invokeStaticMethod(
     methodName: String,
-    args: Array<out Any?> = arrayOf(),
-    argTypes: Array<out Class<*>> = arrayOf(),
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
     returnType: Class<*>? = null
 ): Any? {
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
@@ -536,8 +536,8 @@ fun Class<*>.invokeStaticMethod(
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.newInstance(
-    args: Array<out Any?> = arrayOf(),
-    argTypes: Array<out Class<*>> = arrayOf()
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Any? {
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     return try {
