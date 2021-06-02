@@ -163,7 +163,6 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
     return getMethods(clzName).findMethodByCondition(condition)
 }
 
-
 /**
  * 扩展函数 通过类或者对象获取单个属性
  * @param fieldName 属性名
@@ -259,6 +258,21 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
 /**
  * 扩展函数 获取实例化对象中的对象
  * 注意 请勿对Class使用此函数
+ * @param objName 对象名称
+ * @param type 类型
+ * @param T 转换的类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ * @throws IllegalArgumentException 对类调用此函数
+ * @throws IllegalArgumentException 目标对象名为空
+ */
+fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.getObjectOrNull(objName, type) as T?
+}
+
+/**
+ * 扩展函数 获取实例化对象中的对象
+ * 注意 请勿对Class使用此函数
  * @param field 属性
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
@@ -274,6 +288,19 @@ fun Any.getObjectOrNull(field: Field): Any? {
         Log.e(e)
         return null
     }
+}
+
+/**
+ * 扩展函数 获取实例化对象中的对象 并且转换为T?类型
+ * 注意 请勿对Class使用此函数
+ * @param field 属性
+ * @param T 转换的类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ * @throws IllegalArgumentException 对类调用此函数
+ */
+fun <T> Any.getObjectOrNullAs(field: Field): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.getObjectOrNull(field) as T?
 }
 
 /**
@@ -321,6 +348,22 @@ fun Class<*>.getStaticObjectOrNull(
         Log.e(e)
         return null
     }
+}
+
+/**
+ * 扩展函数 获取类中的静态对象 并且转换为T?类型
+ * @param objName 需要获取的对象名
+ * @param fieldType 类型
+ * @param T 转换的类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ * @throws IllegalArgumentException 当名字为空时
+ */
+fun <T> Class<*>.getStaticObjectOrNullAs(
+    objName: String,
+    fieldType: Class<*>? = null
+): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.getStaticObjectOrNull(objName, fieldType) as T?
 }
 
 /**
@@ -489,6 +532,29 @@ fun Any.invokeMethod(
 }
 
 /**
+ * 扩展函数 调用对象的方法 并且将结果转换为T?类型
+ * 注意 请勿对类使用此函数
+ * @param methodName 方法名
+ * @param args 形参表 可空
+ * @param argTypes 形参类型 可空
+ * @param returnType 返回值类型 为null时无视返回值类型
+ * @param T 转换的类型
+ * @return 函数调用后的返回值
+ * @throws IllegalArgumentException 当方法名为空时
+ * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
+ * @throws IllegalArgumentException 当对象是一个Class时
+ */
+fun <T> Any.invokeMethodAs(
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
+): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.invokeMethod(methodName, args, argTypes, returnType) as T?
+}
+
+/**
  * 扩展函数 调用类的静态方法
  * @param methodName 方法名
  * @param args 形参表 可空
@@ -529,6 +595,25 @@ fun Class<*>.invokeStaticMethod(
 }
 
 /**
+ * 扩展函数 调用类的静态方法 并且将结果转换为T?类型
+ * @param methodName 方法名
+ * @param args 形参表 可空
+ * @param argTypes 形参类型 可空
+ * @param returnType 返回值类型 为null时无视返回值类型
+ * @return 函数调用后的返回值
+ * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
+ */
+fun <T> Class<*>.invokeStaticMethodAs(
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
+): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.invokeStaticMethod(methodName, args, argTypes, returnType) as T?
+}
+
+/**
  * 扩展函数 创建新的实例化对象
  * @param args 构造函数的形参表
  * @param argTypes 构造函数的形参类型
@@ -558,6 +643,21 @@ fun Class<*>.newInstance(
 }
 
 /**
+ * 扩展函数 创建新的实例化对象 并将对象转换为T?类型
+ * @param args 构造函数的形参表
+ * @param argTypes 构造函数的形参类型
+ * @return 成功时返回实例化的对象 失败时返回null
+ * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
+ */
+fun <T> Class<*>.newInstanceAs(
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray()
+): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.newInstance(args, argTypes) as T?
+}
+
+/**
  * 扩展函数 调用原方法
  * @param obj 被调用对象
  * @param args 形参表 为null时则为无参
@@ -565,6 +665,29 @@ fun Class<*>.newInstance(
  */
 fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
     return XposedBridge.invokeOriginalMethod(this, obj, args)
+}
+
+/**
+ * 扩展函数 调用原方法 并将结果转换为T?类型
+ * @param obj 被调用对象
+ * @param args 形参表 为null时则为无参
+ * @return 原方法调用后的返回值
+ */
+fun <T> Method.invokedByOriginalAs(
+    obj: Any?, args: Array<Any?>? = null
+): T? {
+    @Suppress("UNCHECKED_CAST")
+    return XposedBridge.invokeOriginalMethod(this, obj, args) as T?
+}
+
+/**
+ * 扩展函数 调用方法 并将结果转换为T?类型
+ * @param obj 被调用对象
+ * @param args 形参表
+ */
+fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
+    @Suppress("UNCHECKED_CAST")
+    return this.invoke(obj, args) as T?
 }
 
 /**
