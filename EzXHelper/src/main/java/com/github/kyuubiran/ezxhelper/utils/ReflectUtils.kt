@@ -58,7 +58,7 @@ fun getFields(clzName: String): Array<Field> {
  * @throws IllegalArgumentException 方法名为空
  * @throws NoSuchMethodException 未找到方法
  */
-fun Any.getMethodByClzOrObj(
+fun Any.getMethodByClassOrObject(
     methodName: String,
     isStatic: Boolean = false,
     returnType: Class<*>? = null,
@@ -91,13 +91,13 @@ fun Any.getMethodByClzOrObj(
  * @param argTypes 方法形参表类型
  * @throws IllegalArgumentException 方法名为空
  */
-fun Class<*>.getStaticMethodByClz(
+fun Class<*>.getStaticMethodByClass(
     methodName: String,
     returnType: Class<*>? = null,
     argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return this.getMethodByClzOrObj(methodName, true, returnType, argTypes)
+    return this.getMethodByClassOrObject(methodName, true, returnType, argTypes)
 }
 
 /**
@@ -117,7 +117,7 @@ fun getMethod(
     argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return loadClass(clzName).getMethodByClzOrObj(
+    return loadClass(clzName).getMethodByClassOrObject(
         methodName,
         isStatic,
         returnType,
@@ -172,7 +172,7 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
  * @throws IllegalArgumentException 属性名为空
  * @throws NoSuchFieldException 未找到属性
  */
-fun Any.getFieldByClzOrObj(
+fun Any.getFieldByClassOrObject(
     fieldName: String,
     isStatic: Boolean = false,
     fieldType: Class<*>? = null
@@ -221,14 +221,14 @@ fun Any.getStaticFieldByType(type: Class<*>): Field {
 /**
  * 扩展函数 通过类获取静态属性
  * @param fieldName 属性名称
- * @param fieldType 属性类型
+ * @param type 属性类型
  * @return 符合条件的属性
  * @throws IllegalArgumentException 属性名为空
  * @throws NoSuchFieldException 未找到属性
  */
-fun Class<*>.getStaticFiledByClass(fieldName: String, fieldType: Class<*>? = null): Field {
+fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): Field {
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
-    return this.getFieldByClzOrObj(fieldName, true, fieldType)
+    return this.getFieldByClassOrObject(fieldName, true, type)
 }
 
 /**
@@ -244,7 +244,7 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     try {
-        val f = this.javaClass.getFieldByClzOrObj(objName, false, type)
+        val f = this.javaClass.getFieldByClassOrObject(objName, false, type)
         f.let {
             it.isAccessible = true
             return it.get(this)
@@ -268,6 +268,40 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
 fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
     @Suppress("UNCHECKED_CAST")
     return this.getObjectOrNull(objName, type) as T?
+}
+
+
+/**
+ * 扩展函数 获取实例化对象中的对象
+ * 注意 请勿对Class使用此函数
+ * @param objName 对象名称
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 对类调用此函数
+ * @throws IllegalArgumentException 目标对象名为空
+ */
+fun Any.getObject(objName: String, type: Class<*>? = null): Any {
+    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
+    if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
+    val f = this.javaClass.getFieldByClassOrObject(objName, false, type)
+    f.let {
+        it.isAccessible = true
+        return it.get(this)!!
+    }
+}
+
+/**
+ * 扩展函数 获取实例化对象中的对象 并转化为类型T
+ * 注意 请勿对Class使用此函数
+ * @param objName 对象名称
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 对类调用此函数
+ * @throws IllegalArgumentException 目标对象名为空
+ */
+fun <T> Any.getObjectAs(objName: String, type: Class<*>? = null): T {
+    @Suppress("UNCHECKED_CAST")
+    return this.getObject(objName, type) as T
 }
 
 /**
@@ -324,19 +358,19 @@ fun Any.getObjectOrNullByType(type: Class<*>): Any? {
 /**
  * 扩展函数 获取类中的静态对象
  * @param objName 需要获取的对象名
- * @param fieldType 类型
+ * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 当名字为空时
  */
 fun Class<*>.getStaticObjectOrNull(
     objName: String,
-    fieldType: Class<*>? = null
+    type: Class<*>? = null
 ): Any? {
     try {
         if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
         val f: Field
         try {
-            f = this.getStaticFiledByClass(objName, fieldType)
+            f = this.getStaticFiledByClass(objName, type)
         } catch (e: NoSuchFieldException) {
             return null
         }
@@ -353,18 +387,96 @@ fun Class<*>.getStaticObjectOrNull(
 /**
  * 扩展函数 获取类中的静态对象 并且转换为T?类型
  * @param objName 需要获取的对象名
- * @param fieldType 类型
+ * @param type 类型
  * @param T 转换的类型
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 当名字为空时
  */
 fun <T> Class<*>.getStaticObjectOrNullAs(
     objName: String,
-    fieldType: Class<*>? = null
+    type: Class<*>? = null
 ): T? {
     @Suppress("UNCHECKED_CAST")
-    return this.getStaticObjectOrNull(objName, fieldType) as T?
+    return this.getStaticObjectOrNull(objName, type) as T?
 }
+
+/**
+ * 扩展函数 获取类中的静态对象
+ * @param objName 需要获取的对象名
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 当名字为空时
+ */
+fun Class<*>.getStaticObject(
+    objName: String,
+    type: Class<*>? = null
+): Any {
+    if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
+    this.getStaticFiledByClass(objName, type).let {
+        it.isAccessible = true
+        return it.get(this)!!
+    }
+}
+
+/**
+ * 扩展函数 获取类中的静态对象 并转换为T类型
+ * @param objName 需要获取的对象名
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 当名字为空时
+ */
+fun <T> Class<*>.getStaticObjectAs(
+    objName: String,
+    type: Class<*>? = null
+): T {
+    @Suppress("UNCHECKED_CAST")
+    return this.getStaticObject(objName, type) as T
+}
+
+/**
+ * 获取Field中的对象
+ * @param field 属性
+ * @return 返回获取到的对象(Nullable)
+ */
+fun getStaticObjectOrNull(field: Field): Any? {
+    field.let {
+        it.isAccessible = true
+        return it.get(null)
+    }
+}
+
+/**
+ * 获取Field中的对象 并转换为T?类型
+ * @param field 属性
+ * @return 返回获取到的对象(Nullable)
+ */
+fun <T> getStaticObjectOrNullAs(field: Field): T? {
+    @Suppress("UNCHECKED_CAST")
+    return getStaticObjectOrNull(field) as T?
+}
+
+/**
+ * 获取Field中的对象
+ * @param field 属性
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun getStaticObject(field: Field): Any {
+    field.let {
+        it.isAccessible = true
+        return it.get(null)!!
+    }
+}
+
+/**
+ * 获取Field中的对象 并转换为T类型
+ * @param field 属性
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun <T> getStaticObjectAs(field: Field): T {
+    @Suppress("UNCHECKED_CAST")
+    return getStaticObject(field) as T
+}
+
 
 /**
  * 扩展函数 通过类型 获取类中的静态对象
@@ -394,8 +506,7 @@ fun Any.putObject(objName: String, value: Any?, fieldType: Class<*>? = null) {
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     try {
-        val f = this.getFieldByClzOrObj(objName, false, fieldType)
-        f.let {
+        this.getFieldByClassOrObject(objName, false, fieldType).let {
             it.isAccessible = true
             it.set(this, value)
         }
@@ -510,7 +621,7 @@ fun Any.invokeMethod(
     val m: Method
     if (args.isEmpty()) {
         try {
-            m = this.getMethodByClzOrObj(methodName, false, returnType)
+            m = this.getMethodByClassOrObject(methodName, false, returnType)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -520,7 +631,7 @@ fun Any.invokeMethod(
         }
     } else {
         try {
-            m = this.getMethodByClzOrObj(methodName, false, returnType, argTypes)
+            m = this.getMethodByClassOrObject(methodName, false, returnType, argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -573,7 +684,7 @@ fun Class<*>.invokeStaticMethod(
     val m: Method
     if (args.isEmpty()) {
         try {
-            m = this.getMethodByClzOrObj(methodName, true, returnType)
+            m = this.getMethodByClassOrObject(methodName, true, returnType)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -583,7 +694,7 @@ fun Class<*>.invokeStaticMethod(
         }
     } else {
         try {
-            m = this.getMethodByClzOrObj(methodName, true, returnType, argTypes)
+            m = this.getMethodByClassOrObject(methodName, true, returnType, argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
