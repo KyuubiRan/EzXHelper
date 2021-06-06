@@ -126,7 +126,7 @@ fun getMethod(
 }
 
 /**
- *  通过方法数组 根据条件查找方法
+ *  扩展函数 通过方法数组 根据条件查找方法
  *  @param condition 方法的具体条件
  *  @return 符合条件的方法
  *  @throws NoSuchMethodException 未找到方法
@@ -265,8 +265,8 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
  * @throws IllegalArgumentException 对类调用此函数
  * @throws IllegalArgumentException 目标对象名为空
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.getObjectOrNull(objName, type) as T?
 }
 
@@ -392,11 +392,11 @@ fun Class<*>.getStaticObjectOrNull(
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 当名字为空时
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.getStaticObjectOrNullAs(
     objName: String,
     type: Class<*>? = null
 ): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.getStaticObjectOrNull(objName, type) as T?
 }
 
@@ -425,11 +425,11 @@ fun Class<*>.getStaticObject(
  * @return 成功时返回获取到的对象 失败时抛出异常
  * @throws IllegalArgumentException 当名字为空时
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.getStaticObjectAs(
     objName: String,
     type: Class<*>? = null
 ): T {
-    @Suppress("UNCHECKED_CAST")
     return this.getStaticObject(objName, type) as T
 }
 
@@ -450,8 +450,8 @@ fun getStaticObjectOrNull(field: Field): Any? {
  * @param field 属性
  * @return 返回获取到的对象(Nullable)
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> getStaticObjectOrNullAs(field: Field): T? {
-    @Suppress("UNCHECKED_CAST")
     return getStaticObjectOrNull(field) as T?
 }
 
@@ -472,8 +472,8 @@ fun getStaticObject(field: Field): Any {
  * @param field 属性
  * @return 成功时返回获取到的对象 失败时抛出异常
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> getStaticObjectAs(field: Field): T {
-    @Suppress("UNCHECKED_CAST")
     return getStaticObject(field) as T
 }
 
@@ -643,7 +643,7 @@ fun Any.invokeMethod(
 }
 
 /**
- * 扩展函数 调用对象的方法 并且将结果转换为T?类型
+ * 扩展函数 调用对象的方法 并且将返回值转换为T?类型
  * 注意 请勿对类使用此函数
  * @param methodName 方法名
  * @param args 形参表 可空
@@ -655,13 +655,13 @@ fun Any.invokeMethod(
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  * @throws IllegalArgumentException 当对象是一个Class时
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAs(
     methodName: String,
     args: Array<out Any?> = emptyArray(),
     argTypes: Array<out Class<*>> = emptyArray(),
     returnType: Class<*>? = null
 ): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.invokeMethod(methodName, args, argTypes, returnType) as T?
 }
 
@@ -706,7 +706,7 @@ fun Class<*>.invokeStaticMethod(
 }
 
 /**
- * 扩展函数 调用类的静态方法 并且将结果转换为T?类型
+ * 扩展函数 调用类的静态方法 并且将返回值转换为T?类型
  * @param methodName 方法名
  * @param args 形参表 可空
  * @param argTypes 形参类型 可空
@@ -714,13 +714,13 @@ fun Class<*>.invokeStaticMethod(
  * @return 函数调用后的返回值
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAs(
     methodName: String,
     args: Array<out Any?> = emptyArray(),
     argTypes: Array<out Class<*>> = emptyArray(),
     returnType: Class<*>? = null
 ): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.invokeStaticMethod(methodName, args, argTypes, returnType) as T?
 }
 
@@ -760,11 +760,11 @@ fun Class<*>.newInstance(
  * @return 成功时返回实例化的对象 失败时返回null
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.newInstanceAs(
     args: Array<out Any?> = emptyArray(),
     argTypes: Array<out Class<*>> = emptyArray()
 ): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.newInstance(args, argTypes) as T?
 }
 
@@ -779,25 +779,25 @@ fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
 }
 
 /**
- * 扩展函数 调用原方法 并将结果转换为T?类型
+ * 扩展函数 调用原方法 并将返回值转换为T?类型
  * @param obj 被调用对象
  * @param args 形参表 为null时则为无参
  * @return 原方法调用后的返回值
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Method.invokedByOriginalAs(
     obj: Any?, args: Array<Any?>? = null
 ): T? {
-    @Suppress("UNCHECKED_CAST")
     return XposedBridge.invokeOriginalMethod(this, obj, args) as T?
 }
 
 /**
- * 扩展函数 调用方法 并将结果转换为T?类型
+ * 扩展函数 调用方法 并将返回值转换为T?类型
  * @param obj 被调用对象
  * @param args 形参表
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.invoke(obj, args) as T?
 }
 
