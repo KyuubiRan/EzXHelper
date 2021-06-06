@@ -1,9 +1,14 @@
 package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
+import android.content.res.XModuleResources
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
+import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
+import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
+import de.robv.android.xposed.IXposedHookZygoteInit
+import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 object EzXHelperInit {
@@ -13,6 +18,25 @@ object EzXHelperInit {
      */
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         setEzClassLoader(lpparam.classLoader)
+    }
+
+    /**
+     * 设置模块路径
+     * @see IXposedHookZygoteInit.StartupParam.modulePath
+     */
+    fun setModulePath(path: String) {
+        modulePath = path
+    }
+
+    /**
+     * 设置模块资源
+     * @see XC_InitPackageResources.InitPackageResourcesParam
+     */
+    fun setXModuleResources(
+        path: String,
+        resourcesParam: XC_InitPackageResources.InitPackageResourcesParam
+    ) {
+        moduleRes = XModuleResources.createInstance(path, resourcesParam.res)
     }
 
     /**
