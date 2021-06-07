@@ -23,6 +23,15 @@ fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
+fun <T> JSONArray.forEachIndexed(
+    action: (index: Int, obj: T) -> Unit
+) {
+    for (index in 0 until this.length()) {
+        action(index, this.get(index) as T)
+    }
+}
+
 /**
  * 将JSONArray 转换为ArrayList
  * @param T 类型
