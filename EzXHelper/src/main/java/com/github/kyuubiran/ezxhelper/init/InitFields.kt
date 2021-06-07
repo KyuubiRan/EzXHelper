@@ -39,4 +39,10 @@ object InitFields {
      */
     var LOG_TAG: String = "EzXHelper"
         internal set
+
+    /**
+     * Toast TAG
+     */
+    var TOAST_TAG: String? = null
+        internal set
 }

@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.res.XModuleResources
 import android.content.res.XResources
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
+import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
+import com.github.kyuubiran.ezxhelper.utils.Log
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
@@ -78,4 +80,14 @@ object EzXHelperInit {
     fun setLogTag(tag: String) {
         LOG_TAG = tag
     }
+
+    /**
+     * 设置Log.toast的Tag
+     * 如果不设置会使用日志TAG
+     * @see Log.toast
+     */
+    fun setToastTag(tag: String) {
+        TOAST_TAG = tag
+    }
+
 }
