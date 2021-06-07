@@ -29,6 +29,12 @@ object InitFields {
         internal set
 
     /**
+     * 宿主包名
+     */
+    lateinit var hostPackageName: String
+        internal set
+
+    /**
      * 日志TAG
      */
     var LOG_TAG: String = "EzXHelper"

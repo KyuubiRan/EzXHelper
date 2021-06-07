@@ -2,11 +2,15 @@ package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import android.content.res.XModuleResources
+import android.content.res.XResources
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
+import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
+import de.robv.android.xposed.IXposedHookInitPackageResources
+import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -15,9 +19,13 @@ object EzXHelperInit {
     /**
      * 使用本库必须执行的初始化
      * 应在handleLoadPackage方法内第一个调用
+     * @see IXposedHookLoadPackage.handleLoadPackage
+     * @see XC_LoadPackage.LoadPackageParam
      */
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
+
         setEzClassLoader(lpparam.classLoader)
+        setHostPackageName(lpparam.packageName)
     }
 
     /**
@@ -30,13 +38,14 @@ object EzXHelperInit {
 
     /**
      * 设置模块资源
-     * @see XC_InitPackageResources.InitPackageResourcesParam
+     * @see IXposedHookInitPackageResources.handleInitPackageResources
+     * @see XC_InitPackageResources.InitPackageResourcesParam.res
      */
     fun setXModuleResources(
         path: String,
-        resourcesParam: XC_InitPackageResources.InitPackageResourcesParam
+        xResources: XResources
     ) {
-        moduleRes = XModuleResources.createInstance(path, resourcesParam.res)
+        moduleRes = XModuleResources.createInstance(path, xResources)
     }
 
     /**
@@ -47,6 +56,13 @@ object EzXHelperInit {
      */
     fun setEzClassLoader(classLoader: ClassLoader) {
         ezXClassLoader = classLoader
+    }
+
+    /**
+     * 设置宿主包名
+     */
+    fun setHostPackageName(packageName: String) {
+        hostPackageName = packageName
     }
 
     /**
