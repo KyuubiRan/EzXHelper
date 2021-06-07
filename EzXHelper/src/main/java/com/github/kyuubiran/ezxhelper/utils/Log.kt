@@ -30,6 +30,14 @@ object Log {
 
     /**
      * 打印日志 等级:Error
+     * @param msg 消息
+     */
+    fun e(msg: String) {
+        Log.e(LOG_TAG, msg)
+    }
+
+    /**
+     * 打印日志 等级:Error
      * @param e 异常
      * @param msg 消息
      */
