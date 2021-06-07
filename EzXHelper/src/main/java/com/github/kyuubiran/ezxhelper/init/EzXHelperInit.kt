@@ -2,7 +2,6 @@ package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import android.content.res.XModuleResources
-import android.content.res.XResources
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
@@ -11,10 +10,8 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
-import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
-import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 object EzXHelperInit {
@@ -31,23 +28,12 @@ object EzXHelperInit {
     }
 
     /**
-     * 设置模块路径
-     * @see IXposedHookZygoteInit.StartupParam.modulePath
+     * 初始化Zygote 以便使用模块路径 和 模块资源
+     * @see IXposedHookZygoteInit.initZygote
      */
-    fun setModulePath(path: String) {
-        modulePath = path
-    }
-
-    /**
-     * 设置模块资源
-     * @see IXposedHookInitPackageResources.handleInitPackageResources
-     * @see XC_InitPackageResources.InitPackageResourcesParam.res
-     */
-    fun setXModuleResources(
-        path: String,
-        xResources: XResources
-    ) {
-        moduleRes = XModuleResources.createInstance(path, xResources)
+    fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
+        modulePath = startupParam.modulePath
+        moduleRes = XModuleResources.createInstance(modulePath, null)
     }
 
     /**
