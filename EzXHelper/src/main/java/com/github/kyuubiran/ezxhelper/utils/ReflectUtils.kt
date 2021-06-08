@@ -126,7 +126,7 @@ fun getMethod(
 }
 
 /**
- *  扩展函数 通过方法数组 根据条件查找方法
+ *  扩展函数 通过条件查找方法
  *  @param condition 方法的具体条件
  *  @return 符合条件的方法
  *  @throws NoSuchMethodException 未找到方法
@@ -161,6 +161,44 @@ fun findMethodByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Met
  */
 fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): Method {
     return getMethods(clzName).findMethodByCondition(condition)
+}
+
+/**
+ * 扩展函数 通过条件查找属性
+ * @param condition 条件
+ * @return 符合条件的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun Array<Field>.findFieldByCondition(condition: (f: Field) -> Boolean): Field {
+    this.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            return it
+        }
+    }
+    throw NoSuchFieldError()
+}
+
+/**
+ * 通过条件查找属性
+ * @param clzName 类名
+ * @param condition 条件
+ * @return 符合条件的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun findFieldByCondition(clzName: String, condition: (f: Field) -> Boolean): Field {
+    return loadClass(clzName).declaredFields.findFieldByCondition(condition)
+}
+
+/**
+ * 通过条件查找属性
+ * @param clz 类
+ * @param condition 条件
+ * @return 符合条件的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun findFieldByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Field {
+    return clz.declaredFields.findFieldByCondition(condition)
 }
 
 /**
@@ -233,7 +271,8 @@ fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): F
 
 /**
  * 扩展函数 获取实例化对象中的对象
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
@@ -257,7 +296,8 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @param T 转换的类型
@@ -273,7 +313,8 @@ fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时抛出异常
@@ -292,7 +333,8 @@ fun Any.getObject(objName: String, type: Class<*>? = null): Any {
 
 /**
  * 扩展函数 获取实例化对象中的对象 并转化为类型T
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时抛出异常
@@ -306,7 +348,8 @@ fun <T> Any.getObjectAs(objName: String, type: Class<*>? = null): T {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param field 属性
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
@@ -326,7 +369,8 @@ fun Any.getObjectOrNull(field: Field): Any? {
 
 /**
  * 扩展函数 获取实例化对象中的对象 并且转换为T?类型
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param field 属性
  * @param T 转换的类型
  * @return 成功时返回获取到的对象 失败时返回null
@@ -339,8 +383,10 @@ fun <T> Any.getObjectOrNullAs(field: Field): T? {
 
 /**
  * 扩展函数 通过类型 获取实例化对象中的对象
+ *
  * 不推荐使用 此函数只会返回第一次匹配到的对象
- * 注意 请勿对Class使用此函数
+ *
+ * 注意: 请勿对Class使用此函数
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
@@ -353,6 +399,50 @@ fun Any.getObjectOrNullByType(type: Class<*>): Any? {
         Log.e(e)
         null
     }
+}
+
+/**
+ * 扩展函数 通过类型 获取实例化对象中的对象 并转换为T?类型
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ *
+ * 注意: 请勿对Class使用此函数
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ * @throws IllegalArgumentException 对类调用此函数
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.getObjectOrNullByTypeAs(type: Class<*>): T? {
+    return this.getObjectOrNullByType(type) as T?
+}
+
+/**
+ * 扩展函数 通过类型 获取实例化对象中的对象
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ *
+ * 注意: 请勿对Class使用此函数
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 对类调用此函数
+ */
+fun Any.getObjectByType(type: Class<*>): Any {
+    return this.getFieldByType(type).get(this)!!
+}
+
+/**
+ * 扩展函数 通过类型 获取实例化对象中的对象 并转换为T类型
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ *
+ * 注意: 请勿对Class使用此函数
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ * @throws IllegalArgumentException 对类调用此函数
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.getObjectByTypeAs(type: Class<*>): T {
+    return this.getObjectByType(type) as T
 }
 
 /**
@@ -477,9 +567,32 @@ fun <T> getStaticObjectAs(field: Field): T {
     return getStaticObject(field) as T
 }
 
+/**
+ * 扩展函数 通过类型 获取类中的静态对象
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun Class<*>.getStaticObjectByType(type: Class<*>): Any {
+    return this.getStaticFieldByType(type).get(null)!!
+}
+
+/**
+ * 扩展函数 通过类型 获取类中的静态对象 并转换为T类型
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<*>.getStaticObjectByTypeAs(type: Class<*>): T {
+    return this.getStaticFieldByType(type).get(null) as T
+}
 
 /**
  * 扩展函数 通过类型 获取类中的静态对象
+ *
  * 不推荐使用 此函数只会返回第一次匹配到的对象
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
@@ -494,8 +607,21 @@ fun Class<*>.getStaticObjectOrNullByType(type: Class<*>): Any? {
 }
 
 /**
+ * 扩展函数 通过类型 获取类中的静态对象 并转换为T？类型
+ *
+ * 不推荐使用 此函数只会返回第一次匹配到的对象
+ * @param type 类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<*>.getStaticObjectOrNullByTypeAs(type: Class<*>): T? {
+    return this.getStaticFieldByType(type) as T?
+}
+
+/**
  * 扩展函数 设置对象中对象的值
- * 注意 请勿对类使用此函数
+ *
+ * 注意: 请勿对类使用此函数
  * @param objName 需要设置的对象名称
  * @param value 值
  * @param fieldType 对象类型
@@ -517,7 +643,8 @@ fun Any.putObject(objName: String, value: Any?, fieldType: Class<*>? = null) {
 
 /**
  * 扩展函数 设置对象中对象的值
- * 注意 请勿对类使用此函数
+ *
+ * 注意: 请勿对类使用此函数
  * @param field 属性
  * @param value 值
  * @throws IllegalArgumentException 对类调用此函数
@@ -536,6 +663,7 @@ fun Any.putObject(field: Field, value: Any?) {
 
 /**
  * 扩展函数 通过类型设置值
+ *
  * 不推荐使用 只会设置第一个类型符合的对象的值
  * @param value 值
  * @param type 类型
@@ -556,6 +684,7 @@ fun Any.putObjectByType(value: Any?, type: Class<*>) {
 
 /**
  * 扩展函数 通过类型设置类中的静态对象的值
+ *
  * 不推荐使用 只会设置第一个类型符合的对象的值
  * @param value 值
  * @param type 类型
@@ -599,7 +728,8 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
 
 /**
  * 扩展函数 调用对象的方法
- * 注意 请勿对类使用此函数
+ *
+ * 注意: 请勿对类使用此函数
  * @param methodName 方法名
  * @param args 形参表 可空
  * @param argTypes 形参类型 可空
@@ -644,7 +774,8 @@ fun Any.invokeMethod(
 
 /**
  * 扩展函数 调用对象的方法 并且将返回值转换为T?类型
- * 注意 请勿对类使用此函数
+ *
+ * 注意: 请勿对类使用此函数
  * @param methodName 方法名
  * @param args 形参表 可空
  * @param argTypes 形参类型 可空

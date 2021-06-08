@@ -17,7 +17,7 @@ fun emptyJSONArray(): JSONArray {
  * @param action 操作
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
+inline fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
     for (index in 0 until this.length()) {
         action(this.get(index) as T)
     }
@@ -29,7 +29,7 @@ fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
  * @param action 操作
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> JSONArray.forEachIndexed(
+inline fun <T> JSONArray.forEachIndexed(
     action: (index: Int, obj: T) -> Unit
 ) {
     for (index in 0 until this.length()) {
