@@ -81,7 +81,7 @@ object EzXHelperInit {
     }
 
     /**
-     * 将模块的资源注入到宿主内 允许直接以R.xx.xxx获取资源
+     * 将模块的资源加载到Context.resources内 允许直接以R.xx.xxx获取资源
      *
      * 要求:
      *
@@ -89,16 +89,22 @@ object EzXHelperInit {
      *
      * aaptOptions.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
      *
-     * 2.执行过initZygote
+     * 2.执行过EzXHelperInit.initZygote
      *
-     * 3.已经初始化appContext
+     * 3.在使用资源前调用
+     *
+     * eg:在Activity中:
+     * init { addResources(this) }
      *
      * @see initZygote
-     * @see initAppContext
      *
      */
-    fun initResources(res: Resources = appContext.resources) {
-        res.assets.invokeMethod(
+    fun addResourcesPath(context: Context) {
+        addResourcesPath(context.resources)
+    }
+
+    fun addResourcesPath(resources: Resources) {
+        resources.assets.invokeMethod(
             "addAssetPath",
             arrayOf(modulePath),
             arrayOf(String::class.java)
