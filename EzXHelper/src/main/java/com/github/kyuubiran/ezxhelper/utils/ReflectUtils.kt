@@ -824,7 +824,7 @@ fun <T> Any.invokeMethodAutoAs(
     methodName: String,
     vararg args: Any
 ): T? {
-    return XposedHelpers.callMethod(this, methodName, args) as T?
+    return this.invokeMethodAuto(methodName, methodName, args) as T?
 }
 
 /**
