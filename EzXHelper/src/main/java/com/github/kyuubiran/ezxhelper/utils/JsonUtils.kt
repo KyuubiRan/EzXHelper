@@ -12,7 +12,7 @@ fun emptyJSONArray(): JSONArray {
 }
 
 /**
- * 遍历json array
+ * 遍历JSONArray
  * @param T 类型
  * @param action 操作
  */
@@ -23,6 +23,11 @@ fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
     }
 }
 
+/**
+ * 遍历JSONArray 并且附带index
+ * @param T 类型
+ * @param action 操作
+ */
 @Suppress("UNCHECKED_CAST")
 fun <T> JSONArray.forEachIndexed(
     action: (index: Int, obj: T) -> Unit
