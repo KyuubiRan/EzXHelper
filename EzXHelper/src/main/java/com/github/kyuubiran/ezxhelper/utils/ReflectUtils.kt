@@ -2,6 +2,7 @@ package com.github.kyuubiran.ezxhelper.utils
 
 import com.github.kyuubiran.ezxhelper.init.InitFields
 import de.robv.android.xposed.XposedBridge
+import de.robv.android.xposed.XposedHelpers
 import java.lang.reflect.*
 
 /**
@@ -797,6 +798,36 @@ fun <T> Any.invokeMethodAs(
 }
 
 /**
+ * 扩展函数 调用对象与形参表最佳匹配的方法
+ * @param methodName 方法名
+ * @param args 形参
+ * @return 函数调用时的返回值
+ * @throws IllegalArgumentException 当对象是一个Class时
+ */
+fun Any.invokeMethodAuto(
+    methodName: String,
+    vararg args: Any?
+): Any? {
+    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
+    return XposedHelpers.callMethod(this, methodName, args)
+}
+
+/**
+ * 扩展函数 调用对象与形参表最佳匹配的方法 并将返回值转换为T?类型
+ * @param methodName 方法名
+ * @param args 形参
+ * @return 函数调用时的返回值
+ * @throws IllegalArgumentException 当对象是一个Class时
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.invokeMethodAutoAs(
+    methodName: String,
+    vararg args: Any
+): T? {
+    return XposedHelpers.callMethod(this, methodName, args) as T?
+}
+
+/**
  * 扩展函数 调用类的静态方法
  * @param methodName 方法名
  * @param args 形参表 可空
@@ -853,6 +884,35 @@ fun <T> Class<*>.invokeStaticMethodAs(
     returnType: Class<*>? = null
 ): T? {
     return this.invokeStaticMethod(methodName, args, argTypes, returnType) as T?
+}
+
+/**
+ * 扩展函数 调用类中与形参表最佳匹配的静态方法
+ * @param methodName 方法名
+ * @param args 形参
+ * @return 函数调用时的返回值
+ * @throws IllegalArgumentException 当对象是一个Class时
+ */
+fun Class<*>.invokeStaticMethodAuto(
+    methodName: String,
+    vararg args: Any
+): Any? {
+    return XposedHelpers.callStaticMethod(this, methodName, args)
+}
+
+/**
+ * 扩展函数 调用类中与形参表最佳匹配的静态方法 并将返回值转换为T?类型
+ * @param methodName 方法名
+ * @param args 形参
+ * @return 函数调用时的返回值
+ * @throws IllegalArgumentException 当对象是一个Class时
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<*>.invokeStaticMethodAutoAs(
+    methodName: String,
+    vararg args: Any
+): Any? {
+    return XposedHelpers.callStaticMethod(this, methodName, args) as T?
 }
 
 /**
