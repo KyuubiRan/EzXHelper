@@ -1,6 +1,7 @@
 package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
+import android.content.res.Resources
 import android.content.res.XModuleResources
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
@@ -10,6 +11,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.invokeMethod
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -78,4 +80,28 @@ object EzXHelperInit {
         TOAST_TAG = tag
     }
 
+    /**
+     * 将模块的资源注入到宿主内 允许直接以R.xx.xxx获取资源
+     *
+     * 要求:
+     *
+     * 1.在项目的build.gradle中修改资源id(不与宿主冲突即可) 如下:
+     *
+     * aaptOptions.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
+     *
+     * 2.执行过initZygote
+     *
+     * 3.已经初始化appContext
+     *
+     * @see initZygote
+     * @see initAppContext
+     *
+     */
+    fun initResources(res: Resources = appContext.resources) {
+        res.assets.invokeMethod(
+            "addAssetPath",
+            arrayOf(modulePath),
+            arrayOf(String::class.java)
+        )
+    }
 }
