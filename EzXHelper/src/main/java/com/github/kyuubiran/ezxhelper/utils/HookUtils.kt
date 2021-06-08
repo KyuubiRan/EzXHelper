@@ -104,7 +104,7 @@ fun Constructor<*>.hookAfter(
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Method.replaceHook(
+fun Method.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hook: (param: XC_MethodHook.MethodHookParam) -> Any?
 ) {
@@ -124,7 +124,7 @@ fun Method.replaceHook(
  * @param priority 优先级 默认50
  * @param hook hook具体实现
  */
-fun Constructor<*>.replaceHook(
+fun Constructor<*>.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hook: (param: XC_MethodHook.MethodHookParam) -> Any?
 ) {
