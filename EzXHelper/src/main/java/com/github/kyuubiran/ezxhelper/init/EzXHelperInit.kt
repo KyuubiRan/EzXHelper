@@ -96,7 +96,7 @@ object EzXHelperInit {
      * 3.在使用资源前调用
      *
      * eg:在Activity中:
-     * init { addResources(this) }
+     * init { addModuleAssetPath(this) }
      *
      * @see initZygote
      *
