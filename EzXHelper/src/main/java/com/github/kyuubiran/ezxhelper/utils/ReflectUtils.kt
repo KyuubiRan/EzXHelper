@@ -891,7 +891,6 @@ fun <T> Class<*>.invokeStaticMethodAs(
  * @param methodName 方法名
  * @param args 形参
  * @return 函数调用时的返回值
- * @throws IllegalArgumentException 当对象是一个Class时
  */
 fun Class<*>.invokeStaticMethodAuto(
     methodName: String,
@@ -905,7 +904,6 @@ fun Class<*>.invokeStaticMethodAuto(
  * @param methodName 方法名
  * @param args 形参
  * @return 函数调用时的返回值
- * @throws IllegalArgumentException 当对象是一个Class时
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAutoAs(
