@@ -24,7 +24,6 @@ object EzXHelperInit {
      * @see XC_LoadPackage.LoadPackageParam
      */
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-
         setEzClassLoader(lpparam.classLoader)
         setHostPackageName(lpparam.packageName)
     }
@@ -59,9 +58,12 @@ object EzXHelperInit {
 
     /**
      * 初始化全局ApplicationContext
+     * @param context ctx
+     * @param addPath 是否往ctx中添加模块资源路径
      */
-    fun initAppContext(context: Context) {
+    fun initAppContext(context: Context, addPath: Boolean = false) {
         appContext = context
+        if (addPath) addModuleAssetPath(appContext)
     }
 
     /**
@@ -81,7 +83,7 @@ object EzXHelperInit {
     }
 
     /**
-     * 将模块的资源加载到Context.resources内 允许直接以R.xx.xxx获取资源
+     * 将模块的资源路径添加到Context.resources内 允许直接以R.xx.xxx获取资源
      *
      * 要求:
      *
@@ -99,11 +101,11 @@ object EzXHelperInit {
      * @see initZygote
      *
      */
-    fun addResourcesPath(context: Context) {
-        addResourcesPath(context.resources)
+    fun addModuleAssetPath(context: Context) {
+        addModuleAssetPath(context.resources)
     }
 
-    fun addResourcesPath(resources: Resources) {
+    fun addModuleAssetPath(resources: Resources) {
         resources.assets.invokeMethod(
             "addAssetPath",
             arrayOf(modulePath),

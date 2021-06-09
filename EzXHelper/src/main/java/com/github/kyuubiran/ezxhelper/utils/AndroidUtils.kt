@@ -1,9 +1,11 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 
 val mainHandler: Handler by lazy {
     Handler(Looper.getMainLooper())
@@ -34,4 +36,20 @@ fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
     runOnMainThread {
         Toast.makeText(this, msg, length).show()
     }
+}
+
+/**
+ * 扩展函数 将模块的资源路径添加到Context.resources内 允许直接以R.xx.xxx获取资源
+ * @see EzXHelperInit.addModuleAssetPath
+ */
+fun Context.addModuleAssetPath() {
+    EzXHelperInit.addModuleAssetPath(this)
+}
+
+/**
+ * 扩展函数 将模块的资源路径添加到resources内 允许直接以R.xx.xxx获取资源
+ * @see EzXHelperInit.addModuleAssetPath
+ */
+fun Resources.addModuleAssetPath() {
+    EzXHelperInit.addModuleAssetPath(this)
 }
