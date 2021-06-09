@@ -6,7 +6,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = "com.github.kyuubiran"		//项目包名
     PUBLISH_ARTIFACT_ID = 'EzXHelper'		    	//项目名
-    PUBLISH_VERSION = "0.1.7"			        	//版本号
+    PUBLISH_VERSION = "0.1.8"			        	//版本号
 }
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
@@ -17,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 17
-        versionName "0.1.7"
+        versionCode 18
+        versionName "0.1.8"
 
         consumerProguardFiles "consumer-rules.pro"
     }

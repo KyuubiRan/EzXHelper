@@ -2,6 +2,7 @@ package com.github.kyuubiran.ezxhelper.utils
 
 import android.util.Log
 import android.widget.Toast
+import com.github.kyuubiran.ezxhelper.init.EzXHelperInit.setToastTag
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
@@ -77,7 +78,12 @@ object Log {
 
     /**
      * 显示一个Toast
+     *
      * 需要先初始化appContext才能使用
+     *
+     * 如果不设置TOAST_TAG
+     * 则不显示前缀
+     * @see setToastTag
      */
     fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
         try {
@@ -86,7 +92,7 @@ object Log {
                     if (TOAST_TAG != null) {
                         setText("${TOAST_TAG}: $msg")
                     } else {
-                        setText("${LOG_TAG}: $msg")
+                        setText(msg)
                     }
                     show()
                 }
