@@ -34,11 +34,11 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) : Seri
             METHOD, FIELD
         }
 
-        fun newMethod(sig: String): DexDescriptor {
+        fun newMethodDesc(sig: String): DexDescriptor {
             return DexDescriptor(sig, TYPE.METHOD)
         }
 
-        fun newField(sig: String): DexDescriptor {
+        fun newFieldDesc(sig: String): DexDescriptor {
             return DexDescriptor(sig, TYPE.FIELD)
         }
     }
@@ -63,16 +63,16 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) : Seri
 
     private fun getTypeSig(type: Class<*>): String {
         if (type.isPrimitive) {
-            return when (type) {
-                Void.TYPE -> "V"
-                Integer.TYPE -> "I"
-                java.lang.Boolean.TYPE -> "Z"
-                java.lang.Byte.TYPE -> "B"
-                java.lang.Long.TYPE -> "L"
-                java.lang.Float.TYPE -> "F"
-                java.lang.Double.TYPE -> "D"
-                Character.TYPE -> "C"
-                java.lang.Short.TYPE -> "S"
+            return when (type.name) {
+                Void.TYPE.name -> "V"
+                Integer.TYPE.name -> "I"
+                java.lang.Boolean.TYPE.name -> "Z"
+                java.lang.Byte.TYPE.name -> "B"
+                java.lang.Long.TYPE.name -> "L"
+                java.lang.Float.TYPE.name -> "F"
+                java.lang.Double.TYPE.name -> "D"
+                Character.TYPE.name -> "C"
+                java.lang.Short.TYPE.name -> "S"
                 else -> throw IllegalStateException("Type: " + type.name + " is not a primitive type")
             }
         }

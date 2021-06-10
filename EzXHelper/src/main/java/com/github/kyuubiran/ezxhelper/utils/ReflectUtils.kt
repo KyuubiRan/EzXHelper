@@ -1052,7 +1052,7 @@ fun <T> fieldCpy(srcObj: T, newObj: T): T? {
  * @throws NoSuchMethodException 未找到方法
  */
 fun getMethodBySig(sig: String): Method {
-    return DexDescriptor.newMethod(sig).getMethod().also { it.isAccessible = true }
+    return DexDescriptor.newMethodDesc(sig).getMethod().also { it.isAccessible = true }
 }
 
 /**
@@ -1062,5 +1062,5 @@ fun getMethodBySig(sig: String): Method {
  * @throws NoSuchFieldError 未找到属性
  */
 fun getFieldBySig(sig: String): Field {
-    return DexDescriptor.newField(sig).getField().also { it.isAccessible = true }
+    return DexDescriptor.newFieldDesc(sig).getField().also { it.isAccessible = true }
 }
