@@ -1044,3 +1044,23 @@ fun <T> fieldCpy(srcObj: T, newObj: T): T? {
         null
     }
 }
+
+/**
+ * 通过Signature获取方法
+ * @param sig signature
+ * @return 找到的方法
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun getMethodBySig(sig: String): Method {
+    return DexDescriptor.newMethod(sig).getMethod().also { it.isAccessible = true }
+}
+
+/**
+ * 通过Signature获取属性
+ * @param sig signature
+ * @return 找到的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun getFieldBySig(sig: String): Field {
+    return DexDescriptor.newField(sig).getField().also { it.isAccessible = true }
+}
