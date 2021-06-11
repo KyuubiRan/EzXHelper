@@ -931,6 +931,7 @@ fun Class<*>.newInstance(
                 this.getDeclaredConstructor(*argTypes)
             else
                 this.getDeclaredConstructor()
+        constructor.isAccessible = true
         if (args.isEmpty()) {
             constructor.newInstance()
         } else {
@@ -987,6 +988,7 @@ fun <T> Method.invokedByOriginalAs(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
+    this.isAccessible = true
     return this.invoke(obj, args) as T?
 }
 
@@ -1021,6 +1023,42 @@ val Member.isFinal: Boolean
     get() = Modifier.isFinal(this.modifiers)
 
 /**
+ * 扩展属性 判断是否为Interface
+ */
+val Member.isInterface: Boolean
+    get() = Modifier.isInterface(this.modifiers)
+
+/**
+ * 扩展属性 判断是否为Native
+ */
+val Member.isNative: Boolean
+    get() = Modifier.isNative(this.modifiers)
+
+/**
+ * 扩展属性 判断是否为Synchronized
+ */
+val Member.isSynchronized: Boolean
+    get() = Modifier.isSynchronized(this.modifiers)
+
+/**
+ * 扩展属性 判断是否为Abstract
+ */
+val Member.isAbstract: Boolean
+    get() = Modifier.isAbstract(this.modifiers)
+
+/**
+ * 扩展属性 判断是否为Transient
+ */
+val Member.isTransient: Boolean
+    get() = Modifier.isTransient(this.modifiers)
+
+/**
+ * 扩展属性 判断是否为Volatile
+ */
+val Member.isVolatile: Boolean
+    get() = Modifier.isVolatile(this.modifiers)
+
+/**
  * 深拷贝一个对象
  * @param srcObj 源对象
  * @param newObj 新对象
@@ -1048,19 +1086,111 @@ fun <T> fieldCpy(srcObj: T, newObj: T): T? {
 /**
  * 通过Signature获取方法
  * @param sig signature
+ * @param clzLoader 类加载器
  * @return 找到的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun getMethodBySig(sig: String): Method {
-    return DexDescriptor.newMethodDesc(sig).getMethod().also { it.isAccessible = true }
+fun getMethodBySig(sig: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Method {
+    return DexDescriptor.newMethodDesc(sig).getMethod(clzLoader).also { it.isAccessible = true }
 }
 
 /**
  * 通过Signature获取属性
  * @param sig signature
+ * @param clzLoader 类加载器
  * @return 找到的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun getFieldBySig(sig: String): Field {
-    return DexDescriptor.newFieldDesc(sig).getField().also { it.isAccessible = true }
+fun getFieldBySig(sig: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
+    return DexDescriptor.newFieldDesc(sig).getField(clzLoader).also { it.isAccessible = true }
+}
+
+/**
+ * 扩展函数 通过Signature获取方法
+ * @param sig signature
+ * @return 找到的方法
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun ClassLoader.getMethodBySig(sig: String): Method {
+    return getMethodBySig(sig, this)
+}
+
+/**
+ * 扩展函数 通过Signature获取属性
+ * @param sig signature
+ * @return 找到的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun ClassLoader.getFieldBySig(sig: String): Field {
+    return getFieldBySig(sig, this)
+}
+
+/**
+ * 扩展函数 获取对象 并转换为T?类型
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getAs(obj: Any?): T? {
+    this.isAccessible = true
+    return this.get(obj) as T?
+}
+
+/**
+ * 扩展函数 获取静态对象
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+fun Field.getStatic(): Any? {
+    this.isAccessible = true
+    return this.get(null)
+}
+
+/**
+ * 扩展函数 获取静态对象 并转换为T?类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getStaticAs(): T? {
+    this.isAccessible = true
+    return this.get(null) as T?
+}
+
+/**
+ * 扩展函数 获取非空对象
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun Field.getNonNull(obj: Any?): Any {
+    this.isAccessible = true
+    return this.get(obj)!!
+}
+
+/**
+ * 扩展函数 获取非空对象 并转换为T类型
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getNonNullAs(obj: Any?): T {
+    this.isAccessible = true
+    return this.get(obj) as T
+}
+
+/**
+ * 扩展函数 获取静态非空对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun Field.getStaticNonNull(): Any {
+    this.isAccessible = true
+    return this.get(null)!!
+}
+
+/**
+ * 扩展函数 获取静态非空对象 并转换为T类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getStaticNonNullAs(): T {
+    this.isAccessible = true
+    return this.get(null)!! as T
 }

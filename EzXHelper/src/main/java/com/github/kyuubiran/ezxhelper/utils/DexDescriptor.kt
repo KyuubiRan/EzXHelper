@@ -1,10 +1,14 @@
 package com.github.kyuubiran.ezxhelper.utils
 
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-internal class DexDescriptor private constructor(sig: String, type: TYPE) : Serializable,
+internal class DexDescriptor private constructor(
+    sig: String,
+    type: TYPE,
+) : Serializable,
     Cloneable {
     private var name: String
     private var declaringClass: String
@@ -92,10 +96,13 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) : Seri
         }
     }
 
-    fun getMethod(): Method {
+    fun getMethod(clzLoader: ClassLoader = ezXClassLoader): Method {
         try {
             var clz =
-                loadClass(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'))
+                loadClass(
+                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
+                    clzLoader
+                )
             clz.declaredMethods.forEach { m ->
                 if (m.name == name && getMethodTypeSig(m) == signature) return m
             }
@@ -111,10 +118,13 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) : Seri
         }
     }
 
-    fun getField(): Field {
+    fun getField(clzLoader: ClassLoader = ezXClassLoader): Field {
         try {
             var clz =
-                loadClass(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'))
+                loadClass(
+                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
+                    clzLoader
+                )
             clz.declaredFields.forEach { f ->
                 if (f.name == name && getTypeSig(f.type) == signature) return f
             }

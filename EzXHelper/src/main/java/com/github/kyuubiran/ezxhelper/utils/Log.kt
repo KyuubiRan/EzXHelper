@@ -98,7 +98,7 @@ object Log {
                 }
             }
         } catch (e: Exception) {
-            Log.e(LOG_TAG, null, e);
+            Log.e(LOG_TAG, null, e)
         }
     }
 }
