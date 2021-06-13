@@ -1,5 +1,6 @@
 package com.github.kyuubiran.ezxhelper.init
 
+import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.XModuleResources
@@ -12,6 +13,9 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.invokeMethod
+import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityHelper
+import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityProxyManager
+import com.github.kyuubiran.ezxhelper.utils.parasitics.TransferActivity
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -61,7 +65,10 @@ object EzXHelperInit {
      * @param context ctx
      * @param addPath 是否往ctx中添加模块资源路径
      */
-    fun initAppContext(context: Context, addPath: Boolean = false) {
+    fun initAppContext(
+        context: Context = AndroidAppHelper.currentApplication(),
+        addPath: Boolean = false
+    ) {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
     }
@@ -111,5 +118,48 @@ object EzXHelperInit {
             arrayOf(modulePath),
             arrayOf(String::class.java)
         )
+    }
+
+    /**
+     * 初始化启动未注册Activity所需的各类内容
+     * 需要在initSubActivity之前调用 且不能过早调用
+     *
+     * @param modulePackageName 模块包名
+     * @param hostActivityProxyName 代理的宿主的Activity名
+     * @param moduleClassLoader 模块的类加载器
+     * @param hostClassLoader 宿主的类加载器
+     * @see initSubActivity
+     * @see ActivityProxyManager
+     * @see TransferActivity
+     */
+    fun initActivityProxyManager(
+        modulePackageName: String,
+        hostActivityProxyName: String,
+        moduleClassLoader: ClassLoader,
+        hostClassLoader: ClassLoader = AndroidAppHelper.currentApplication().classLoader!!
+    ) {
+        ActivityProxyManager.MODULE_PACKAGE_NAME_ID = modulePackageName
+        ActivityProxyManager.ACTIVITY_PROXY_INTENT =
+            "${modulePackageName.replace('.', '_')}_intent_proxy"
+        ActivityProxyManager.HOST_ACTIVITY_PROXY_NAME = hostActivityProxyName
+        ActivityProxyManager.MODULE_CLASS_LOADER = moduleClassLoader
+        ActivityProxyManager.HOST_CLASS_LOADER = hostClassLoader
+    }
+
+    /**
+     * 初始化启动未注册的Activity
+     *
+     * 需要先调用initActivityProxyManager
+     * @see initActivityProxyManager
+     *
+     * 需要使用addModuleAssetPath 所以必须调用initZygote
+     * @see initZygote
+     * @see addModuleAssetPath
+     *
+     * 需要在Application.onCreate之后调用 且只需要调用一次
+     * 并且模块所以的Activity需要继承于TransferActivity
+     */
+    fun initSubActivity() {
+        ActivityHelper.initSubActivity()
     }
 }
