@@ -13,7 +13,7 @@
 - 各种扩展属性(如Menber 可以直接判断是否公开、私有、静态等)
 - 各种扩展方法(如可以直接用Class.newInstance调用有参构造实例化对象 obj.invoke调用成员方法 obj.getObject获取对象等)
 - 资源注入(使用宿主的context时 也能使用模块的资源)
-- 在宿主中启动模块的Activity
+- 在宿主内以宿主的身份启动模块(未注册)的Activity
 
 ### 使用本库的项目
 [QNotifiedX](https://github.com/QNotifiedX/QNotifiedX)    
