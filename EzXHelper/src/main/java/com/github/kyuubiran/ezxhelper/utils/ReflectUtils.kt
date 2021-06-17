@@ -132,10 +132,10 @@ fun getMethod(
  *  @throws NoSuchMethodException 未找到方法
  */
 fun Array<Method>.findMethodByCondition(condition: (m: Method) -> Boolean): Method {
-    for (m in this) {
-        if (condition(m)) {
-            m.isAccessible = true
-            return m
+    this.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            return it
         }
     }
     throw NoSuchMethodException()
@@ -161,6 +161,42 @@ fun findMethodByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Met
  */
 fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): Method {
     return getMethods(clzName).findMethodByCondition(condition)
+}
+
+/**
+ * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
+ * @param condition 条件
+ * @return 符合条件的方法数组
+ */
+fun Array<Method>.getMethodArrayByCondition(condition: (m: Method) -> Boolean): Array<Method> {
+    val lst = ArrayList<Method>()
+    this.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            lst.add(it)
+        }
+    }
+    return lst.toTypedArray()
+}
+
+/**
+ * 通过条件获取方法数组
+ * @param clzName 类名
+ * @param condition 条件
+ * @return 符合条件的方法数组
+ */
+fun getMethodArrayByCondition(clzName: String, condition: (m: Method) -> Boolean): Array<Method> {
+    return loadClass(clzName).declaredMethods.getMethodArrayByCondition(condition)
+}
+
+/**
+ * 通过条件获取方法数组
+ * @param clz 类
+ * @param condition 条件
+ * @return 符合条件的方法数组
+ */
+fun getMethodArrayByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Array<Method> {
+    return clz.declaredMethods.getMethodArrayByCondition(condition)
 }
 
 /**
@@ -199,6 +235,42 @@ fun findFieldByCondition(clzName: String, condition: (f: Field) -> Boolean): Fie
  */
 fun findFieldByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Field {
     return clz.declaredFields.findFieldByCondition(condition)
+}
+
+/**
+ * 扩展函数 通过遍历属性数组 返回符合条件的属性数组
+ * @param condition 条件
+ * @return 符合条件的属性数组
+ */
+fun Array<Field>.getFieldArrayByCondition(condition: (f: Field) -> Boolean): Array<Field> {
+    val lst = ArrayList<Field>()
+    this.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            lst.add(it)
+        }
+    }
+    return lst.toTypedArray()
+}
+
+/**
+ * 通过条件获取属性数组
+ * @param clzName 类名
+ * @param condition 条件
+ * @return 符合条件的属性数组
+ */
+fun getFieldArrayByCondition(clzName: String, condition: (f: Field) -> Boolean): Array<Field> {
+    return loadClass(clzName).declaredFields.getFieldArrayByCondition(condition)
+}
+
+/**
+ * 通过条件获取属性数组
+ * @param clz 类
+ * @param condition 条件
+ * @return 符合条件的属性数组
+ */
+fun getFieldArrayByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Array<Field> {
+    return clz.declaredFields.getFieldArrayByCondition(condition)
 }
 
 /**
@@ -376,8 +448,8 @@ fun Any.getObjectOrNull(field: Field): Any? {
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Any.getObjectOrNullAs(field: Field): T? {
-    @Suppress("UNCHECKED_CAST")
     return this.getObjectOrNull(field) as T?
 }
 
