@@ -71,11 +71,10 @@ fun Any.getMethodByClassOrObject(
         method@ for (m in clz.declaredMethods) {
             if ((isStatic && !m.isStatic) || (!isStatic && m.isStatic)) continue
             if (m.name != methodName) continue
+            if (m.parameterTypes.size != argTypes.size) continue
             if (returnType != null && m.returnType != returnType) continue
-            if (m.parameterTypes.isNotEmpty()) {
-                for (i in m.parameterTypes.indices) {
-                    if (argTypes[i] != m.parameterTypes[i]) continue@method
-                }
+            for (i in m.parameterTypes.indices) {
+                if (argTypes[i] != m.parameterTypes[i]) continue@method
             }
             m.isAccessible = true
             return m
@@ -809,7 +808,7 @@ fun Any.invokeMethodAuto(
     vararg args: Any?
 ): Any? {
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
-    return XposedHelpers.callMethod(this, methodName, args)
+    return XposedHelpers.callMethod(this, methodName, *args)
 }
 
 /**
@@ -822,9 +821,10 @@ fun Any.invokeMethodAuto(
 @Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAutoAs(
     methodName: String,
-    vararg args: Any
+    vararg args: Any?
 ): T? {
-    return this.invokeMethodAuto(methodName, methodName, args) as T?
+    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
+    return XposedHelpers.callMethod(this, methodName, *args) as T?
 }
 
 /**
@@ -894,7 +894,7 @@ fun <T> Class<*>.invokeStaticMethodAs(
  */
 fun Class<*>.invokeStaticMethodAuto(
     methodName: String,
-    vararg args: Any
+    vararg args: Any?
 ): Any? {
     return XposedHelpers.callStaticMethod(this, methodName, args)
 }
@@ -908,7 +908,7 @@ fun Class<*>.invokeStaticMethodAuto(
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAutoAs(
     methodName: String,
-    vararg args: Any
+    vararg args: Any?
 ): Any? {
     return XposedHelpers.callStaticMethod(this, methodName, args) as T?
 }
