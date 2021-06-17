@@ -896,7 +896,7 @@ fun Class<*>.invokeStaticMethodAuto(
     methodName: String,
     vararg args: Any?
 ): Any? {
-    return XposedHelpers.callStaticMethod(this, methodName, args)
+    return XposedHelpers.callStaticMethod(this, methodName, *args)
 }
 
 /**
@@ -910,7 +910,7 @@ fun <T> Class<*>.invokeStaticMethodAutoAs(
     methodName: String,
     vararg args: Any?
 ): Any? {
-    return XposedHelpers.callStaticMethod(this, methodName, args) as T?
+    return XposedHelpers.callStaticMethod(this, methodName, *args) as T?
 }
 
 /**
