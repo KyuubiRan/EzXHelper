@@ -168,7 +168,7 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun Array<Method>.getMethodArrayByCondition(condition: (m: Method) -> Boolean): Array<Method> {
+fun Array<Method>.getMethodsByCondition(condition: (m: Method) -> Boolean): Array<Method> {
     return ArrayList<Method>().also { lst ->
         this.forEach {
             if (condition(it)) {
@@ -185,8 +185,8 @@ fun Array<Method>.getMethodArrayByCondition(condition: (m: Method) -> Boolean): 
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun getMethodArrayByCondition(clzName: String, condition: (m: Method) -> Boolean): Array<Method> {
-    return loadClass(clzName).declaredMethods.getMethodArrayByCondition(condition)
+fun getMethodsByCondition(clzName: String, condition: (m: Method) -> Boolean): Array<Method> {
+    return loadClass(clzName).declaredMethods.getMethodsByCondition(condition)
 }
 
 /**
@@ -195,8 +195,8 @@ fun getMethodArrayByCondition(clzName: String, condition: (m: Method) -> Boolean
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun getMethodArrayByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Array<Method> {
-    return clz.declaredMethods.getMethodArrayByCondition(condition)
+fun getMethodsByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Array<Method> {
+    return clz.declaredMethods.getMethodsByCondition(condition)
 }
 
 /**
@@ -242,7 +242,7 @@ fun findFieldByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Field
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun Array<Field>.getFieldArrayByCondition(condition: (f: Field) -> Boolean): Array<Field> {
+fun Array<Field>.getFieldsByCondition(condition: (f: Field) -> Boolean): Array<Field> {
     return ArrayList<Field>().also { lst ->
         this.forEach {
             if (condition(it)) {
@@ -259,8 +259,8 @@ fun Array<Field>.getFieldArrayByCondition(condition: (f: Field) -> Boolean): Arr
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun getFieldArrayByCondition(clzName: String, condition: (f: Field) -> Boolean): Array<Field> {
-    return loadClass(clzName).declaredFields.getFieldArrayByCondition(condition)
+fun getFieldsByCondition(clzName: String, condition: (f: Field) -> Boolean): Array<Field> {
+    return loadClass(clzName).declaredFields.getFieldsByCondition(condition)
 }
 
 /**
@@ -269,8 +269,8 @@ fun getFieldArrayByCondition(clzName: String, condition: (f: Field) -> Boolean):
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun getFieldArrayByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Array<Field> {
-    return clz.declaredFields.getFieldArrayByCondition(condition)
+fun getFieldsByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Array<Field> {
+    return clz.declaredFields.getFieldsByCondition(condition)
 }
 
 /**
