@@ -5,7 +5,7 @@
 在build.gradle的dependencies下添加语句implementation 'com.github.kyuubiran:EzXHelper:0.2.7'
 调用EzXHelperInit.initHandleLoadPackage(lpparam)初始化 就可以使用大部分工具类啦
 ### 例子
-![image](example/example.png)
+![image](docs/example.png)
 
 ### 功能
 - 方法查找(通过条件、signature等查找)
