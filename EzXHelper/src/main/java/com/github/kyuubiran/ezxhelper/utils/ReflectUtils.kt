@@ -169,14 +169,14 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
  * @return 符合条件的方法数组
  */
 fun Array<Method>.getMethodArrayByCondition(condition: (m: Method) -> Boolean): Array<Method> {
-    val lst = ArrayList<Method>()
-    this.forEach {
-        if (condition(it)) {
-            it.isAccessible = true
-            lst.add(it)
+    return ArrayList<Method>().also { lst ->
+        this.forEach {
+            if (condition(it)) {
+                it.isAccessible = true
+                lst.add(it)
+            }
         }
-    }
-    return lst.toTypedArray()
+    }.toTypedArray()
 }
 
 /**
@@ -243,14 +243,14 @@ fun findFieldByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Field
  * @return 符合条件的属性数组
  */
 fun Array<Field>.getFieldArrayByCondition(condition: (f: Field) -> Boolean): Array<Field> {
-    val lst = ArrayList<Field>()
-    this.forEach {
-        if (condition(it)) {
-            it.isAccessible = true
-            lst.add(it)
+    return ArrayList<Field>().also { lst ->
+        this.forEach {
+            if (condition(it)) {
+                it.isAccessible = true
+                lst.add(it)
+            }
         }
-    }
-    return lst.toTypedArray()
+    }.toTypedArray()
 }
 
 /**
