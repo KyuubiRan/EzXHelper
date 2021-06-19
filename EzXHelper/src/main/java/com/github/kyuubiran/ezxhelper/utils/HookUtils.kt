@@ -261,3 +261,87 @@ fun Array<Constructor<*>>.hookReplace(
             }
         }.toTypedArray()
 }
+
+/**
+ * 扩展函数 hook类的所有构造前
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun Class<*>.hookAllConstructorBefore(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): Array<XC_MethodHook.Unhook> {
+    return this.declaredConstructors.hookBefore(priority, hooker)
+}
+
+/**
+ * 扩展函数 hook类的所有构造后
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun Class<*>.hookAllConstructorAfter(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): Array<XC_MethodHook.Unhook> {
+    return this.declaredConstructors.hookAfter(priority, hooker)
+}
+
+/**
+ * 扩展函数 替换类的所有构造
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun Class<*>.hookAllConstructorReplace(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: ReplaceHooker
+): Array<XC_MethodHook.Unhook> {
+    return this.declaredConstructors.hookReplace(priority, hooker)
+}
+
+/**
+ * hook类的所有构造前
+ * @param clzName 类名
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun hookAllConstructorBefore(
+    clzName: String,
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): Array<XC_MethodHook.Unhook> {
+    return loadClass(clzName).declaredConstructors.hookBefore(priority, hooker)
+}
+
+/**
+ * hook类的所有构造后
+ * @param clzName 类名
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun hookAllConstructorAfter(
+    clzName: String,
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): Array<XC_MethodHook.Unhook> {
+    return loadClass(clzName).declaredConstructors.hookAfter(priority, hooker)
+}
+
+/**
+ * 替换类的所有构造
+ * @param clzName 类名
+ * @param priority 优先级 默认50
+ * @param hooker [Hooker] hook具体实现
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun hookAllConstructorReplace(
+    clzName: String,
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): Array<XC_MethodHook.Unhook> {
+    return loadClass(clzName).declaredConstructors.hookReplace(priority, hooker)
+}
