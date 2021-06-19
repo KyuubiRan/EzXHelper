@@ -1245,7 +1245,7 @@ fun Field.getNonNull(obj: Any?): Any {
 @Suppress("UNCHECKED_CAST")
 fun <T> Field.getNonNullAs(obj: Any?): T {
     this.isAccessible = true
-    return this.get(obj) as T
+    return this.get(obj)!! as T
 }
 
 /**
