@@ -24,7 +24,7 @@ fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoade
  * @return 方法数组
  * @throws IllegalArgumentException 类名为空
  */
-fun getMethods(clzName: String): Array<Method> {
+fun getDeclaredMethods(clzName: String): Array<Method> {
     if (clzName.isEmpty()) throw IllegalArgumentException("Class name must not be null or empty!")
     return loadClass(clzName).declaredMethods
 }
@@ -142,6 +142,50 @@ fun Array<Method>.findMethodByCondition(condition: (m: Method) -> Boolean): Meth
 }
 
 /**
+ *  扩展函数 通过条件查找构造方法
+ *  @param condition 方法的具体条件
+ *  @return 符合条件的构造方法
+ *  @throws NoSuchMethodException 未找到构造方法
+ */
+fun Array<Constructor<*>>.findConstructorByCondition(condition: (m: Constructor<*>) -> Boolean): Constructor<*> {
+    this.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            return it
+        }
+    }
+    throw NoSuchMethodException()
+}
+
+/**
+ * 通过条件查找构造方法
+ * @param clz 类
+ * @param condition 条件
+ * @return 符合条件的构造方法
+ * @throws NoSuchMethodException 未找到构造方法
+ */
+fun findConstructorByCondition(
+    clz: Class<*>,
+    condition: (m: Constructor<*>) -> Boolean
+): Constructor<*> {
+    return clz.declaredConstructors.findConstructorByCondition(condition)
+}
+
+/**
+ * 通过条件查找构造方法
+ * @param clzName 类名
+ * @param condition 条件
+ * @return 符合条件的构造方法
+ * @throws NoSuchMethodException 未找到构造方法
+ */
+fun findConstructorByCondition(
+    clzName: String,
+    condition: (m: Constructor<*>) -> Boolean
+): Constructor<*> {
+    return loadClass(clzName).declaredConstructors.findConstructorByCondition(condition)
+}
+
+/**
  * 通过条件查找方法
  * @param clz 类
  * @param condition 条件
@@ -160,7 +204,7 @@ fun findMethodByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Met
  * @throws NoSuchMethodException 未找到方法
  */
 fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): Method {
-    return getMethods(clzName).findMethodByCondition(condition)
+    return loadClass(clzName).declaredMethods.findMethodByCondition(condition)
 }
 
 /**
