@@ -67,10 +67,12 @@ object EzXHelperInit {
      */
     fun initAppContext(
         context: Context = AndroidAppHelper.currentApplication(),
-        addPath: Boolean = false
+        addPath: Boolean = false,
+        initResources: Boolean = false
     ) {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
+        if (initResources) moduleRes = context.resources
     }
 
     /**
