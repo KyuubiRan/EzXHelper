@@ -1,6 +1,7 @@
 package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
+import android.content.res.Resources
 import android.content.res.XModuleResources
 
 object InitFields {
@@ -9,6 +10,11 @@ object InitFields {
      */
     lateinit var appContext: Context
         internal set
+
+    /**
+     * 指示宿主全局AppContext是否已经初始化
+     */
+    val isAppContextInitialized: Boolean = this::appContext.isInitialized
 
     /**
      * 调用本库加载类函数时使用的类加载器
@@ -25,8 +31,13 @@ object InitFields {
     /**
      * 模块资源
      */
-    lateinit var moduleRes: XModuleResources
+    lateinit var moduleRes: Resources
         internal set
+
+    /**
+     * 指示模块资源是否已经初始化
+     */
+    val isModuleResInitialized: Boolean = this::moduleRes.isInitialized
 
     /**
      * 宿主包名

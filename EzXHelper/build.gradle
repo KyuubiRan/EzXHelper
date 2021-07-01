@@ -8,8 +8,12 @@ ext {
     PUBLISH_ARTIFACT_ID = 'EzXHelper'		    	//项目名
     PUBLISH_VERSION = "0.3.0"			        	//版本号
 }
-apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
+try {
+    apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+} catch(Exception ignored) {
+    //ignore
+}
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
