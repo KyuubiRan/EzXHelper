@@ -1025,7 +1025,7 @@ fun Class<*>.invokeStaticMethodAuto(
 fun <T> Class<*>.invokeStaticMethodAutoAs(
     methodName: String,
     vararg args: Any?
-): Any? {
+): T? {
     return XposedHelpers.callStaticMethod(this, methodName, *args) as T?
 }
 
@@ -1105,7 +1105,7 @@ fun <T> Method.invokedByOriginalAs(
 @Suppress("UNCHECKED_CAST")
 fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
     this.isAccessible = true
-    return this.invoke(obj, args) as T?
+    return this.invoke(obj, *args) as T?
 }
 
 /**
