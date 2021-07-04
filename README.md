@@ -16,5 +16,5 @@
 - 在宿主内以宿主的身份启动模块(未注册)的Activity
 
 ### 使用本库的项目
-[QNotifiedX](https://github.com/QNotifiedX/QNotifiedX)    
+[QAssistant](https://github.com/KitsunePie/QAssistant)
 [QQCleaner](https://github.com/KyuubiRan/QQCleaner)
