@@ -345,3 +345,129 @@ fun hookAllConstructorReplace(
 ): Array<XC_MethodHook.Unhook> {
     return loadClass(clzName).declaredConstructors.hookReplace(priority, hooker)
 }
+
+/**
+ * Hook工厂类
+ */
+class XposedHookUtilFactory(priority: Int = XCallback.PRIORITY_DEFAULT) : XC_MethodHook(priority) {
+    private var beforeMethod: Hooker? = null
+    private var afterMethod: Hooker? = null
+
+    override fun beforeHookedMethod(param: MethodHookParam) {
+        beforeMethod?.invoke(param)
+    }
+
+    override fun afterHookedMethod(param: MethodHookParam) {
+        afterMethod?.invoke(param)
+    }
+
+    /**
+     * hook方法执行前
+     */
+    fun before(before: Hooker) {
+        this.beforeMethod = before
+    }
+
+    /**
+     * hook方法执行后
+     */
+    fun after(after: Hooker) {
+        this.afterMethod = after
+    }
+}
+
+/**
+ * 扩展函数 hook方法
+ * 直接以
+ *
+ * before { }
+ *
+ * after { }
+ *
+ * 的形式进行hook 两者均为可选
+ * @param priority 优先级 默认50
+ * @param hook 传递的XposedHookUtilFactory
+ * @return Unhook
+ * @see XposedHookUtilFactory
+ */
+fun Method.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hook: XposedHookUtilFactory.() -> Unit
+): XC_MethodHook.Unhook {
+    val factory = XposedHookUtilFactory(priority)
+    hook.invoke(factory)
+    return this.hookMethod(factory)
+}
+
+/**
+ * 扩展函数 hook构造
+ * 直接以
+ *
+ * before { }
+ *
+ * after { }
+ *
+ * 的形式进行hook 两者均为可选
+ * @param priority 优先级 默认50
+ * @param hook 传递的XposedHookUtilFactory
+ * @return Unhook
+ * @see XposedHookUtilFactory
+ */
+fun Constructor<*>.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hook: XposedHookUtilFactory.() -> Unit
+): XC_MethodHook.Unhook {
+    val factory = XposedHookUtilFactory(priority)
+    hook.invoke(factory)
+    return this.hookMethod(factory)
+}
+
+/**
+ * 扩展函数 hook多个方法
+ * 直接以
+ *
+ * before { }
+ *
+ * after { }
+ *
+ * 的形式进行hook 两者均为可选
+ * @param priority 优先级 默认50
+ * @param hook 传递的XposedHookUtilFactory
+ * @return Array<Unhook>
+ * @see XposedHookUtilFactory
+ */
+fun Array<Method>.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hook: XposedHookUtilFactory.() -> Unit
+): Array<XC_MethodHook.Unhook> {
+    return ArrayList<XC_MethodHook.Unhook>().also { ret ->
+        this.forEach { m ->
+            ret += m.hookMethod(priority, hook)
+        }
+    }.toTypedArray()
+}
+
+/**
+ * 扩展函数 hook多个构造
+ * 直接以
+ *
+ * before { }
+ *
+ * after { }
+ *
+ * 的形式进行hook 两者均为可选
+ * @param priority 优先级 默认50
+ * @param hook 传递的XposedHookUtilFactory
+ * @return Array<Unhook>
+ * @see XposedHookUtilFactory
+ */
+fun Array<Constructor<*>>.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hook: XposedHookUtilFactory.() -> Unit
+): Array<XC_MethodHook.Unhook> {
+    return ArrayList<XC_MethodHook.Unhook>().also { ret ->
+        this.forEach { m ->
+            ret += m.hookMethod(priority, hook)
+        }
+    }.toTypedArray()
+}
