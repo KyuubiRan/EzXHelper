@@ -231,6 +231,7 @@ fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
  */
 fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
     for (f in this.declaredFields) {
+        if (!Modifier.isStatic(f.modifiers)) continue
         f.get(null).let {
             if (condition(it)) {
                 return it
