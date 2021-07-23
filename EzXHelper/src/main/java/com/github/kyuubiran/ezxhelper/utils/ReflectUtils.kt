@@ -207,6 +207,39 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
     return loadClass(clzName).declaredMethods.findMethodByCondition(condition)
 }
 
+
+/**
+ * 扩展函数 遍历对象中的属性并返回符合条件的对象
+ * @param condition 条件
+ * @return 成功时返回找到的对象 失败时返回null
+ */
+fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
+    for (f in this::class.java.declaredFields) {
+        f.get(this).let {
+            if (condition(it)) {
+                return it
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
+ * @param condition 条件
+ * @return 成功时返回找到的静态对象 失败时返回null
+ */
+fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
+    for (f in this.declaredFields) {
+        f.get(null).let {
+            if (condition(it)) {
+                return it
+            }
+        }
+    }
+    return null
+}
+
 /**
  * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
  * @param condition 条件
