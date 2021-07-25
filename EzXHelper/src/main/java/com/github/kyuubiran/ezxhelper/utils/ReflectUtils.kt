@@ -253,7 +253,7 @@ fun Any.invokeMethodByCondition(vararg params: Any?, condition: (m: Method) -> B
     for (m in this::class.java.declaredMethods) {
         if (condition(m)) {
             m.isAccessible = true
-            return m.invoke(null, *params)
+            return m.invoke(this, *params)
         }
     }
     throw NoSuchMethodException()
