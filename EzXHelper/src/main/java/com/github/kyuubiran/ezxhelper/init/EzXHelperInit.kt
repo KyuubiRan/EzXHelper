@@ -64,15 +64,16 @@ object EzXHelperInit {
      * 初始化全局ApplicationContext
      * @param context ctx
      * @param addPath 是否往ctx中添加模块资源路径
+     * @param initModuleResources 是否初始化moduleRes
      */
     fun initAppContext(
         context: Context = AndroidAppHelper.currentApplication(),
         addPath: Boolean = false,
-        initResources: Boolean = false
+        initModuleResources: Boolean = false
     ) {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
-        if (initResources) moduleRes = context.resources
+        if (initModuleResources) moduleRes = context.resources
     }
 
     /**

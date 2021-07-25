@@ -207,7 +207,6 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
     return loadClass(clzName).declaredMethods.findMethodByCondition(condition)
 }
 
-
 /**
  * 扩展函数 遍历对象中的属性并返回符合条件的对象
  * @param condition 条件
@@ -215,6 +214,7 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
  */
 fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
     for (f in this::class.java.declaredFields) {
+        f.isAccessible = true
         f.get(this).let {
             if (condition(it)) {
                 return it
@@ -231,7 +231,8 @@ fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
  */
 fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
     for (f in this.declaredFields) {
-        if (!Modifier.isStatic(f.modifiers)) continue
+        if (!f.isStatic) continue
+        f.isAccessible = true
         f.get(null).let {
             if (condition(it)) {
                 return it
@@ -239,6 +240,44 @@ fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any
         }
     }
     return null
+}
+
+/**
+ * 扩展函数 调用对象中符合条件的静态方法
+ * @param params 参数表
+ * @param condition 条件
+ * @return 方法的返回值
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun Any.invokeMethodByCondition(vararg params: Any?, condition: (m: Method) -> Boolean): Any? {
+    for (m in this::class.java.declaredMethods) {
+        if (condition(m)) {
+            m.isAccessible = true
+            return m.invoke(null, *params)
+        }
+    }
+    throw NoSuchMethodException()
+}
+
+/**
+ * 扩展函数 调用类中符合条件的静态方法
+ * @param params 参数表
+ * @param condition 条件
+ * @return 方法的返回值
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun Class<*>.invokeStaticMethodByCondition(
+    vararg params: Any?,
+    condition: (m: Method) -> Boolean
+): Any? {
+    for (m in this.declaredMethods) {
+        if (!m.isStatic) continue
+        if (condition(m)) {
+            m.isAccessible = true
+            return m.invoke(null, *params)
+        }
+    }
+    throw NoSuchMethodException()
 }
 
 /**
