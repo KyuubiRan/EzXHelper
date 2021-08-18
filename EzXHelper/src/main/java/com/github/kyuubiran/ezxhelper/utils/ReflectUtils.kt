@@ -208,6 +208,8 @@ fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): M
 }
 
 /**
+ * 强烈不推荐!!非常慢!!
+ *
  * 扩展函数 遍历对象中的属性并返回符合条件的对象
  * @param condition 条件
  * @return 成功时返回找到的对象 失败时返回null
@@ -225,6 +227,33 @@ fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
 }
 
 /**
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历对象中的属性并返回符合条件的对象
+ * @param fieldCond 属性条件
+ * @param objCond 对象条件
+ * @return 成功时返回找到的对象 失败时返回null
+ */
+fun Any.findObjectByCondition(
+    fieldCond: (f: Field) -> Boolean,
+    objCond: (obj: Any?) -> Boolean
+): Any? {
+    for (f in this::class.java.declaredFields) {
+        if (fieldCond(f)) {
+            f.isAccessible = true
+            f.get(this).let {
+                if (objCond(it)) {
+                    return it
+                }
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 强烈不推荐!!非常慢!!
+ *
  * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
  * @param condition 条件
  * @return 成功时返回找到的静态对象 失败时返回null
@@ -243,7 +272,33 @@ fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any
 }
 
 /**
- * 扩展函数 调用对象中符合条件的静态方法
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
+ * @param fieldCond 属性条件
+ * @param objCond 对象条件
+ * @return 成功时返回找到的静态对象 失败时返回null
+ */
+fun Any.findStaticObjectByCondition(
+    fieldCond: (f: Field) -> Boolean,
+    objCond: (obj: Any?) -> Boolean
+): Any? {
+    for (f in this::class.java.declaredFields) {
+        if (!f.isStatic) continue
+        if (fieldCond(f)) {
+            f.isAccessible = true
+            f.get(this).let {
+                if (objCond(it)) {
+                    return it
+                }
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 扩展函数 调用对象中符合条件的方法
  * @param params 参数表
  * @param condition 条件
  * @return 方法的返回值
@@ -1185,67 +1240,98 @@ fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
  * 扩展属性 判断是否为Static
  */
 val Member.isStatic: Boolean
-    get() = Modifier.isStatic(this.modifiers)
+    inline get() = Modifier.isStatic(this.modifiers)
+
 
 /**
  * 扩展属性 判断是否为Public
  */
 val Member.isPublic: Boolean
-    get() = Modifier.isPublic(this.modifiers)
+    inline get() = Modifier.isPublic(this.modifiers)
+
+val Member.isNotPublic: Boolean
+    inline get() = !this.isPublic
 
 /**
  * 扩展属性 判断是否为Protected
  */
 val Member.isProtected: Boolean
-    get() = Modifier.isProtected(this.modifiers)
+    inline get() = Modifier.isProtected(this.modifiers)
+
+val Member.isNotProtected: Boolean
+    inline get() = !this.isProtected
 
 /**
  * 扩展属性 判断是否为Private
  */
 val Member.isPrivate: Boolean
-    get() = Modifier.isPrivate(this.modifiers)
+    inline get() = Modifier.isPrivate(this.modifiers)
+
+val Member.isNotPrivate: Boolean
+    inline get() = !this.isPrivate
 
 /**
  * 扩展属性 判断是否为Final
  */
 val Member.isFinal: Boolean
-    get() = Modifier.isFinal(this.modifiers)
+    inline get() = Modifier.isFinal(this.modifiers)
+
+val Member.isNotFinal: Boolean
+    inline get() = !this.isFinal
 
 /**
  * 扩展属性 判断是否为Interface
  */
 val Member.isInterface: Boolean
-    get() = Modifier.isInterface(this.modifiers)
+    inline get() = Modifier.isInterface(this.modifiers)
+
+val Member.isNotInterface: Boolean
+    inline get() = !this.isInterface
 
 /**
  * 扩展属性 判断是否为Native
  */
 val Member.isNative: Boolean
-    get() = Modifier.isNative(this.modifiers)
+    inline get() = Modifier.isNative(this.modifiers)
+
+val Member.isNotNative: Boolean
+    inline get() = !this.isNative
 
 /**
  * 扩展属性 判断是否为Synchronized
  */
 val Member.isSynchronized: Boolean
-    get() = Modifier.isSynchronized(this.modifiers)
+    inline get() = Modifier.isSynchronized(this.modifiers)
+
+val Member.isNotSynchronized: Boolean
+    inline get() = !this.isSynchronized
 
 /**
  * 扩展属性 判断是否为Abstract
  */
 val Member.isAbstract: Boolean
-    get() = Modifier.isAbstract(this.modifiers)
+    inline get() = Modifier.isAbstract(this.modifiers)
+
+val Member.isNotAbstract: Boolean
+    inline get() = !this.isAbstract
 
 /**
  * 扩展属性 判断是否为Transient
  */
 val Member.isTransient: Boolean
-    get() = Modifier.isTransient(this.modifiers)
+    inline get() = Modifier.isTransient(this.modifiers)
+
+val Member.isNotTransient: Boolean
+    inline get() = !this.isTransient
 
 /**
  * 扩展属性 判断是否为Volatile
  */
 val Member.isVolatile: Boolean
-    get() = Modifier.isVolatile(this.modifiers)
+    inline get() = Modifier.isVolatile(this.modifiers)
+
+val Member.isNotVolatile: Boolean
+    inline get() = !this.isVolatile
 
 /**
  * 深拷贝一个对象
