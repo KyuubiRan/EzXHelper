@@ -458,7 +458,7 @@ class MyInstrumentation(private val mBase: Instrumentation) : Instrumentation() 
     }
 }
 
-@SuppressLint("PrivateApi")
+@SuppressLint("PrivateApi", "DiscouragedPrivateApi")
 class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
@@ -521,6 +521,26 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                                     ActivityProxyManager.ACTIVITY_PROXY_INTENT
                                                 )
                                             fmIntent.set(item, rIntent)
+                                            if (Build.VERSION.SDK_INT >= 31) {
+                                                val cActivityThread = Class.forName("android.app.ActivityThread")
+                                                val currentActivityThread =
+                                                    cActivityThread.getDeclaredMethod("currentActivityThread")
+                                                currentActivityThread.isAccessible = true
+                                                val activityThread = currentActivityThread.invoke(null)
+                                                val acr = activityThread.javaClass.getMethod(
+                                                    "getLaunchingActivity",
+                                                    IBinder::class.java
+                                                ).invoke(
+                                                    activityThread,
+                                                    cTrans.javaClass.getMethod("getActivityToken")
+                                                        .invoke(cTrans)
+                                                )
+                                                if (acr != null) {
+                                                    val fAcrIntent = acr.javaClass.getDeclaredField("intent")
+                                                    fAcrIntent.isAccessible = true
+                                                    fAcrIntent[acr] = rIntent
+                                                }
+                                            }
                                         }
                                     }
                                 }
