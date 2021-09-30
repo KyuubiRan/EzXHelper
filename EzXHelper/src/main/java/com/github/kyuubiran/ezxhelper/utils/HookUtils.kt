@@ -30,8 +30,8 @@ fun Constructor<*>.hookMethod(hookCallback: XC_MethodHook): XC_MethodHook.Unhook
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Method.hookBefore(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
         override fun beforeHookedMethod(param: MethodHookParam) {
@@ -51,15 +51,15 @@ fun Method.hookBefore(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Method>.hookBefore(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookBefore(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach { m ->
+                    ret += m.hookBefore(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 /**
@@ -69,8 +69,8 @@ fun Array<Method>.hookBefore(
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Constructor<*>.hookBefore(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
         override fun beforeHookedMethod(param: MethodHookParam) {
@@ -90,15 +90,15 @@ fun Constructor<*>.hookBefore(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Constructor<*>>.hookBefore(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookBefore(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach {
+                    ret += it.hookBefore(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 
@@ -109,8 +109,8 @@ fun Array<Constructor<*>>.hookBefore(
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Method.hookAfter(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
         override fun afterHookedMethod(param: MethodHookParam) {
@@ -130,15 +130,15 @@ fun Method.hookAfter(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Method>.hookAfter(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookAfter(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach { m ->
+                    ret += m.hookAfter(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 /**
@@ -148,8 +148,8 @@ fun Array<Method>.hookAfter(
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Constructor<*>.hookAfter(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
         override fun afterHookedMethod(param: MethodHookParam) {
@@ -169,15 +169,15 @@ fun Constructor<*>.hookAfter(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Constructor<*>>.hookAfter(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookAfter(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach {
+                    ret += it.hookAfter(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 /**
@@ -187,8 +187,8 @@ fun Array<Constructor<*>>.hookAfter(
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Method.hookReplace(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: ReplaceHooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: ReplaceHooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodReplacement(priority) {
         override fun replaceHookedMethod(param: MethodHookParam): Any? {
@@ -210,15 +210,15 @@ fun Method.hookReplace(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Method>.hookReplace(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: ReplaceHooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: ReplaceHooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookReplace(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach { m ->
+                    ret += m.hookReplace(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 /**
@@ -228,8 +228,8 @@ fun Array<Method>.hookReplace(
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Constructor<*>.hookReplace(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: ReplaceHooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: ReplaceHooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodReplacement(priority) {
         override fun replaceHookedMethod(param: MethodHookParam): Any? {
@@ -251,15 +251,15 @@ fun Constructor<*>.hookReplace(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Array<Constructor<*>>.hookReplace(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: ReplaceHooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: ReplaceHooker
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookReplace(priority, hooker)
-            }
-        }.toTypedArray()
+            .also { ret ->
+                this.forEach {
+                    ret += it.hookReplace(priority, hooker)
+                }
+            }.toTypedArray()
 }
 
 /**
@@ -269,8 +269,8 @@ fun Array<Constructor<*>>.hookReplace(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Class<*>.hookAllConstructorBefore(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return this.declaredConstructors.hookBefore(priority, hooker)
 }
@@ -282,8 +282,8 @@ fun Class<*>.hookAllConstructorBefore(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Class<*>.hookAllConstructorAfter(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return this.declaredConstructors.hookAfter(priority, hooker)
 }
@@ -295,8 +295,8 @@ fun Class<*>.hookAllConstructorAfter(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun Class<*>.hookAllConstructorReplace(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: ReplaceHooker
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: ReplaceHooker
 ): Array<XC_MethodHook.Unhook> {
     return this.declaredConstructors.hookReplace(priority, hooker)
 }
@@ -309,9 +309,9 @@ fun Class<*>.hookAllConstructorReplace(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun hookAllConstructorBefore(
-    clzName: String,
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        clzName: String,
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return loadClass(clzName).declaredConstructors.hookBefore(priority, hooker)
 }
@@ -324,9 +324,9 @@ fun hookAllConstructorBefore(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun hookAllConstructorAfter(
-    clzName: String,
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        clzName: String,
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return loadClass(clzName).declaredConstructors.hookAfter(priority, hooker)
 }
@@ -339,9 +339,9 @@ fun hookAllConstructorAfter(
  * @return unhooks Array<[XC_MethodHook.Unhook]>
  */
 fun hookAllConstructorReplace(
-    clzName: String,
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hooker: Hooker
+        clzName: String,
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
     return loadClass(clzName).declaredConstructors.hookReplace(priority, hooker)
 }
@@ -391,8 +391,8 @@ class XposedHookUtilFactory(priority: Int = XCallback.PRIORITY_DEFAULT) : XC_Met
  * @see XposedHookUtilFactory
  */
 fun Method.hookMethod(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: XposedHookUtilFactory.() -> Unit
 ): XC_MethodHook.Unhook {
     val factory = XposedHookUtilFactory(priority)
     hook.invoke(factory)
@@ -414,8 +414,8 @@ fun Method.hookMethod(
  * @see XposedHookUtilFactory
  */
 fun Constructor<*>.hookMethod(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: XposedHookUtilFactory.() -> Unit
 ): XC_MethodHook.Unhook {
     val factory = XposedHookUtilFactory(priority)
     hook.invoke(factory)
@@ -437,8 +437,8 @@ fun Constructor<*>.hookMethod(
  * @see XposedHookUtilFactory
  */
 fun Array<Method>.hookMethod(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: XposedHookUtilFactory.() -> Unit
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>().also { ret ->
         this.forEach { m ->
@@ -462,8 +462,8 @@ fun Array<Method>.hookMethod(
  * @see XposedHookUtilFactory
  */
 fun Array<Constructor<*>>.hookMethod(
-    priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+        priority: Int = XCallback.PRIORITY_DEFAULT,
+        hook: XposedHookUtilFactory.() -> Unit
 ): Array<XC_MethodHook.Unhook> {
     return ArrayList<XC_MethodHook.Unhook>().also { ret ->
         this.forEach { m ->

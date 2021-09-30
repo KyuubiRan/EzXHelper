@@ -4,14 +4,14 @@ plugins {
 }
 
 ext {
-    PUBLISH_GROUP_ID = "com.github.kyuubiran"		//项目包名
-    PUBLISH_ARTIFACT_ID = 'EzXHelper'		    	//项目名
-    PUBLISH_VERSION = "0.3.8"			        	//版本号
+    PUBLISH_GROUP_ID = "com.github.kyuubiran"        //项目包名
+    PUBLISH_ARTIFACT_ID = 'EzXHelper'                //项目名
+    PUBLISH_VERSION = "0.3.8"                        //版本号
 }
 
 try {
     apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
-} catch(Exception ignored) {
+} catch (Exception ignored) {
     //ignore
 }
 android {

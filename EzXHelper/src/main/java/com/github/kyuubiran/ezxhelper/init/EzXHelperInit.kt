@@ -67,9 +67,9 @@ object EzXHelperInit {
      * @param initModuleResources 是否初始化moduleRes
      */
     fun initAppContext(
-        context: Context = AndroidAppHelper.currentApplication(),
-        addPath: Boolean = false,
-        initModuleResources: Boolean = false
+            context: Context = AndroidAppHelper.currentApplication(),
+            addPath: Boolean = false,
+            initModuleResources: Boolean = false
     ) {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
@@ -117,9 +117,9 @@ object EzXHelperInit {
 
     fun addModuleAssetPath(resources: Resources) {
         resources.assets.invokeMethod(
-            "addAssetPath",
-            arrayOf(modulePath),
-            arrayOf(String::class.java)
+                "addAssetPath",
+                arrayOf(modulePath),
+                arrayOf(String::class.java)
         )
     }
 
@@ -136,14 +136,14 @@ object EzXHelperInit {
      * @see TransferActivity
      */
     fun initActivityProxyManager(
-        modulePackageName: String,
-        hostActivityProxyName: String,
-        moduleClassLoader: ClassLoader,
-        hostClassLoader: ClassLoader = AndroidAppHelper.currentApplication().classLoader!!
+            modulePackageName: String,
+            hostActivityProxyName: String,
+            moduleClassLoader: ClassLoader,
+            hostClassLoader: ClassLoader = AndroidAppHelper.currentApplication().classLoader!!
     ) {
         ActivityProxyManager.MODULE_PACKAGE_NAME_ID = modulePackageName
         ActivityProxyManager.ACTIVITY_PROXY_INTENT =
-            "${modulePackageName.replace('.', '_')}_intent_proxy"
+                "${modulePackageName.replace('.', '_')}_intent_proxy"
         ActivityProxyManager.HOST_ACTIVITY_PROXY_NAME = hostActivityProxyName
         ActivityProxyManager.MODULE_CLASS_LOADER = moduleClassLoader
         ActivityProxyManager.HOST_CLASS_LOADER = hostClassLoader
