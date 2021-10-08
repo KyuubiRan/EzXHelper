@@ -60,10 +60,10 @@ fun getFields(clzName: String): Array<Field> {
  * @throws NoSuchMethodException 未找到方法
  */
 fun Any.getMethodByClassOrObject(
-        methodName: String,
-        isStatic: Boolean = false,
-        returnType: Class<*>? = null,
-        argTypes: Array<out Class<*>> = emptyArray()
+    methodName: String,
+    isStatic: Boolean = false,
+    returnType: Class<*>? = null,
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
@@ -92,9 +92,9 @@ fun Any.getMethodByClassOrObject(
  * @throws IllegalArgumentException 方法名为空
  */
 fun Class<*>.getStaticMethodByClass(
-        methodName: String,
-        returnType: Class<*>? = null,
-        argTypes: Array<out Class<*>> = emptyArray()
+    methodName: String,
+    returnType: Class<*>? = null,
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return this.getMethodByClassOrObject(methodName, true, returnType, argTypes)
@@ -110,19 +110,68 @@ fun Class<*>.getStaticMethodByClass(
  * @throws IllegalArgumentException 方法名为空
  */
 fun getMethod(
-        clzName: String,
-        isStatic: Boolean = false,
-        methodName: String,
-        returnType: Class<*>? = null,
-        argTypes: Array<out Class<*>> = emptyArray()
+    clzName: String,
+    isStatic: Boolean = false,
+    methodName: String,
+    returnType: Class<*>? = null,
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return loadClass(clzName).getMethodByClassOrObject(
-            methodName,
-            isStatic,
-            returnType,
-            argTypes
+        methodName,
+        isStatic,
+        returnType,
+        argTypes
     )
+}
+
+/**
+ * 通过条件查找类中的方法
+ * @param clz 类
+ * @param condition 条件
+ * @param findSuper 是否查找父类
+ * @return 符合条件的方法
+ * @throws NoSuchMethodException
+ */
+fun findMethodByCondition(
+    clz: Class<*>,
+    condition: (m: Method) -> Boolean,
+    findSuper: Boolean = false
+): Method {
+    var c = clz
+    c.declaredMethods.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            return it
+        }
+    }
+    if (findSuper) {
+        do {
+            c.declaredMethods.forEach {
+                if (condition(it)) {
+                    it.isAccessible = true
+                    return it
+                }
+            }
+        } while (c.superclass.also { c = it } != null)
+    }
+    throw NoSuchMethodException()
+}
+
+/**
+ * 通过条件查找方法
+ * @param clzName 类名
+ * @param condition 条件
+ * @param findSuper 是否查找父类
+ * @return 符合条件的方法
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun findMethodByCondition(
+    clzName: String,
+    condition: (m: Method) -> Boolean,
+    findSuper: Boolean = false
+): Method {
+    return findMethodByCondition(loadClass(clzName), condition, findSuper)
 }
 
 /**
@@ -165,8 +214,8 @@ fun Array<Constructor<*>>.findConstructorByCondition(condition: (m: Constructor<
  * @throws NoSuchMethodException 未找到构造方法
  */
 fun findConstructorByCondition(
-        clz: Class<*>,
-        condition: (m: Constructor<*>) -> Boolean
+    clz: Class<*>,
+    condition: (m: Constructor<*>) -> Boolean
 ): Constructor<*> {
     return clz.declaredConstructors.findConstructorByCondition(condition)
 }
@@ -179,33 +228,12 @@ fun findConstructorByCondition(
  * @throws NoSuchMethodException 未找到构造方法
  */
 fun findConstructorByCondition(
-        clzName: String,
-        condition: (m: Constructor<*>) -> Boolean
+    clzName: String,
+    condition: (m: Constructor<*>) -> Boolean
 ): Constructor<*> {
     return loadClass(clzName).declaredConstructors.findConstructorByCondition(condition)
 }
 
-/**
- * 通过条件查找方法
- * @param clz 类
- * @param condition 条件
- * @return 符合条件的方法
- * @throws NoSuchMethodException 未找到方法
- */
-fun findMethodByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Method {
-    return clz.declaredMethods.findMethodByCondition(condition)
-}
-
-/**
- * 通过条件查找方法
- * @param clzName 类名
- * @param condition 条件
- * @return 符合条件的方法
- * @throws NoSuchMethodException 未找到方法
- */
-fun findMethodByCondition(clzName: String, condition: (m: Method) -> Boolean): Method {
-    return loadClass(clzName).declaredMethods.findMethodByCondition(condition)
-}
 
 /**
  * 强烈不推荐!!非常慢!!
@@ -235,8 +263,8 @@ fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
  * @return 成功时返回找到的对象 失败时返回null
  */
 fun Any.findObjectByCondition(
-        fieldCond: (f: Field) -> Boolean,
-        objCond: (obj: Any?) -> Boolean
+    fieldCond: (f: Field) -> Boolean,
+    objCond: (obj: Any?) -> Boolean
 ): Any? {
     for (f in this::class.java.declaredFields) {
         if (fieldCond(f)) {
@@ -280,8 +308,8 @@ fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any
  * @return 成功时返回找到的静态对象 失败时返回null
  */
 fun Any.findStaticObjectByCondition(
-        fieldCond: (f: Field) -> Boolean,
-        objCond: (obj: Any?) -> Boolean
+    fieldCond: (f: Field) -> Boolean,
+    objCond: (obj: Any?) -> Boolean
 ): Any? {
     for (f in this::class.java.declaredFields) {
         if (!f.isStatic) continue
@@ -322,8 +350,8 @@ fun Any.invokeMethodByCondition(vararg params: Any?, condition: (m: Method) -> B
  * @throws NoSuchMethodException 未找到方法
  */
 fun Class<*>.invokeStaticMethodByCondition(
-        vararg params: Any?,
-        condition: (m: Method) -> Boolean
+    vararg params: Any?,
+    condition: (m: Method) -> Boolean
 ): Any? {
     for (m in this.declaredMethods) {
         if (!m.isStatic) continue
@@ -353,22 +381,89 @@ fun Array<Method>.getMethodsByCondition(condition: (m: Method) -> Boolean): Arra
 
 /**
  * 通过条件获取方法数组
- * @param clzName 类名
+ * @param clz 类
  * @param condition 条件
+ * @param findSuper 是否查找父类
  * @return 符合条件的方法数组
  */
-fun getMethodsByCondition(clzName: String, condition: (m: Method) -> Boolean): Array<Method> {
-    return loadClass(clzName).declaredMethods.getMethodsByCondition(condition)
+fun getMethodsByCondition(
+    clz: Class<*>,
+    condition: (m: Method) -> Boolean,
+    findSuper: Boolean = false
+): Array<Method> {
+    var c = clz
+    val arr = ArrayList<Method>()
+    arr.addAll(c.declaredMethods.getMethodsByCondition(condition))
+    if (findSuper) {
+        do {
+            arr.addAll(c.declaredMethods.getMethodsByCondition(condition))
+        } while (c.superclass.also { c = it } != null)
+    }
+    return arr.toTypedArray()
 }
 
 /**
  * 通过条件获取方法数组
- * @param clz 类
+ * @param clzName 类名
  * @param condition 条件
+ * @param findSuper 是否查找父类
  * @return 符合条件的方法数组
  */
-fun getMethodsByCondition(clz: Class<*>, condition: (m: Method) -> Boolean): Array<Method> {
-    return clz.declaredMethods.getMethodsByCondition(condition)
+fun getMethodsByCondition(
+    clzName: String,
+    condition: (m: Method) -> Boolean,
+    findSuper: Boolean = false
+): Array<Method> {
+    return getMethodsByCondition(loadClass(clzName), condition, findSuper)
+}
+
+/**
+ * 通过条件查找类中的属性
+ * @param clz 类
+ * @param condition 条件
+ * @param findSuper 是否查找父类
+ * @return 符合条件的属性
+ * @throws NoSuchFieldError
+ */
+fun findFieldByCondition(
+    clz: Class<*>,
+    condition: (m: Field) -> Boolean,
+    findSuper: Boolean = false
+): Field {
+    var c = clz
+    c.declaredFields.forEach {
+        if (condition(it)) {
+            it.isAccessible = true
+            return it
+        }
+    }
+    if (findSuper) {
+        do {
+            c.declaredFields.forEach {
+                if (condition(it)) {
+                    it.isAccessible = true
+                    return it
+                }
+            }
+        } while (c.superclass.also { c = it } != null)
+    }
+    throw NoSuchFieldError()
+}
+
+/**
+ * 通过条件查找类中的属性
+ * @param clzName 类名
+ * @param condition 条件
+ * @param findSuper 是否查找父类
+ * @return 符合条件的属性
+ * @throws NoSuchFieldError 未找到属性
+ */
+fun findFieldByCondition(
+    clzName: String,
+    condition: (f: Field) -> Boolean,
+    findSuper: Boolean = false
+): Field {
+    return findFieldByCondition(loadClass(clzName), condition, findSuper)
 }
 
 /**
@@ -385,28 +480,6 @@ fun Array<Field>.findFieldByCondition(condition: (f: Field) -> Boolean): Field {
         }
     }
     throw NoSuchFieldError()
-}
-
-/**
- * 通过条件查找属性
- * @param clzName 类名
- * @param condition 条件
- * @return 符合条件的属性
- * @throws NoSuchFieldError 未找到属性
- */
-fun findFieldByCondition(clzName: String, condition: (f: Field) -> Boolean): Field {
-    return loadClass(clzName).declaredFields.findFieldByCondition(condition)
-}
-
-/**
- * 通过条件查找属性
- * @param clz 类
- * @param condition 条件
- * @return 符合条件的属性
- * @throws NoSuchFieldError 未找到属性
- */
-fun findFieldByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Field {
-    return clz.declaredFields.findFieldByCondition(condition)
 }
 
 /**
@@ -427,22 +500,40 @@ fun Array<Field>.getFieldsByCondition(condition: (f: Field) -> Boolean): Array<F
 
 /**
  * 通过条件获取属性数组
- * @param clzName 类名
+ * @param clz 类
  * @param condition 条件
+ * @param findSuper 是否查找父类
  * @return 符合条件的属性数组
  */
-fun getFieldsByCondition(clzName: String, condition: (f: Field) -> Boolean): Array<Field> {
-    return loadClass(clzName).declaredFields.getFieldsByCondition(condition)
+fun getFieldsByCondition(
+    clz: Class<*>,
+    condition: (f: Field) -> Boolean,
+    findSuper: Boolean = false
+): Array<Field> {
+    var c = clz
+    val arr = ArrayList<Field>()
+    arr.addAll(c.declaredFields.getFieldsByCondition(condition))
+    if (findSuper) {
+        do {
+            arr.addAll(c.declaredFields.getFieldsByCondition(condition))
+        } while (c.superclass.also { c = it } != null)
+    }
+    return arr.toTypedArray()
 }
 
 /**
  * 通过条件获取属性数组
- * @param clz 类
+ * @param clzName 类名
  * @param condition 条件
+ * @param findSuper 是否查找父类
  * @return 符合条件的属性数组
  */
-fun getFieldsByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Array<Field> {
-    return clz.declaredFields.getFieldsByCondition(condition)
+fun getFieldsByCondition(
+    clzName: String,
+    condition: (f: Field) -> Boolean,
+    findSuper: Boolean = false
+): Array<Field> {
+    return getFieldsByCondition(loadClass(clzName), condition, findSuper)
 }
 
 /**
@@ -455,9 +546,9 @@ fun getFieldsByCondition(clz: Class<*>, condition: (f: Field) -> Boolean): Array
  * @throws NoSuchFieldException 未找到属性
  */
 fun Any.getFieldByClassOrObject(
-        fieldName: String,
-        isStatic: Boolean = false,
-        fieldType: Class<*>? = null
+    fieldName: String,
+    isStatic: Boolean = false,
+    fieldType: Class<*>? = null
 ): Field {
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
     var clz: Class<*> = if (this is Class<*>) this else this.javaClass
@@ -553,7 +644,6 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
 fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
     return this.getObjectOrNull(objName, type) as T?
 }
-
 
 /**
  * 扩展函数 获取实例化对象中的对象
@@ -697,8 +787,8 @@ fun <T> Any.getObjectByTypeAs(type: Class<*>): T {
  * @throws IllegalArgumentException 当名字为空时
  */
 fun Class<*>.getStaticObjectOrNull(
-        objName: String,
-        type: Class<*>? = null
+    objName: String,
+    type: Class<*>? = null
 ): Any? {
     try {
         if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
@@ -728,8 +818,8 @@ fun Class<*>.getStaticObjectOrNull(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.getStaticObjectOrNullAs(
-        objName: String,
-        type: Class<*>? = null
+    objName: String,
+    type: Class<*>? = null
 ): T? {
     return this.getStaticObjectOrNull(objName, type) as T?
 }
@@ -742,8 +832,8 @@ fun <T> Class<*>.getStaticObjectOrNullAs(
  * @throws IllegalArgumentException 当名字为空时
  */
 fun Class<*>.getStaticObject(
-        objName: String,
-        type: Class<*>? = null
+    objName: String,
+    type: Class<*>? = null
 ): Any {
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     this.getStaticFiledByClass(objName, type).let {
@@ -761,8 +851,8 @@ fun Class<*>.getStaticObject(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.getStaticObjectAs(
-        objName: String,
-        type: Class<*>? = null
+    objName: String,
+    type: Class<*>? = null
 ): T {
     return this.getStaticObject(objName, type) as T
 }
@@ -984,10 +1074,10 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
  * @throws IllegalArgumentException 当对象是一个Class时
  */
 fun Any.invokeMethod(
-        methodName: String,
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray(),
-        returnType: Class<*>? = null
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
 ): Any? {
     if (methodName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
@@ -1032,10 +1122,10 @@ fun Any.invokeMethod(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAs(
-        methodName: String,
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray(),
-        returnType: Class<*>? = null
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
 ): T? {
     return this.invokeMethod(methodName, args, argTypes, returnType) as T?
 }
@@ -1048,8 +1138,8 @@ fun <T> Any.invokeMethodAs(
  * @throws IllegalArgumentException 当对象是一个Class时
  */
 fun Any.invokeMethodAuto(
-        methodName: String,
-        vararg args: Any?
+    methodName: String,
+    vararg args: Any?
 ): Any? {
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     return XposedHelpers.callMethod(this, methodName, *args)
@@ -1064,8 +1154,8 @@ fun Any.invokeMethodAuto(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAutoAs(
-        methodName: String,
-        vararg args: Any?
+    methodName: String,
+    vararg args: Any?
 ): T? {
     if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     return XposedHelpers.callMethod(this, methodName, *args) as T?
@@ -1081,10 +1171,10 @@ fun <T> Any.invokeMethodAutoAs(
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.invokeStaticMethod(
-        methodName: String,
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray(),
-        returnType: Class<*>? = null
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
 ): Any? {
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     val m: Method
@@ -1122,10 +1212,10 @@ fun Class<*>.invokeStaticMethod(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAs(
-        methodName: String,
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray(),
-        returnType: Class<*>? = null
+    methodName: String,
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray(),
+    returnType: Class<*>? = null
 ): T? {
     return this.invokeStaticMethod(methodName, args, argTypes, returnType) as T?
 }
@@ -1137,8 +1227,8 @@ fun <T> Class<*>.invokeStaticMethodAs(
  * @return 函数调用时的返回值
  */
 fun Class<*>.invokeStaticMethodAuto(
-        methodName: String,
-        vararg args: Any?
+    methodName: String,
+    vararg args: Any?
 ): Any? {
     return XposedHelpers.callStaticMethod(this, methodName, *args)
 }
@@ -1151,8 +1241,8 @@ fun Class<*>.invokeStaticMethodAuto(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAutoAs(
-        methodName: String,
-        vararg args: Any?
+    methodName: String,
+    vararg args: Any?
 ): T? {
     return XposedHelpers.callStaticMethod(this, methodName, *args) as T?
 }
@@ -1165,16 +1255,16 @@ fun <T> Class<*>.invokeStaticMethodAutoAs(
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.newInstance(
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray()
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray()
 ): Any? {
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     return try {
         val constructor: Constructor<*> =
-                if (argTypes.isNotEmpty())
-                    this.getDeclaredConstructor(*argTypes)
-                else
-                    this.getDeclaredConstructor()
+            if (argTypes.isNotEmpty())
+                this.getDeclaredConstructor(*argTypes)
+            else
+                this.getDeclaredConstructor()
         constructor.isAccessible = true
         if (args.isEmpty()) {
             constructor.newInstance()
@@ -1196,8 +1286,8 @@ fun Class<*>.newInstance(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.newInstanceAs(
-        args: Array<out Any?> = emptyArray(),
-        argTypes: Array<out Class<*>> = emptyArray()
+    args: Array<out Any?> = emptyArray(),
+    argTypes: Array<out Class<*>> = emptyArray()
 ): T? {
     return this.newInstance(args, argTypes) as T?
 }
@@ -1220,7 +1310,7 @@ fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Method.invokedByOriginalAs(
-        obj: Any?, args: Array<Any?>? = null
+    obj: Any?, args: Array<Any?>? = null
 ): T? {
     return XposedBridge.invokeOriginalMethod(this, obj, args) as T?
 }
