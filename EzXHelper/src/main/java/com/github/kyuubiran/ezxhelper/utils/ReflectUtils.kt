@@ -128,15 +128,15 @@ fun getMethod(
 /**
  * 通过条件查找类中的方法
  * @param clz 类
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的方法
  * @throws NoSuchMethodException
  */
 fun findMethodByCondition(
     clz: Class<*>,
-    condition: (m: Method) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (m: Method) -> Boolean
 ): Method {
     var c = clz
     c.declaredMethods.forEach {
@@ -161,17 +161,17 @@ fun findMethodByCondition(
 /**
  * 通过条件查找方法
  * @param clzName 类名
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的方法
  * @throws NoSuchMethodException 未找到方法
  */
 fun findMethodByCondition(
     clzName: String,
-    condition: (m: Method) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (m: Method) -> Boolean
 ): Method {
-    return findMethodByCondition(loadClass(clzName), condition, findSuper)
+    return findMethodByCondition(loadClass(clzName), findSuper, condition)
 }
 
 /**
@@ -382,14 +382,14 @@ fun Array<Method>.getMethodsByCondition(condition: (m: Method) -> Boolean): Arra
 /**
  * 通过条件获取方法数组
  * @param clz 类
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的方法数组
  */
 fun getMethodsByCondition(
     clz: Class<*>,
-    condition: (m: Method) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (m: Method) -> Boolean
 ): Array<Method> {
     var c = clz
     val arr = ArrayList<Method>()
@@ -405,30 +405,30 @@ fun getMethodsByCondition(
 /**
  * 通过条件获取方法数组
  * @param clzName 类名
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的方法数组
  */
 fun getMethodsByCondition(
     clzName: String,
-    condition: (m: Method) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (m: Method) -> Boolean
 ): Array<Method> {
-    return getMethodsByCondition(loadClass(clzName), condition, findSuper)
+    return getMethodsByCondition(loadClass(clzName), findSuper, condition)
 }
 
 /**
  * 通过条件查找类中的属性
  * @param clz 类
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的属性
  * @throws NoSuchFieldError
  */
 fun findFieldByCondition(
     clz: Class<*>,
-    condition: (m: Field) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (m: Field) -> Boolean
 ): Field {
     var c = clz
     c.declaredFields.forEach {
@@ -453,17 +453,17 @@ fun findFieldByCondition(
 /**
  * 通过条件查找类中的属性
  * @param clzName 类名
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的属性
  * @throws NoSuchFieldError 未找到属性
  */
 fun findFieldByCondition(
     clzName: String,
-    condition: (f: Field) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (f: Field) -> Boolean
 ): Field {
-    return findFieldByCondition(loadClass(clzName), condition, findSuper)
+    return findFieldByCondition(loadClass(clzName), findSuper, condition)
 }
 
 /**
@@ -501,14 +501,14 @@ fun Array<Field>.getFieldsByCondition(condition: (f: Field) -> Boolean): Array<F
 /**
  * 通过条件获取属性数组
  * @param clz 类
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的属性数组
  */
 fun getFieldsByCondition(
     clz: Class<*>,
-    condition: (f: Field) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (f: Field) -> Boolean
 ): Array<Field> {
     var c = clz
     val arr = ArrayList<Field>()
@@ -524,16 +524,16 @@ fun getFieldsByCondition(
 /**
  * 通过条件获取属性数组
  * @param clzName 类名
- * @param condition 条件
  * @param findSuper 是否查找父类
+ * @param condition 条件
  * @return 符合条件的属性数组
  */
 fun getFieldsByCondition(
     clzName: String,
-    condition: (f: Field) -> Boolean,
-    findSuper: Boolean = false
+    findSuper: Boolean = false,
+    condition: (f: Field) -> Boolean
 ): Array<Field> {
-    return getFieldsByCondition(loadClass(clzName), condition, findSuper)
+    return getFieldsByCondition(loadClass(clzName), findSuper, condition)
 }
 
 /**

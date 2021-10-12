@@ -11,33 +11,37 @@ object Log {
     /**
      * 打印日志 等级:Info
      * @param msg 消息
+     * @param thr 异常
      */
-    fun i(msg: String) {
-        Log.i(LOG_TAG, msg)
+    fun i(msg: String, thr: Throwable? = null) {
+        Log.i(LOG_TAG, msg, thr)
     }
 
     /**
      * 打印日志 等级:Debug
      * @param msg 消息
+     * @param thr 异常
      */
-    fun d(msg: String) {
-        Log.d(LOG_TAG, msg)
+    fun d(msg: String, thr: Throwable? = null) {
+        Log.d(LOG_TAG, msg, thr)
     }
 
     /**
      * 打印日志 等级:Warn
      * @param msg 消息
+     * @param thr 异常
      */
-    fun w(msg: String) {
-        Log.w(LOG_TAG, msg)
+    fun w(msg: String, thr: Throwable? = null) {
+        Log.w(LOG_TAG, msg, thr)
     }
 
     /**
      * 打印日志 等级:Error
      * @param msg 消息
+     * @param thr 异常
      */
-    fun e(msg: String) {
-        Log.e(LOG_TAG, msg)
+    fun e(msg: String, thr: Throwable? = null) {
+        Log.e(LOG_TAG, msg, thr)
     }
 
     /**
