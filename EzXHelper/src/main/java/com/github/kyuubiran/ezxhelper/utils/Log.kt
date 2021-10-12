@@ -41,27 +41,39 @@ object Log {
     }
 
     /**
-     * 打印日志 等级:Error
-     * @param e 异常
+     * 打印日志 等级:Info
+     * @param thr 异常
      * @param msg 消息
      */
-    fun e(e: Exception, msg: String = "") {
-        if (msg.isEmpty())
-            Log.e(LOG_TAG, e.stackTraceToString())
-        else
-            Log.e(LOG_TAG, "$msg\n${e.stackTraceToString()}")
+    fun i(thr: Throwable, msg: String? = null) {
+        Log.i(LOG_TAG, msg, thr)
+    }
+
+    /**
+     * 打印日志 等级:Debug
+     * @param thr 异常
+     * @param msg 消息
+     */
+    fun d(thr: Throwable, msg: String? = null) {
+        Log.d(LOG_TAG, msg, thr)
+    }
+
+    /**
+     * 打印日志 等级:Warn
+     * @param thr 异常
+     * @param msg 消息
+     */
+    fun w(thr: Throwable, msg: String? = null) {
+        Log.w(LOG_TAG, msg, thr)
     }
 
     /**
      * 打印日志 等级:Error
-     * @param e 错误
+     * @param thr 异常
      * @param msg 消息
      */
-    fun e(e: Error, msg: String = "") {
-        if (msg.isEmpty())
-            Log.e(LOG_TAG, e.stackTraceToString())
-        else
-            Log.e(LOG_TAG, "$msg\n${e.stackTraceToString()}")
+    fun e(thr: Throwable, msg: String? = null) {
+        Log.e(LOG_TAG, msg, thr)
     }
 
     /**
@@ -69,11 +81,12 @@ object Log {
      * @param thr Throwable
      * @param msg 消息
      */
-    fun t(thr: Throwable, msg: String = "") {
-        if (msg.isEmpty())
-            Log.e(LOG_TAG, thr.stackTraceToString())
-        else
-            Log.e(LOG_TAG, "$msg\n${thr.stackTraceToString()}")
+    @Deprecated(
+        "Replace with Log.e(thr, msg)",
+        ReplaceWith("Log.e(msg, thr)")
+    )
+    fun t(thr: Throwable, msg: String? = null) {
+        Log.e(LOG_TAG, msg, thr)
     }
 
     /**

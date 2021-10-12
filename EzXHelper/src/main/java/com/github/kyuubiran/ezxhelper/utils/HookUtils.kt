@@ -38,7 +38,7 @@ fun Method.hookBefore(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
@@ -77,7 +77,7 @@ fun Constructor<*>.hookBefore(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
@@ -117,7 +117,7 @@ fun Method.hookAfter(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
@@ -156,7 +156,7 @@ fun Constructor<*>.hookAfter(
             try {
                 hooker(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
@@ -195,7 +195,7 @@ fun Method.hookReplace(
             return try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
@@ -236,7 +236,7 @@ fun Constructor<*>.hookReplace(
             return try {
                 hooker(param)
             } catch (thr: Throwable) {
-                Log.t(thr)
+                Log.e(thr)
             }
         }
     })
