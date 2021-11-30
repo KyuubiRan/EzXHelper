@@ -49,7 +49,7 @@ object Log {
      * @param thr 异常
      * @param msg 消息
      */
-    fun i(thr: Throwable, msg: String? = null) {
+    fun i(thr: Throwable, msg: String = "") {
         Log.i(LOG_TAG, msg, thr)
     }
 
@@ -58,7 +58,7 @@ object Log {
      * @param thr 异常
      * @param msg 消息
      */
-    fun d(thr: Throwable, msg: String? = null) {
+    fun d(thr: Throwable, msg: String = "") {
         Log.d(LOG_TAG, msg, thr)
     }
 
@@ -67,7 +67,7 @@ object Log {
      * @param thr 异常
      * @param msg 消息
      */
-    fun w(thr: Throwable, msg: String? = null) {
+    fun w(thr: Throwable, msg: String = "") {
         Log.w(LOG_TAG, msg, thr)
     }
 
@@ -76,7 +76,7 @@ object Log {
      * @param thr 异常
      * @param msg 消息
      */
-    fun e(thr: Throwable, msg: String? = null) {
+    fun e(thr: Throwable, msg: String = "") {
         Log.e(LOG_TAG, msg, thr)
     }
 
@@ -89,7 +89,7 @@ object Log {
         "Replace with Log.e(thr, msg)",
         ReplaceWith("Log.e(msg, thr)")
     )
-    fun t(thr: Throwable, msg: String? = null) {
+    fun t(thr: Throwable, msg: String = "") {
         Log.e(LOG_TAG, msg, thr)
     }
 
