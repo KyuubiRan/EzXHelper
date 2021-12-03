@@ -247,7 +247,7 @@ typealias ObjectCondition = Any?.() -> Boolean
  * @param condition 条件
  * @return 成功时返回找到的对象 失败时返回null
  */
-fun Any.findObjectByCondition(condition: ObjectCondition): Any? {
+fun Any.findObject(condition: ObjectCondition): Any? {
     for (f in this::class.java.declaredFields) {
         f.isAccessible = true
         f.get(this).let {
@@ -269,7 +269,7 @@ typealias FieldCondition = Field.() -> Boolean
  * @param objCond 对象条件
  * @return 成功时返回找到的对象 失败时返回null
  */
-fun Any.findObjectByCondition(
+fun Any.findObject(
     fieldCond: FieldCondition,
     objCond: ObjectCondition
 ): Any? {
