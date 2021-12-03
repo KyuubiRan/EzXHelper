@@ -54,16 +54,16 @@ fun getFields(clzName: String): Array<Field> {
  * @param methodName 方法名
  * @param isStatic 是否为静态方法
  * @param returnType 方法返回值 填入null为无视返回值
- * @param argTypes 方法形参表类型
+ * @param argTypes 方法参数类型
  * @return 符合条件的方法
  * @throws IllegalArgumentException 方法名为空
  * @throws NoSuchMethodException 未找到方法
  */
 fun Any.getMethodByClassOrObject(
     methodName: String,
-    isStatic: Boolean = false,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = emptyArray()
+    isStatic: Boolean = false,
+    vararg argTypes: Class<*>
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
@@ -88,16 +88,16 @@ fun Any.getMethodByClassOrObject(
  * 扩展函数 通过类获取单个静态方法
  * @param methodName 方法名
  * @param returnType 方法返回值 填入null为无视返回值
- * @param argTypes 方法形参表类型
+ * @param argTypes 方法参数类型
  * @throws IllegalArgumentException 方法名为空
  */
 fun Class<*>.getStaticMethodByClass(
     methodName: String,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = emptyArray()
+    vararg argTypes: Class<*>
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return this.getMethodByClassOrObject(methodName, true, returnType, argTypes)
+    return this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
 }
 
 /**
@@ -111,19 +111,21 @@ fun Class<*>.getStaticMethodByClass(
  */
 fun getMethod(
     clzName: String,
-    isStatic: Boolean = false,
     methodName: String,
     returnType: Class<*>? = null,
-    argTypes: Array<out Class<*>> = emptyArray()
+    isStatic: Boolean = false,
+    vararg argTypes: Class<*>
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return loadClass(clzName).getMethodByClassOrObject(
         methodName,
-        isStatic,
         returnType,
-        argTypes
+        isStatic,
+        argTypes = argTypes
     )
 }
+
+typealias MethodCondition = Method.() -> Boolean
 
 /**
  * 通过条件查找类中的方法
@@ -133,14 +135,14 @@ fun getMethod(
  * @return 符合条件的方法
  * @throws NoSuchMethodException
  */
-fun findMethodByCondition(
+fun findMethod(
     clz: Class<*>,
     findSuper: Boolean = false,
-    condition: (m: Method) -> Boolean
+    condition: MethodCondition
 ): Method {
     var c = clz
     c.declaredMethods.forEach {
-        if (condition(it)) {
+        if (it.condition()) {
             it.isAccessible = true
             return it
         }
@@ -148,7 +150,7 @@ fun findMethodByCondition(
     if (findSuper) {
         do {
             c.declaredMethods.forEach {
-                if (condition(it)) {
+                if (it.condition()) {
                     it.isAccessible = true
                     return it
                 }
@@ -166,23 +168,23 @@ fun findMethodByCondition(
  * @return 符合条件的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun findMethodByCondition(
+fun findMethod(
     clzName: String,
     findSuper: Boolean = false,
-    condition: (m: Method) -> Boolean
+    condition: MethodCondition
 ): Method {
-    return findMethodByCondition(loadClass(clzName), findSuper, condition)
+    return findMethod(loadClass(clzName), findSuper, condition)
 }
 
 /**
  *  扩展函数 通过条件查找方法
- *  @param condition 方法的具体条件
+ *  @param condition 方法的条件
  *  @return 符合条件的方法
  *  @throws NoSuchMethodException 未找到方法
  */
-fun Array<Method>.findMethodByCondition(condition: (m: Method) -> Boolean): Method {
+fun Array<Method>.findMethod(condition: MethodCondition): Method {
     this.forEach {
-        if (condition(it)) {
+        if (it.condition()) {
             it.isAccessible = true
             return it
         }
@@ -190,15 +192,17 @@ fun Array<Method>.findMethodByCondition(condition: (m: Method) -> Boolean): Meth
     throw NoSuchMethodException()
 }
 
+typealias ConstructorCondition = Constructor<*>.() -> Boolean
+
 /**
  *  扩展函数 通过条件查找构造方法
- *  @param condition 方法的具体条件
+ *  @param condition 构造方法的条件
  *  @return 符合条件的构造方法
  *  @throws NoSuchMethodException 未找到构造方法
  */
-fun Array<Constructor<*>>.findConstructorByCondition(condition: (m: Constructor<*>) -> Boolean): Constructor<*> {
+fun Array<Constructor<*>>.findConstructor(condition: ConstructorCondition): Constructor<*> {
     this.forEach {
-        if (condition(it)) {
+        if (it.condition()) {
             it.isAccessible = true
             return it
         }
@@ -213,11 +217,11 @@ fun Array<Constructor<*>>.findConstructorByCondition(condition: (m: Constructor<
  * @return 符合条件的构造方法
  * @throws NoSuchMethodException 未找到构造方法
  */
-fun findConstructorByCondition(
+fun findConstructor(
     clz: Class<*>,
     condition: (m: Constructor<*>) -> Boolean
 ): Constructor<*> {
-    return clz.declaredConstructors.findConstructorByCondition(condition)
+    return clz.declaredConstructors.findConstructor(condition)
 }
 
 /**
@@ -227,13 +231,14 @@ fun findConstructorByCondition(
  * @return 符合条件的构造方法
  * @throws NoSuchMethodException 未找到构造方法
  */
-fun findConstructorByCondition(
+fun findConstructor(
     clzName: String,
     condition: (m: Constructor<*>) -> Boolean
 ): Constructor<*> {
-    return loadClass(clzName).declaredConstructors.findConstructorByCondition(condition)
+    return loadClass(clzName).declaredConstructors.findConstructor(condition)
 }
 
+typealias ObjectCondition = Any?.() -> Boolean
 
 /**
  * 强烈不推荐!!非常慢!!
@@ -242,17 +247,19 @@ fun findConstructorByCondition(
  * @param condition 条件
  * @return 成功时返回找到的对象 失败时返回null
  */
-fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
+fun Any.findObjectByCondition(condition: ObjectCondition): Any? {
     for (f in this::class.java.declaredFields) {
         f.isAccessible = true
         f.get(this).let {
-            if (condition(it)) {
+            if (it.condition()) {
                 return it
             }
         }
     }
     return null
 }
+
+typealias FieldCondition = Field.() -> Boolean
 
 /**
  * 强烈不推荐!!非常慢!!
@@ -263,14 +270,14 @@ fun Any.findObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
  * @return 成功时返回找到的对象 失败时返回null
  */
 fun Any.findObjectByCondition(
-    fieldCond: (f: Field) -> Boolean,
-    objCond: (obj: Any?) -> Boolean
+    fieldCond: FieldCondition,
+    objCond: ObjectCondition
 ): Any? {
     for (f in this::class.java.declaredFields) {
-        if (fieldCond(f)) {
+        if (f.fieldCond()) {
             f.isAccessible = true
             f.get(this).let {
-                if (objCond(it)) {
+                if (it.objCond()) {
                     return it
                 }
             }
@@ -286,12 +293,12 @@ fun Any.findObjectByCondition(
  * @param condition 条件
  * @return 成功时返回找到的静态对象 失败时返回null
  */
-fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any? {
+fun Class<*>.findStaticObject(condition: ObjectCondition): Any? {
     for (f in this.declaredFields) {
         if (!f.isStatic) continue
         f.isAccessible = true
         f.get(null).let {
-            if (condition(it)) {
+            if (it.condition()) {
                 return it
             }
         }
@@ -307,16 +314,16 @@ fun Class<*>.findStaticObjectByCondition(condition: (obj: Any?) -> Boolean): Any
  * @param objCond 对象条件
  * @return 成功时返回找到的静态对象 失败时返回null
  */
-fun Any.findStaticObjectByCondition(
-    fieldCond: (f: Field) -> Boolean,
-    objCond: (obj: Any?) -> Boolean
+fun Any.findStaticObject(
+    fieldCond: FieldCondition,
+    objCond: ObjectCondition
 ): Any? {
     for (f in this::class.java.declaredFields) {
         if (!f.isStatic) continue
-        if (fieldCond(f)) {
+        if (f.fieldCond()) {
             f.isAccessible = true
             f.get(this).let {
-                if (objCond(it)) {
+                if (it.objCond()) {
                     return it
                 }
             }
@@ -327,16 +334,16 @@ fun Any.findStaticObjectByCondition(
 
 /**
  * 扩展函数 调用对象中符合条件的方法
- * @param params 参数表
+ * @param args 参数
  * @param condition 条件
  * @return 方法的返回值
  * @throws NoSuchMethodException 未找到方法
  */
-fun Any.invokeMethodByCondition(vararg params: Any?, condition: (m: Method) -> Boolean): Any? {
+fun Any.invokeMethod(vararg args: Any?, condition: MethodCondition): Any? {
     for (m in this::class.java.declaredMethods) {
-        if (condition(m)) {
+        if (m.condition()) {
             m.isAccessible = true
-            return m.invoke(this, *params)
+            return m.invoke(this, *args)
         }
     }
     throw NoSuchMethodException()
@@ -344,20 +351,20 @@ fun Any.invokeMethodByCondition(vararg params: Any?, condition: (m: Method) -> B
 
 /**
  * 扩展函数 调用类中符合条件的静态方法
- * @param params 参数表
+ * @param args 参数表
  * @param condition 条件
  * @return 方法的返回值
  * @throws NoSuchMethodException 未找到方法
  */
-fun Class<*>.invokeStaticMethodByCondition(
-    vararg params: Any?,
-    condition: (m: Method) -> Boolean
+fun Class<*>.invokeStaticMethod(
+    vararg args: Any?,
+    condition: MethodCondition
 ): Any? {
     for (m in this.declaredMethods) {
         if (!m.isStatic) continue
-        if (condition(m)) {
+        if (m.condition()) {
             m.isAccessible = true
-            return m.invoke(null, *params)
+            return m.invoke(null, *args)
         }
     }
     throw NoSuchMethodException()
@@ -368,10 +375,10 @@ fun Class<*>.invokeStaticMethodByCondition(
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun Array<Method>.getMethodsByCondition(condition: (m: Method) -> Boolean): Array<Method> {
+fun Array<Method>.findAllMethods(condition: MethodCondition): Array<Method> {
     return ArrayList<Method>().also { lst ->
         this.forEach {
-            if (condition(it)) {
+            if (it.condition()) {
                 it.isAccessible = true
                 lst.add(it)
             }
@@ -386,17 +393,17 @@ fun Array<Method>.getMethodsByCondition(condition: (m: Method) -> Boolean): Arra
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun getMethodsByCondition(
+fun findAllMethods(
     clz: Class<*>,
     findSuper: Boolean = false,
-    condition: (m: Method) -> Boolean
+    condition: MethodCondition
 ): Array<Method> {
     var c = clz
     val arr = ArrayList<Method>()
-    arr.addAll(c.declaredMethods.getMethodsByCondition(condition))
+    arr.addAll(c.declaredMethods.findAllMethods(condition))
     if (findSuper) {
         do {
-            arr.addAll(c.declaredMethods.getMethodsByCondition(condition))
+            arr.addAll(c.declaredMethods.findAllMethods(condition))
         } while (c.superclass.also { c = it } != null)
     }
     return arr.toTypedArray()
@@ -409,12 +416,12 @@ fun getMethodsByCondition(
  * @param condition 条件
  * @return 符合条件的方法数组
  */
-fun getMethodsByCondition(
+fun findAllMethods(
     clzName: String,
     findSuper: Boolean = false,
-    condition: (m: Method) -> Boolean
+    condition: MethodCondition
 ): Array<Method> {
-    return getMethodsByCondition(loadClass(clzName), findSuper, condition)
+    return findAllMethods(loadClass(clzName), findSuper, condition)
 }
 
 /**
@@ -425,14 +432,14 @@ fun getMethodsByCondition(
  * @return 符合条件的属性
  * @throws NoSuchFieldError
  */
-fun findFieldByCondition(
+fun findField(
     clz: Class<*>,
     findSuper: Boolean = false,
-    condition: (m: Field) -> Boolean
+    condition: FieldCondition
 ): Field {
     var c = clz
     c.declaredFields.forEach {
-        if (condition(it)) {
+        if (it.condition()) {
             it.isAccessible = true
             return it
         }
@@ -440,7 +447,7 @@ fun findFieldByCondition(
     if (findSuper) {
         do {
             c.declaredFields.forEach {
-                if (condition(it)) {
+                if (it.condition()) {
                     it.isAccessible = true
                     return it
                 }
@@ -458,12 +465,12 @@ fun findFieldByCondition(
  * @return 符合条件的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun findFieldByCondition(
+fun findField(
     clzName: String,
     findSuper: Boolean = false,
-    condition: (f: Field) -> Boolean
+    condition: FieldCondition
 ): Field {
-    return findFieldByCondition(loadClass(clzName), findSuper, condition)
+    return findField(loadClass(clzName), findSuper, condition)
 }
 
 /**
@@ -472,9 +479,9 @@ fun findFieldByCondition(
  * @return 符合条件的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun Array<Field>.findFieldByCondition(condition: (f: Field) -> Boolean): Field {
+fun Array<Field>.findField(condition: FieldCondition): Field {
     this.forEach {
-        if (condition(it)) {
+        if (it.condition()) {
             it.isAccessible = true
             return it
         }
@@ -487,10 +494,10 @@ fun Array<Field>.findFieldByCondition(condition: (f: Field) -> Boolean): Field {
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun Array<Field>.getFieldsByCondition(condition: (f: Field) -> Boolean): Array<Field> {
+fun Array<Field>.findAllFields(condition: FieldCondition): Array<Field> {
     return ArrayList<Field>().also { lst ->
         this.forEach {
-            if (condition(it)) {
+            if (it.condition()) {
                 it.isAccessible = true
                 lst.add(it)
             }
@@ -505,17 +512,17 @@ fun Array<Field>.getFieldsByCondition(condition: (f: Field) -> Boolean): Array<F
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun getFieldsByCondition(
+fun findAllFields(
     clz: Class<*>,
     findSuper: Boolean = false,
-    condition: (f: Field) -> Boolean
+    condition: FieldCondition
 ): Array<Field> {
     var c = clz
     val arr = ArrayList<Field>()
-    arr.addAll(c.declaredFields.getFieldsByCondition(condition))
+    arr.addAll(c.declaredFields.findAllFields(condition))
     if (findSuper) {
         do {
-            arr.addAll(c.declaredFields.getFieldsByCondition(condition))
+            arr.addAll(c.declaredFields.findAllFields(condition))
         } while (c.superclass.also { c = it } != null)
     }
     return arr.toTypedArray()
@@ -528,12 +535,12 @@ fun getFieldsByCondition(
  * @param condition 条件
  * @return 符合条件的属性数组
  */
-fun getFieldsByCondition(
+fun findAllFields(
     clzName: String,
     findSuper: Boolean = false,
-    condition: (f: Field) -> Boolean
+    condition: FieldCondition
 ): Array<Field> {
-    return getFieldsByCondition(loadClass(clzName), findSuper, condition)
+    return findAllFields(loadClass(clzName), findSuper, condition)
 }
 
 /**
@@ -1085,7 +1092,7 @@ fun Any.invokeMethod(
     val m: Method
     if (args.isEmpty()) {
         try {
-            m = this.getMethodByClassOrObject(methodName, false, returnType)
+            m = this.getMethodByClassOrObject(methodName, returnType, false)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1095,7 +1102,7 @@ fun Any.invokeMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, false, returnType, argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, false, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1180,7 +1187,7 @@ fun Class<*>.invokeStaticMethod(
     val m: Method
     if (args.isEmpty()) {
         try {
-            m = this.getMethodByClassOrObject(methodName, true, returnType)
+            m = this.getMethodByClassOrObject(methodName, returnType, true)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1190,7 +1197,7 @@ fun Class<*>.invokeStaticMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, true, returnType, argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1298,7 +1305,7 @@ fun <T> Class<*>.newInstanceAs(
  * @param args 形参表 为null时则为无参
  * @return 原方法调用后的返回值
  */
-fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
+fun Method.invokedOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
     return XposedBridge.invokeOriginalMethod(this, obj, args)
 }
 
@@ -1309,7 +1316,7 @@ fun Method.invokedByOriginal(obj: Any?, args: Array<Any?>? = null): Any? {
  * @return 原方法调用后的返回值
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> Method.invokedByOriginalAs(
+fun <T> Method.invokedOriginalAs(
     obj: Any?, args: Array<Any?>? = null
 ): T? {
     return XposedBridge.invokeOriginalMethod(this, obj, args) as T?
@@ -1331,14 +1338,14 @@ fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
  */
 val Member.isStatic: Boolean
     inline get() = Modifier.isStatic(this.modifiers)
-
+val Member.isNotStatic: Boolean
+    inline get() = !this.isStatic
 
 /**
  * 扩展属性 判断是否为Public
  */
 val Member.isPublic: Boolean
     inline get() = Modifier.isPublic(this.modifiers)
-
 val Member.isNotPublic: Boolean
     inline get() = !this.isPublic
 
@@ -1347,7 +1354,6 @@ val Member.isNotPublic: Boolean
  */
 val Member.isProtected: Boolean
     inline get() = Modifier.isProtected(this.modifiers)
-
 val Member.isNotProtected: Boolean
     inline get() = !this.isProtected
 
@@ -1356,7 +1362,6 @@ val Member.isNotProtected: Boolean
  */
 val Member.isPrivate: Boolean
     inline get() = Modifier.isPrivate(this.modifiers)
-
 val Member.isNotPrivate: Boolean
     inline get() = !this.isPrivate
 
@@ -1365,7 +1370,6 @@ val Member.isNotPrivate: Boolean
  */
 val Member.isFinal: Boolean
     inline get() = Modifier.isFinal(this.modifiers)
-
 val Member.isNotFinal: Boolean
     inline get() = !this.isFinal
 
@@ -1374,7 +1378,6 @@ val Member.isNotFinal: Boolean
  */
 val Member.isInterface: Boolean
     inline get() = Modifier.isInterface(this.modifiers)
-
 val Member.isNotInterface: Boolean
     inline get() = !this.isInterface
 
@@ -1383,7 +1386,6 @@ val Member.isNotInterface: Boolean
  */
 val Member.isNative: Boolean
     inline get() = Modifier.isNative(this.modifiers)
-
 val Member.isNotNative: Boolean
     inline get() = !this.isNative
 
@@ -1392,7 +1394,6 @@ val Member.isNotNative: Boolean
  */
 val Member.isSynchronized: Boolean
     inline get() = Modifier.isSynchronized(this.modifiers)
-
 val Member.isNotSynchronized: Boolean
     inline get() = !this.isSynchronized
 
@@ -1401,7 +1402,6 @@ val Member.isNotSynchronized: Boolean
  */
 val Member.isAbstract: Boolean
     inline get() = Modifier.isAbstract(this.modifiers)
-
 val Member.isNotAbstract: Boolean
     inline get() = !this.isAbstract
 
@@ -1410,7 +1410,6 @@ val Member.isNotAbstract: Boolean
  */
 val Member.isTransient: Boolean
     inline get() = Modifier.isTransient(this.modifiers)
-
 val Member.isNotTransient: Boolean
     inline get() = !this.isTransient
 
@@ -1419,7 +1418,6 @@ val Member.isNotTransient: Boolean
  */
 val Member.isVolatile: Boolean
     inline get() = Modifier.isVolatile(this.modifiers)
-
 val Member.isNotVolatile: Boolean
     inline get() = !this.isVolatile
 
@@ -1450,44 +1448,47 @@ fun <T> fieldCpy(srcObj: T, newObj: T): T? {
 
 /**
  * 通过Signature获取方法
- * @param sig signature
+ * @param desc Descriptor
  * @param clzLoader 类加载器
  * @return 找到的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun getMethodBySig(sig: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Method {
-    return DexDescriptor.newMethodDesc(sig).getMethod(clzLoader).also { it.isAccessible = true }
+fun getMethodByDescriptor(
+    desc: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Method {
+    return DexDescriptor.newMethodDesc(desc).getMethod(clzLoader).also { it.isAccessible = true }
 }
 
 /**
  * 通过Signature获取属性
- * @param sig signature
+ * @param desc Descriptor
  * @param clzLoader 类加载器
  * @return 找到的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun getFieldBySig(sig: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
-    return DexDescriptor.newFieldDesc(sig).getField(clzLoader).also { it.isAccessible = true }
+fun getFieldByDescriptor(desc: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
+    return DexDescriptor.newFieldDesc(desc).getField(clzLoader).also { it.isAccessible = true }
 }
 
 /**
  * 扩展函数 通过Signature获取方法
- * @param sig signature
+ * @param desc Descriptor
  * @return 找到的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun ClassLoader.getMethodBySig(sig: String): Method {
-    return getMethodBySig(sig, this)
+fun ClassLoader.getMethodByDescriptor(desc: String): Method {
+    return getMethodByDescriptor(desc, this)
 }
 
 /**
  * 扩展函数 通过Signature获取属性
- * @param sig signature
+ * @param desc Descriptor
  * @return 找到的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun ClassLoader.getFieldBySig(sig: String): Field {
-    return getFieldBySig(sig, this)
+fun ClassLoader.getFieldByDescriptor(desc: String): Field {
+    return getFieldByDescriptor(desc, this)
 }
 
 /**

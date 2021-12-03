@@ -81,19 +81,6 @@ object Log {
     }
 
     /**
-     * 打印日志 等级:Error
-     * @param thr Throwable
-     * @param msg 消息
-     */
-    @Deprecated(
-        "Replace with Log.e(thr, msg)",
-        ReplaceWith("Log.e(msg, thr)")
-    )
-    fun t(thr: Throwable, msg: String = "") {
-        Log.e(LOG_TAG, msg, thr)
-    }
-
-    /**
      * 显示一个Toast
      *
      * 需要先初始化appContext才能使用
