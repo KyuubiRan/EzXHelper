@@ -1447,13 +1447,13 @@ fun <T> fieldCpy(srcObj: T, newObj: T): T? {
 }
 
 /**
- * 通过Signature获取方法
+ * 通过Descriptor获取方法
  * @param desc Descriptor
  * @param clzLoader 类加载器
  * @return 找到的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun getMethodByDescriptor(
+fun getMethodByDesc(
     desc: String,
     clzLoader: ClassLoader = InitFields.ezXClassLoader
 ): Method {
@@ -1461,34 +1461,34 @@ fun getMethodByDescriptor(
 }
 
 /**
- * 通过Signature获取属性
+ * 通过Descriptor获取属性
  * @param desc Descriptor
  * @param clzLoader 类加载器
  * @return 找到的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun getFieldByDescriptor(desc: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
+fun getFieldByDesc(desc: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
     return DexDescriptor.newFieldDesc(desc).getField(clzLoader).also { it.isAccessible = true }
 }
 
 /**
- * 扩展函数 通过Signature获取方法
+ * 扩展函数 通过Descriptor获取方法
  * @param desc Descriptor
  * @return 找到的方法
  * @throws NoSuchMethodException 未找到方法
  */
-fun ClassLoader.getMethodByDescriptor(desc: String): Method {
-    return getMethodByDescriptor(desc, this)
+fun ClassLoader.getMethodByDesc(desc: String): Method {
+    return getMethodByDesc(desc, this)
 }
 
 /**
- * 扩展函数 通过Signature获取属性
+ * 扩展函数 通过Descriptor获取属性
  * @param desc Descriptor
  * @return 找到的属性
  * @throws NoSuchFieldError 未找到属性
  */
-fun ClassLoader.getFieldByDescriptor(desc: String): Field {
-    return getFieldByDescriptor(desc, this)
+fun ClassLoader.getFieldByDesc(desc: String): Field {
+    return getFieldByDesc(desc, this)
 }
 
 /**
