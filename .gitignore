@@ -15,3 +15,5 @@
 local.properties
 /.idea/
 /publish-mavencentral.gradle
+/EzXHelper/src/test/
+/EzXHelper/src/androidTest/
