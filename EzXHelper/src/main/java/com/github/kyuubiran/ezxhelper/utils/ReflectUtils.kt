@@ -1422,6 +1422,34 @@ val Member.isNotVolatile: Boolean
     inline get() = !this.isVolatile
 
 /**
+ * 扩展属性 获取方法的参数数量
+ */
+val Method.paramCount: Int
+    inline get() = this.parameterTypes.size
+
+/**
+ * 扩展属性 获取构造方法的参数数量
+ */
+val Constructor<*>.paramCount: Int
+    inline get() = this.parameterTypes.size
+
+/**
+ * 扩展属性 判断方法的参数是否为空
+ */
+val Method.emptyParam: Boolean
+    inline get() = this.paramCount == 0
+val Method.notEmptyParam: Boolean
+    inline get() = this.paramCount != 0
+
+/**
+ * 扩展属性 判断构造方法的参数是否为空
+ */
+val Constructor<*>.emptyParam: Boolean
+    inline get() = this.paramCount == 0
+val Constructor<*>.notEmptyParam: Boolean
+    inline get() = this.paramCount != 0
+
+/**
  * 深拷贝一个对象
  * @param srcObj 源对象
  * @param newObj 新对象
