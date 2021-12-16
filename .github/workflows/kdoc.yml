@@ -1,0 +1,54 @@
+name: Build KDoc
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  dokka:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        
+      - name: Prepare Java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          java-package: jdk
+          
+      - name: Gradle wrapper validation
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('/*.gradle') }}-${{ hashFiles('/*.gradle.kts') }}
+          
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        
+      - name: Build KDoc
+        run: |
+          ./gradlew :EzXHelper:dokkaHtml
+          mv EzXHelper/build/dokka/html ../html
+          
+      - name: Push to gh-pages
+        if: success()
+        run: |
+          git config --global user.email "KyuubiRan@qq.com"
+          git config --global user.name "KyuubiRan"
+          cd ..
+          git clone -b gh-pages https://github.com/${{ github.repository }} gh-pages
+          cd gh-pages
+          rm -rf ./*
+          mv ../html/* ./
+          if [[ git status --porcelain ]]; then
+            git add .
+            git commit -m "Auto commit at $(date)"
+            git push -f https://${{ secrets.CI_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+          else
+            echo "Skip push without change"
+          fi
