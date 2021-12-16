@@ -45,7 +45,7 @@ jobs:
           cd gh-pages
           rm -rf ./*
           mv ../html/* ./
-          if [[ git status --porcelain ]]; then
+          if [[ `git status --porcelain` ]]; then
             git add .
             git commit -m "Auto commit at $(date)"
             git push -f https://${{ secrets.CI_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
