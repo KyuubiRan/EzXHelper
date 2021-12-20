@@ -51,7 +51,7 @@ inline fun ViewGroup.forEachIndexed(action: (index: Int, view: View) -> Unit) {
 }
 
 /**
- * 判断ViewGroup是否为空
+ * 扩展函数 判断ViewGroup是否为空
  * @return 是否为空
  */
 fun ViewGroup.isEmpty(): Boolean {
@@ -59,7 +59,7 @@ fun ViewGroup.isEmpty(): Boolean {
 }
 
 /**
- * 判断ViewGroup是否不为空
+ * 扩展函数 判断ViewGroup是否不为空
  * @return 是否不为空
  */
 fun ViewGroup.isNotEmpty(): Boolean {
