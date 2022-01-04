@@ -32,7 +32,7 @@ fun runOnMainThread(r: Runnable) {
  * @param msg Toast显示的消息
  * @param length Toast显示的时长
  */
-fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
+fun Context.showToast(msg: String?, length: Int = Toast.LENGTH_SHORT) {
     runOnMainThread {
         Toast.makeText(this, msg, length).show()
     }

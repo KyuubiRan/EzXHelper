@@ -5,11 +5,8 @@ import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-internal class DexDescriptor private constructor(
-        sig: String,
-        type: TYPE,
-) : Serializable,
-        Cloneable {
+internal class DexDescriptor private constructor(sig: String, type: TYPE) :
+    Serializable, Cloneable {
     private var name: String
     private var declaringClass: String
     private var signature: String
@@ -80,9 +77,8 @@ internal class DexDescriptor private constructor(
                 else -> throw IllegalStateException("Type: " + type.name + " is not a primitive type")
             }
         }
-        return if (type.isArray) {
-            "[" + getTypeSig(type.componentType!!)
-        } else "L" + type.name.replace('.', '/') + ";"
+        return if (type.isArray) "[" + getTypeSig(type.componentType!!)
+        else "L" + type.name.replace('.', '/') + ";"
     }
 
     private fun getMethodTypeSig(method: Method): String {
@@ -99,10 +95,10 @@ internal class DexDescriptor private constructor(
     fun getMethod(clzLoader: ClassLoader = ezXClassLoader): Method {
         try {
             var clz =
-                    loadClass(
-                            declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
-                            clzLoader
-                    )
+                loadClass(
+                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
+                    clzLoader
+                )
             clz.declaredMethods.forEach { m ->
                 if (m.name == name && getMethodTypeSig(m) == signature) return m
             }
@@ -121,10 +117,10 @@ internal class DexDescriptor private constructor(
     fun getField(clzLoader: ClassLoader = ezXClassLoader): Field {
         try {
             var clz =
-                    loadClass(
-                            declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
-                            clzLoader
-                    )
+                loadClass(
+                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
+                    clzLoader
+                )
             clz.declaredFields.forEach { f ->
                 if (f.name == name && getTypeSig(f.type) == signature) return f
             }

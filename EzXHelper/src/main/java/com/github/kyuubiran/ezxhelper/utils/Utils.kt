@@ -8,3 +8,11 @@ inline fun tryOrFalse(crossinline block: () -> Unit): Boolean {
         false
     }
 }
+
+inline fun <T> tryOrNull(crossinline block: () -> T?): T? {
+    return try {
+        block()
+    } catch (thr: Throwable) {
+        null
+    }
+}

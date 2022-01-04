@@ -11,16 +11,16 @@ class FixedClassLoader(
     }
 
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
-        try {
+        runCatching {
             return mBootstrap.loadClass(name)
-        } catch (ignored: ClassNotFoundException) {
         }
-        try {
+
+        runCatching {
             if ("androidx.lifecycle.ReportFragment" == name) {
                 return mHostClassLoader.loadClass(name)
             }
-        } catch (ignored: ClassNotFoundException) {
         }
+
         return try {
             mModuleClassLoader.loadClass(name)
         } catch (e: Exception) {

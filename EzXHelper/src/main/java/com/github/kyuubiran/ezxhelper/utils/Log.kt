@@ -90,19 +90,15 @@ object Log {
      * @see setToastTag
      */
     fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-        try {
-            runOnMainThread {
-                Toast.makeText(appContext, null, duration).run {
-                    if (TOAST_TAG != null) {
-                        setText("${TOAST_TAG}: $msg")
-                    } else {
-                        setText(msg)
-                    }
-                    show()
+        runOnMainThread {
+            Toast.makeText(appContext, null, duration).run {
+                if (TOAST_TAG != null) {
+                    setText("${TOAST_TAG}: $msg")
+                } else {
+                    setText(msg)
                 }
+                show()
             }
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, null, e)
         }
     }
 }
