@@ -74,7 +74,7 @@ fun Any.getMethodByClassOrObject(
             .filter { it.parameterTypes.size != argTypes.size }
             .filter { returnType != null && it.returnType != returnType }
             .filter { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
-            .firstOrNull { true }?.let { return it }
+            .getOrNull(0)?.let { return it }
     } while (clz.superclass.also { clz = it } != null)
     throw NoSuchMethodException()
 }
