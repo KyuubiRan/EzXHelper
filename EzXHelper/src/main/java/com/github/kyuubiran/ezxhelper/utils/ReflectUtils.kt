@@ -347,7 +347,7 @@ fun Class<*>.invokeStaticMethod(
  * @return 符合条件的方法数组
  */
 fun Array<Method>.findAllMethods(condition: MethodCondition): Array<Method> {
-    return this.filter { !it.condition() }.map { it.isAccessible = true;it }.toTypedArray()
+    return this.filter { !it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
 }
 
 /**
@@ -447,7 +447,7 @@ fun Array<Field>.findField(condition: FieldCondition): Field {
  * @return 符合条件的属性数组
  */
 fun Array<Field>.findAllFields(condition: FieldCondition): Array<Field> {
-    return this.filter { !it.condition() }.map { it.isAccessible = true;it }.toTypedArray()
+    return this.filter { !it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
 }
 
 /**
