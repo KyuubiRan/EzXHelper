@@ -347,7 +347,7 @@ fun Class<*>.invokeStaticMethod(
  * @return 符合条件的方法数组
  */
 fun Array<Method>.findAllMethods(condition: MethodCondition): Array<Method> {
-    return this.filter { !it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
+    return this.filter { it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
 }
 
 /**
@@ -447,7 +447,7 @@ fun Array<Field>.findField(condition: FieldCondition): Field {
  * @return 符合条件的属性数组
  */
 fun Array<Field>.findAllFields(condition: FieldCondition): Array<Field> {
-    return this.filter { !it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
+    return this.filter { it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
 }
 
 /**
@@ -506,7 +506,7 @@ fun Any.getFieldByClassOrObject(
     var clz: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         clz.declaredFields
-            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            .filter { !(isStatic && !it.isStatic) || !(!isStatic && it.isStatic) }
             .firstOrNull {
                 (fieldType == null || it.type == fieldType) && (it.name == fieldName)
             }?.let { it.isAccessible = true;return it }
@@ -525,7 +525,7 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     var clz: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         clz.declaredFields
-            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            .filter { !(isStatic && !it.isStatic) || !(!isStatic && it.isStatic) }
             .firstOrNull {
                 it.type == type
             }?.let { it.isAccessible = true;return it }

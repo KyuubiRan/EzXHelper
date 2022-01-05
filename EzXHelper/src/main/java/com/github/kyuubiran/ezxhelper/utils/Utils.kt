@@ -32,9 +32,9 @@ inline fun <T> tryOrNull(crossinline block: () -> T?): T? {
  * @param predicate 条件
  */
 inline fun <E> MutableList<E>.removeElementsIf(predicate: ((E) -> Boolean)) {
-    val rm = arrayListOf<Int>()
-    this.forEachIndexed { idx, item -> if (predicate(item)) rm.add(idx) }
-    rm.forEach { this.removeAt(it) }
+    val collection = arrayListOf<E>()
+    this.forEach { item -> if (predicate(item)) collection.add(item) }
+    this.removeAll(collection)
 }
 
 /**
