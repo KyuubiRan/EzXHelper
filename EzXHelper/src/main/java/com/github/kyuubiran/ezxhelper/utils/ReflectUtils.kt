@@ -68,13 +68,13 @@ fun Any.getMethodByClassOrObject(
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
     do {
-        clz.declaredMethods
-            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
-            .filter { it.name != methodName }
-            .filter { it.parameterTypes.size != argTypes.size }
-            .filter { returnType != null && it.returnType != returnType }
-            .filter { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
-            .getOrNull(0)?.let { it.isAccessible = true;return it }
+        clz.declaredMethods.toMutableList().apply {
+            removeElementsIf { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            removeElementsIf { it.name != methodName }
+            removeElementsIf { it.parameterTypes.size != argTypes.size }
+            removeElementsIf { returnType != null && it.returnType != returnType }
+            removeElementsIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
+        }.getOrNull(0)?.let { it.isAccessible = true;return it }
     } while (clz.superclass.also { clz = it } != null)
     throw NoSuchMethodException()
 }
