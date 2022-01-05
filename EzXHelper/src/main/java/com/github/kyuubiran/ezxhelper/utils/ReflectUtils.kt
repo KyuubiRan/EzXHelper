@@ -68,20 +68,15 @@ fun Any.getMethodByClassOrObject(
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var clz = if (this is Class<*>) this else this.javaClass
     do {
-        method@ for (m in clz.declaredMethods) {
-            if ((isStatic && !m.isStatic) || (!isStatic && m.isStatic)) continue
-            if (m.name != methodName) continue
-            if (m.parameterTypes.size != argTypes.size) continue
-            if (returnType != null && m.returnType != returnType) continue
-            for (i in m.parameterTypes.indices) {
-                if (argTypes[i] != m.parameterTypes[i]) continue@method
-            }
-            m.isAccessible = true
-            return m
-        }
-        if (clz.superclass == null) throw NoSuchMethodException()
-        clz = clz.superclass
-    } while (true)
+        clz.declaredMethods
+            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            .filter { it.name != methodName }
+            .filter { it.parameterTypes.size != argTypes.size }
+            .filter { returnType != null && it.returnType != returnType }
+            .filter { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
+            .firstOrNull { true }?.let { return it }
+    } while (clz.superclass.also { clz = it } != null)
+    throw NoSuchMethodException()
 }
 
 /**
@@ -141,21 +136,16 @@ fun findMethod(
     condition: MethodCondition
 ): Method {
     var c = clz
-    c.declaredMethods.forEach {
-        if (it.condition()) {
-            it.isAccessible = true
-            return it
-        }
-    }
+    c.declaredMethods.firstOrNull {
+        it.condition()
+    }?.let { it.isAccessible = true;return it }
+
     if (findSuper) {
-        do {
-            c.declaredMethods.forEach {
-                if (it.condition()) {
-                    it.isAccessible = true
-                    return it
-                }
-            }
-        } while (c.superclass.also { c = it } != null)
+        while (c.superclass.also { c = it } != null) {
+            c.declaredMethods.firstOrNull {
+                it.condition()
+            }?.let { it.isAccessible = true;return it }
+        }
     }
     throw NoSuchMethodException()
 }
@@ -183,12 +173,7 @@ fun findMethod(
  *  @throws NoSuchMethodException 未找到方法
  */
 fun Array<Method>.findMethod(condition: MethodCondition): Method {
-    this.forEach {
-        if (it.condition()) {
-            it.isAccessible = true
-            return it
-        }
-    }
+    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
     throw NoSuchMethodException()
 }
 
@@ -201,12 +186,7 @@ typealias ConstructorCondition = Constructor<*>.() -> Boolean
  *  @throws NoSuchMethodException 未找到构造方法
  */
 fun Array<Constructor<*>>.findConstructor(condition: ConstructorCondition): Constructor<*> {
-    this.forEach {
-        if (it.condition()) {
-            it.isAccessible = true
-            return it
-        }
-    }
+    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
     throw NoSuchMethodException()
 }
 
@@ -340,12 +320,8 @@ fun Any.findStaticObject(
  * @throws NoSuchMethodException 未找到方法
  */
 fun Any.invokeMethod(vararg args: Any?, condition: MethodCondition): Any? {
-    for (m in this::class.java.declaredMethods) {
-        if (m.condition()) {
-            m.isAccessible = true
-            return m.invoke(this, *args)
-        }
-    }
+    this::class.java.declaredMethods.firstOrNull { it.condition() }
+        ?.let { it.isAccessible = true;return it(this, *args) }
     throw NoSuchMethodException()
 }
 
@@ -360,13 +336,8 @@ fun Class<*>.invokeStaticMethod(
     vararg args: Any?,
     condition: MethodCondition
 ): Any? {
-    for (m in this.declaredMethods) {
-        if (!m.isStatic) continue
-        if (m.condition()) {
-            m.isAccessible = true
-            return m.invoke(null, *args)
-        }
-    }
+    this::class.java.declaredMethods.firstOrNull { it.isStatic && it.condition() }
+        ?.let { it.isAccessible = true;return it(this, *args) }
     throw NoSuchMethodException()
 }
 
@@ -376,14 +347,7 @@ fun Class<*>.invokeStaticMethod(
  * @return 符合条件的方法数组
  */
 fun Array<Method>.findAllMethods(condition: MethodCondition): Array<Method> {
-    return ArrayList<Method>().also { lst ->
-        this.forEach {
-            if (it.condition()) {
-                it.isAccessible = true
-                lst.add(it)
-            }
-        }
-    }.toTypedArray()
+    return this.filter { !it.condition() }.map { it.isAccessible = true;it }.toTypedArray()
 }
 
 /**
@@ -402,9 +366,9 @@ fun findAllMethods(
     val arr = ArrayList<Method>()
     arr.addAll(c.declaredMethods.findAllMethods(condition))
     if (findSuper) {
-        do {
+        while (c.superclass.also { c = it } != null) {
             arr.addAll(c.declaredMethods.findAllMethods(condition))
-        } while (c.superclass.also { c = it } != null)
+        }
     }
     return arr.toTypedArray()
 }
@@ -438,21 +402,14 @@ fun findField(
     condition: FieldCondition
 ): Field {
     var c = clz
-    c.declaredFields.forEach {
-        if (it.condition()) {
-            it.isAccessible = true
-            return it
-        }
+    c.declaredFields.firstOrNull { it.condition() }?.let {
+        it.isAccessible = true;return it
     }
     if (findSuper) {
-        do {
-            c.declaredFields.forEach {
-                if (it.condition()) {
-                    it.isAccessible = true
-                    return it
-                }
-            }
-        } while (c.superclass.also { c = it } != null)
+        while (c.superclass.also { c = it } != null) {
+            c.declaredFields.firstOrNull { it.condition() }
+                ?.let { it.isAccessible = true;return it }
+        }
     }
     throw NoSuchFieldError()
 }
@@ -480,12 +437,7 @@ fun findField(
  * @throws NoSuchFieldError 未找到属性
  */
 fun Array<Field>.findField(condition: FieldCondition): Field {
-    this.forEach {
-        if (it.condition()) {
-            it.isAccessible = true
-            return it
-        }
-    }
+    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
     throw NoSuchFieldError()
 }
 
@@ -495,14 +447,7 @@ fun Array<Field>.findField(condition: FieldCondition): Field {
  * @return 符合条件的属性数组
  */
 fun Array<Field>.findAllFields(condition: FieldCondition): Array<Field> {
-    return ArrayList<Field>().also { lst ->
-        this.forEach {
-            if (it.condition()) {
-                it.isAccessible = true
-                lst.add(it)
-            }
-        }
-    }.toTypedArray()
+    return this.filter { !it.condition() }.map { it.isAccessible = true;it }.toTypedArray()
 }
 
 /**
@@ -521,9 +466,9 @@ fun findAllFields(
     val arr = ArrayList<Field>()
     arr.addAll(c.declaredFields.findAllFields(condition))
     if (findSuper) {
-        do {
+        while (c.superclass.also { c = it } != null) {
             arr.addAll(c.declaredFields.findAllFields(condition))
-        } while (c.superclass.also { c = it } != null)
+        }
     }
     return arr.toTypedArray()
 }
@@ -550,7 +495,7 @@ fun findAllFields(
  * @param fieldType 属性类型
  * @return 符合条件的属性
  * @throws IllegalArgumentException 属性名为空
- * @throws NoSuchFieldException 未找到属性
+ * @throws NoSuchFieldError 未找到属性
  */
 fun Any.getFieldByClassOrObject(
     fieldName: String,
@@ -560,16 +505,13 @@ fun Any.getFieldByClassOrObject(
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
     var clz: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
-        for (f in clz.declaredFields) {
-            if ((isStatic && !f.isStatic) || (!isStatic && f.isStatic)) continue
-            if ((fieldType == null || f.type == fieldType) && (f.name == fieldName)) {
-                f.isAccessible = true
-                return f
-            }
-        }
-        if (clz.superclass == null) throw NoSuchFieldException()
-        clz = clz.superclass
-    } while (true)
+        clz.declaredFields
+            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            .firstOrNull {
+                (fieldType == null || it.type == fieldType) && (it.name == fieldName)
+            }?.let { it.isAccessible = true;return it }
+    } while (clz.superclass.also { clz = it } != null)
+    throw NoSuchFieldError()
 }
 
 /**
@@ -577,21 +519,18 @@ fun Any.getFieldByClassOrObject(
  * @param type 类型
  * @param isStatic 是否静态
  * @return 符合条件的属性
- * @throws NoSuchFileException 未找到属性
+ * @throws NoSuchFieldError 未找到属性
  */
 fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     var clz: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
-        for (f in clz.declaredFields) {
-            if ((isStatic && !f.isStatic) || (!isStatic && f.isStatic)) continue
-            if (f.type == type) {
-                f.isAccessible = true
-                return f
-            }
-        }
-        if (clz.superclass == null) throw NoSuchFieldException()
-        clz = clz.superclass
-    } while (true)
+        clz.declaredFields
+            .filter { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            .firstOrNull {
+                it.type == type
+            }?.let { it.isAccessible = true;return it }
+    } while (clz.superclass.also { clz = it } != null)
+    throw NoSuchFieldError()
 }
 
 fun Any.getStaticFieldByType(type: Class<*>): Field {
@@ -604,7 +543,7 @@ fun Any.getStaticFieldByType(type: Class<*>): Field {
  * @param type 属性类型
  * @return 符合条件的属性
  * @throws IllegalArgumentException 属性名为空
- * @throws NoSuchFieldException 未找到属性
+ * @throws NoSuchFieldError 未找到属性
  */
 fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): Field {
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
@@ -802,7 +741,7 @@ fun Class<*>.getStaticObjectOrNull(
         val f: Field
         try {
             f = this.getStaticFiledByClass(objName, type)
-        } catch (e: NoSuchFieldException) {
+        } catch (e: NoSuchFieldError) {
             return null
         }
         f.let {
@@ -1055,7 +994,7 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
         val f: Field
         try {
             f = this.getStaticFiledByClass(objName, fieldType)
-        } catch (e: NoSuchFieldException) {
+        } catch (e: NoSuchFieldError) {
             return
         }
         f.let {
