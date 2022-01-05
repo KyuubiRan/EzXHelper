@@ -92,7 +92,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    fun getMethod(clzLoader: ClassLoader = ezXClassLoader): Method {
+    internal fun getMethod(clzLoader: ClassLoader = ezXClassLoader): Method {
         try {
             var clz =
                 loadClass(
@@ -114,7 +114,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    fun getField(clzLoader: ClassLoader = ezXClassLoader): Field {
+    internal fun getField(clzLoader: ClassLoader = ezXClassLoader): Field {
         try {
             var clz =
                 loadClass(
