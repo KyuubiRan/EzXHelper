@@ -31,7 +31,7 @@ inline fun <T> tryOrNull(crossinline block: () -> T?): T? {
  * 扩展函数 移除可变列表中符合条件的元素
  * @param predicate 条件
  */
-inline fun <E> MutableList<E>.removeElementsIf(predicate: ((E) -> Boolean)) {
+inline fun <E> MutableList<E>.dropIf(predicate: ((E) -> Boolean)) {
     val collection = arrayListOf<E>()
     this.forEach { item -> if (predicate(item)) collection.add(item) }
     this.removeAll(collection)
@@ -42,7 +42,27 @@ inline fun <E> MutableList<E>.removeElementsIf(predicate: ((E) -> Boolean)) {
  * @param predicate 条件
  * @return 移除符合条件的元素之后的可变列表
  */
-inline fun <E> MutableList<E>.applyRemoveElementsIf(predicate: (E) -> Boolean): MutableList<E> {
-    this.removeElementsIf(predicate)
+inline fun <E> MutableList<E>.applyDropIf(predicate: (E) -> Boolean): MutableList<E> {
+    this.dropIf(predicate)
+    return this
+}
+
+/**
+ * 扩展函数 保留可变列表中符合条件的元素
+ * @param predicate 条件
+ */
+inline fun <E> MutableList<E>.keepIf(predicate: ((E) -> Boolean)) {
+    val collection = arrayListOf<E>()
+    this.forEach { item -> if (!predicate(item)) collection.add(item) }
+    this.removeAll(collection)
+}
+
+/**
+ * 扩展函数 保留可变列表中符合条件的元素 并返回可变列表
+ * @param predicate 条件
+ * @return 保留符合条件的元素之后的可变列表
+ */
+inline fun <E> MutableList<E>.applyKeepIf(predicate: (E) -> Boolean): MutableList<E> {
+    this.keepIf(predicate)
     return this
 }

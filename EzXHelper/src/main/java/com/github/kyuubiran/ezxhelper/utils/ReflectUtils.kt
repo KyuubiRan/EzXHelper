@@ -69,11 +69,11 @@ fun Any.getMethodByClassOrObject(
     var clz = if (this is Class<*>) this else this.javaClass
     do {
         clz.declaredMethods.toMutableList().apply {
-            removeElementsIf { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
-            removeElementsIf { it.name != methodName }
-            removeElementsIf { it.parameterTypes.size != argTypes.size }
-            removeElementsIf { returnType != null && it.returnType != returnType }
-            removeElementsIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
+            dropIf { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
+            dropIf { it.name != methodName }
+            dropIf { it.parameterTypes.size != argTypes.size }
+            dropIf { returnType != null && it.returnType != returnType }
+            dropIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
         }.getOrNull(0)?.let { it.isAccessible = true;return it }
     } while (clz.superclass.also { clz = it } != null)
     throw NoSuchMethodException()
