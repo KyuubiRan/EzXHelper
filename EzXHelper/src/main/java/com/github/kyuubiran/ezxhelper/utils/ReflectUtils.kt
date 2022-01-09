@@ -199,7 +199,7 @@ fun Array<Constructor<*>>.findConstructor(condition: ConstructorCondition): Cons
  */
 fun findConstructor(
     clz: Class<*>,
-    condition: (m: Constructor<*>) -> Boolean
+    condition: ConstructorCondition
 ): Constructor<*> {
     return clz.declaredConstructors.findConstructor(condition)
 }
@@ -213,7 +213,7 @@ fun findConstructor(
  */
 fun findConstructor(
     clzName: String,
-    condition: (m: Constructor<*>) -> Boolean
+    condition: ConstructorCondition
 ): Constructor<*> {
     return loadClass(clzName).declaredConstructors.findConstructor(condition)
 }
