@@ -394,7 +394,7 @@ fun findAllMethods(
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的属性
- * @throws NoSuchFieldError
+ * @throws NoSuchFieldException
  */
 fun findField(
     clz: Class<*>,
@@ -411,7 +411,7 @@ fun findField(
                 ?.let { it.isAccessible = true;return it }
         }
     }
-    throw NoSuchFieldError()
+    throw NoSuchFieldException()
 }
 
 /**
@@ -420,7 +420,7 @@ fun findField(
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的属性
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun findField(
     clzName: String,
@@ -434,11 +434,11 @@ fun findField(
  * 扩展函数 通过条件查找属性
  * @param condition 条件
  * @return 符合条件的属性
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun Array<Field>.findField(condition: FieldCondition): Field {
     this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
-    throw NoSuchFieldError()
+    throw NoSuchFieldException()
 }
 
 /**
@@ -495,7 +495,7 @@ fun findAllFields(
  * @param fieldType 属性类型
  * @return 符合条件的属性
  * @throws IllegalArgumentException 属性名为空
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun Any.getFieldByClassOrObject(
     fieldName: String,
@@ -511,7 +511,7 @@ fun Any.getFieldByClassOrObject(
                 (fieldType == null || it.type == fieldType) && (it.name == fieldName)
             }?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
-    throw NoSuchFieldError()
+    throw NoSuchFieldException(fieldName)
 }
 
 /**
@@ -519,7 +519,7 @@ fun Any.getFieldByClassOrObject(
  * @param type 类型
  * @param isStatic 是否静态
  * @return 符合条件的属性
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     var c: Class<*> = if (this is Class<*>) this else this.javaClass
@@ -530,7 +530,7 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
                 it.type == type
             }?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
-    throw NoSuchFieldError()
+    throw NoSuchFieldException()
 }
 
 fun Any.getStaticFieldByType(type: Class<*>): Field {
@@ -543,7 +543,7 @@ fun Any.getStaticFieldByType(type: Class<*>): Field {
  * @param type 属性类型
  * @return 符合条件的属性
  * @throws IllegalArgumentException 属性名为空
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): Field {
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
@@ -741,7 +741,7 @@ fun Class<*>.getStaticObjectOrNull(
         val f: Field
         try {
             f = this.getStaticFiledByClass(objName, type)
-        } catch (e: NoSuchFieldError) {
+        } catch (e: NoSuchFieldException) {
             return null
         }
         f.let {
@@ -994,7 +994,7 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
         val f: Field
         try {
             f = this.getStaticFiledByClass(objName, fieldType)
-        } catch (e: NoSuchFieldError) {
+        } catch (e: NoSuchFieldException) {
             return
         }
         f.let {
@@ -1432,7 +1432,7 @@ fun getMethodByDesc(
  * @param desc Descriptor
  * @param clzLoader 类加载器
  * @return 找到的属性
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun getFieldByDesc(desc: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Field {
     return DexDescriptor.newFieldDesc(desc).getField(clzLoader).also { it.isAccessible = true }
@@ -1452,7 +1452,7 @@ fun ClassLoader.getMethodByDesc(desc: String): Method {
  * 扩展函数 通过Descriptor获取属性
  * @param desc Descriptor
  * @return 找到的属性
- * @throws NoSuchFieldError 未找到属性
+ * @throws NoSuchFieldException 未找到属性
  */
 fun ClassLoader.getFieldByDesc(desc: String): Field {
     return getFieldByDesc(desc, this)

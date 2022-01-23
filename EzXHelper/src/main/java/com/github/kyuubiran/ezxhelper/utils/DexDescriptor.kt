@@ -130,9 +130,9 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
                     if (f.name == name && getTypeSig(f.type) == signature) return f
                 }
             }
-            throw NoSuchFieldError("$declaringClass->$name$signature")
+            throw NoSuchFieldException("$declaringClass->$name$signature")
         } catch (e: ClassNotFoundException) {
-            throw NoSuchFieldError("$declaringClass->$name$signature").initCause(e)
+            throw NoSuchFieldException("$declaringClass->$name$signature").initCause(e)
         }
     }
 }
