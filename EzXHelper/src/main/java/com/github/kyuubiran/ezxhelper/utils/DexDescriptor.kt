@@ -102,7 +102,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
             clz.declaredMethods.forEach { m ->
                 if (m.name == name && getMethodTypeSig(m) == signature) return m
             }
-            while (clz.superclass.also { clz = it } != null) {
+            while (clz.superclass?.also { clz = it } != null) {
                 clz.declaredMethods.forEach { m ->
                     if (m.isPrivate || m.isStatic) return@forEach
                     if (m.name == name && getMethodTypeSig(m) == signature) return m
@@ -124,7 +124,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
             clz.declaredFields.forEach { f ->
                 if (f.name == name && getTypeSig(f.type) == signature) return f
             }
-            while (clz.superclass.also { clz = it } != null) {
+            while (clz.superclass?.also { clz = it } != null) {
                 clz.declaredFields.forEach { f ->
                     if (f.isPrivate || f.isStatic) return@forEach
                     if (f.name == name && getTypeSig(f.type) == signature) return f
