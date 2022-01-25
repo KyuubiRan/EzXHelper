@@ -105,40 +105,60 @@ object Log {
     /**
      * 扩展函数 配合runCatching使用
      * 如果抛出异常 则调用 Log.i 记录
+     * @param msg 消息
+     * @param then 发成异常时执行的函数
      * @see runCatching
      * @see i
      */
-    fun <R> Result<R>.logiIfThrow(msg: String = "") {
-        i(this.exceptionOrNull() ?: return, msg)
+    fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+        this.exceptionOrNull()?.let {
+            i(it, msg)
+            then?.invoke(it)
+        }
     }
 
     /**
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.d 记录
+     * @param msg 消息
+     * @param then 发成异常时执行的函数
      * @see runCatching
      * @see d
      */
-    fun <R> Result<R>.logdIfThrow(msg: String = "") {
-        d(this.exceptionOrNull() ?: return, msg)
+    fun <R> Result<R>.logdIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+        this.exceptionOrNull()?.let {
+            d(it, msg)
+            then?.invoke(it)
+        }
     }
 
     /**
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.w 记录
+     * @param msg 消息
+     * @param then 发成异常时执行的函数
      * @see runCatching
      * @see w
      */
-    fun <R> Result<R>.logwIfThrow(msg: String = "") {
-        w(this.exceptionOrNull() ?: return, msg)
+    fun <R> Result<R>.logwIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+        this.exceptionOrNull()?.let {
+            w(it, msg)
+            then?.invoke(it)
+        }
     }
 
     /**
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.e 记录
+     * @param msg 消息
+     * @param then 发成异常时执行的函数
      * @see runCatching
      * @see e
      */
-    fun <R> Result<R>.logeIfThrow(msg: String = "") {
-        e(this.exceptionOrNull() ?: return, msg)
+    fun <R> Result<R>.logeIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+        this.exceptionOrNull()?.let {
+            e(it, msg)
+            then?.invoke(it)
+        }
     }
 }
