@@ -110,10 +110,10 @@ object Log {
      * @see runCatching
      * @see i
      */
-    fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) {
         this.exceptionOrNull()?.let {
             i(it, msg)
-            then?.invoke(it)
+            then(it)
         }
     }
 
@@ -125,10 +125,10 @@ object Log {
      * @see runCatching
      * @see d
      */
-    fun <R> Result<R>.logdIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
         this.exceptionOrNull()?.let {
             d(it, msg)
-            then?.invoke(it)
+            then(it)
         }
     }
 
@@ -140,10 +140,10 @@ object Log {
      * @see runCatching
      * @see w
      */
-    fun <R> Result<R>.logwIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
         this.exceptionOrNull()?.let {
             w(it, msg)
-            then?.invoke(it)
+            then(it)
         }
     }
 
@@ -155,10 +155,10 @@ object Log {
      * @see runCatching
      * @see e
      */
-    fun <R> Result<R>.logeIfThrow(msg: String = "", then: ((Throwable) -> Unit)? = null) {
+    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
         this.exceptionOrNull()?.let {
             e(it, msg)
-            then?.invoke(it)
+            then(it)
         }
     }
 }
