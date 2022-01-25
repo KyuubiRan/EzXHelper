@@ -1,16 +1,21 @@
 # EzXHelper
+
 一个使Xposed模块开发变的更轻松的kotlin库    
-当前最新版本:0.5.8
+当前最新版本:0.5.9
 
 注意：0.5.0版本更改了部分函数命名，比如findXxxByCondition一律改成了findXxx，并且参数也进行了修改，更新到此版本时请注意修改。
+
 ## 使用方式
 
-在build.gradle的dependencies下添加语句implementation 'com.github.kyuubiran:EzXHelper:0.5.8'
+在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.5.9'`
 调用EzXHelperInit.initHandleLoadPackage(lpparam)初始化 就可以使用大部分工具类啦
+
 ### 例子
+
 ![image](docs/example.png)
 
 ### 功能
+
 - 方法查找(通过条件、Descriptor等查找)
 - 属性查找(通过条件、Descriptor等查找)
 - 各种扩展属性(如Menber 可以直接判断是否公开、私有、静态等)
@@ -19,6 +24,7 @@
 - 在宿主内以宿主的身份启动模块(未注册)的Activity
 
 ### 使用本库的项目
+
 [Template](https://github.com/KyuubiRan/ezxhepler-template)   
 [QAssistant](https://github.com/KitsunePie/QAssistant)      
 [QQCleaner](https://github.com/KyuubiRan/QQCleaner)   
