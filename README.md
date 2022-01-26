@@ -24,9 +24,12 @@
 - 在宿主内以宿主的身份启动模块(未注册)的Activity
 
 ### 使用本库的项目
+| 项目名称 | 项目介绍 |
+| :----: | :---- |
+| [Template](https://github.com/KyuubiRan/ezxhepler-template) | EzXHelper模板 |
+| [QAssistant](https://github.com/KitsunePie/QAssistant) | 兼具实用与美观于一身的 QQ 小帮手 |
+| [QQCleaner](https://github.com/KyuubiRan/QQCleaner) | 瘦身模块 |
+| [HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist) | 隐藏应用列表 |
+| [OneText](https://github.com/lz233/OneText_For_Android) | A neat little application that can display some custom sentences through widgets on the launcher. |
+ 
 
-[Template](https://github.com/KyuubiRan/ezxhepler-template)   
-[QAssistant](https://github.com/KitsunePie/QAssistant)      
-[QQCleaner](https://github.com/KyuubiRan/QQCleaner)   
-[HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist)   
-[OneText](https://github.com/lz233/OneText_For_Android)
