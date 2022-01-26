@@ -29,3 +29,4 @@
 [QAssistant](https://github.com/KitsunePie/QAssistant)      
 [QQCleaner](https://github.com/KyuubiRan/QQCleaner)   
 [HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist)
+[OneText](https://github.com/lz233/OneText_For_Android)
