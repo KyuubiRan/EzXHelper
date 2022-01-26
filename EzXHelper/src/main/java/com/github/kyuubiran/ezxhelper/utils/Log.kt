@@ -106,7 +106,7 @@ object Log {
      * 扩展函数 配合runCatching使用
      * 如果抛出异常 则调用 Log.i 记录
      * @param msg 消息
-     * @param then 发成异常时执行的函数
+     * @param then 发生异常时执行的函数
      * @see runCatching
      * @see i
      */
@@ -121,7 +121,7 @@ object Log {
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.d 记录
      * @param msg 消息
-     * @param then 发成异常时执行的函数
+     * @param then 发生异常时执行的函数
      * @see runCatching
      * @see d
      */
@@ -136,7 +136,7 @@ object Log {
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.w 记录
      * @param msg 消息
-     * @param then 发成异常时执行的函数
+     * @param then 发生异常时执行的函数
      * @see runCatching
      * @see w
      */
@@ -151,7 +151,7 @@ object Log {
      * 扩展函数 配合 runCatching 使用
      * 如果抛出异常 则调用 Log.e 记录
      * @param msg 消息
-     * @param then 发成异常时执行的函数
+     * @param then 发生异常时执行的函数
      * @see runCatching
      * @see e
      */
