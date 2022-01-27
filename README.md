@@ -31,5 +31,5 @@
 | [QQCleaner](https://github.com/KyuubiRan/QQCleaner) | 瘦身模块 |
 | [HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist) | 隐藏应用列表 |
 | [OneText](https://github.com/lz233/OneText_For_Android) | A neat little application that can display some custom sentences through widgets on the launcher. |
- 
+| [XAutoDaily](https://github.com/LuckyPray/XAutoDaily) | XAutoDaily 是一个兼容QQ大部分版本的开源签到 Xposed 模块 |
 
