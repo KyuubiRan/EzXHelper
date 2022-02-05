@@ -5,7 +5,7 @@ package com.github.kyuubiran.ezxhelper.utils
  * @param block 执行的代码块
  * @return 成功为true，失败为false
  */
-inline fun tryOrFalse(crossinline block: () -> Unit): Boolean {
+inline fun tryOrFalse(block: () -> Unit): Boolean {
     return try {
         block()
         true
@@ -19,7 +19,7 @@ inline fun tryOrFalse(crossinline block: () -> Unit): Boolean {
  * @param block 执行的代码块
  * @return 成功返回代码块执行的返回值，失败返回null
  */
-inline fun <T> tryOrNull(crossinline block: () -> T?): T? {
+inline fun <T> tryOrNull(block: () -> T?): T? {
     return try {
         block()
     } catch (thr: Throwable) {

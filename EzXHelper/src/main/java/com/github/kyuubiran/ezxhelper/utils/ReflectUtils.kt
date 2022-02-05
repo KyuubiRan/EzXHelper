@@ -151,6 +151,21 @@ fun findMethod(
 }
 
 /**
+ * 通过条件查找类中的方法 果没有则为null
+ * @param clz 类
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的方法 果没有则为null
+ */
+fun findMethodOrNull(
+    clz: Class<*>,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Method? {
+    return tryOrNull { findMethod(clz, findSuper, condition) }
+}
+
+/**
  * 通过条件查找方法
  * @param clzName 类名
  * @param findSuper 是否查找父类
@@ -164,6 +179,21 @@ fun findMethod(
     condition: MethodCondition
 ): Method {
     return findMethod(loadClass(clzName), findSuper, condition)
+}
+
+/**
+ * 通过条件查找类中的方法 果没有则为null
+ * @param clz 类
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的方法 果没有则为null
+ */
+fun findMethodOrNull(
+    clzName: String,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Method? {
+    return tryOrNull { findMethod(clzName, findSuper, condition) }
 }
 
 /**
@@ -205,6 +235,19 @@ fun findConstructor(
 }
 
 /**
+ * 通过条件查找构造方法 如果没有则为null
+ * @param clz 类
+ * @param condition 条件
+ * @return 符合条件的构造方法
+ */
+fun findConstructorOrNull(
+    clz: Class<*>,
+    condition: ConstructorCondition
+): Constructor<*>? {
+    return tryOrNull { clz.declaredConstructors.findConstructor(condition) }
+}
+
+/**
  * 通过条件查找构造方法
  * @param clzName 类名
  * @param condition 条件
@@ -216,6 +259,19 @@ fun findConstructor(
     condition: ConstructorCondition
 ): Constructor<*> {
     return loadClass(clzName).declaredConstructors.findConstructor(condition)
+}
+
+/**
+ * 通过条件查找构造方法 如果没有则为null
+ * @param clzName 类名
+ * @param condition 条件
+ * @return 符合条件的构造方法
+ */
+fun findConstructorOrNull(
+    clzName: String,
+    condition: ConstructorCondition
+): Constructor<*>? {
+    return tryOrNull { loadClass(clzName).declaredConstructors.findConstructor(condition) }
 }
 
 typealias ObjectCondition = Any?.() -> Boolean
@@ -415,6 +471,21 @@ fun findField(
 }
 
 /**
+ * 通过条件查找类中的属性 如果没有则为null
+ * @param clz 类
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性 如果没有则为null
+ */
+fun findFieldOrNull(
+    clz: Class<*>,
+    findSuper: Boolean = false,
+    condition: FieldCondition
+): Field? {
+    return tryOrNull { findField(clz, findSuper, condition) }
+}
+
+/**
  * 通过条件查找类中的属性
  * @param clzName 类名
  * @param findSuper 是否查找父类
@@ -431,6 +502,21 @@ fun findField(
 }
 
 /**
+ * 通过条件查找类中的属性 如果没有则为null
+ * @param clzName 类名
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性 如果没有则为null
+ */
+fun findFieldOrNull(
+    clzName: String,
+    findSuper: Boolean = false,
+    condition: FieldCondition
+): Field? {
+    return tryOrNull { findField(clzName, findSuper, condition) }
+}
+
+/**
  * 扩展函数 通过条件查找属性
  * @param condition 条件
  * @return 符合条件的属性
@@ -439,6 +525,15 @@ fun findField(
 fun Array<Field>.findField(condition: FieldCondition): Field {
     this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
     throw NoSuchFieldException()
+}
+
+/**
+ * 扩展函数 通过条件查找属性 如果没有则为null
+ * @param condition 条件
+ * @return 符合条件的属性 如果没有则为null
+ */
+fun Array<Field>.findFieldOrNull(condition: FieldCondition): Field? {
+    return tryOrNull { this.findField(condition) }
 }
 
 /**
@@ -552,8 +647,6 @@ fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): F
 
 /**
  * 扩展函数 获取实例化对象中的对象
- *
- * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
@@ -561,7 +654,6 @@ fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): F
  * @throws IllegalArgumentException 目标对象名为空
  */
 fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     try {
         val f = this.javaClass.getFieldByClassOrObject(objName, false, type)
@@ -577,8 +669,6 @@ fun Any.getObjectOrNull(objName: String, type: Class<*>? = null): Any? {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- *
- * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @param T 转换的类型
@@ -593,8 +683,6 @@ fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- *
- * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时抛出异常
@@ -602,7 +690,6 @@ fun <T> Any.getObjectOrNullAs(objName: String, type: Class<*>? = null): T? {
  * @throws IllegalArgumentException 目标对象名为空
  */
 fun Any.getObject(objName: String, type: Class<*>? = null): Any {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     val f = this.javaClass.getFieldByClassOrObject(objName, false, type)
     f.let {
@@ -614,7 +701,6 @@ fun Any.getObject(objName: String, type: Class<*>? = null): Any {
 /**
  * 扩展函数 获取实例化对象中的对象 并转化为类型T
  *
- * 注意: 请勿对Class使用此函数
  * @param objName 对象名称
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时抛出异常
@@ -628,14 +714,11 @@ fun <T> Any.getObjectAs(objName: String, type: Class<*>? = null): T {
 
 /**
  * 扩展函数 获取实例化对象中的对象
- *
- * 注意: 请勿对Class使用此函数
  * @param field 属性
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
  */
 fun Any.getObjectOrNull(field: Field): Any? {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     try {
         field.let {
             it.isAccessible = true
@@ -665,14 +748,11 @@ fun <T> Any.getObjectOrNullAs(field: Field): T? {
  * 扩展函数 通过类型 获取实例化对象中的对象
  *
  * 不推荐使用 此函数只会返回第一次匹配到的对象
- *
- * 注意: 请勿对Class使用此函数
  * @param type 类型
  * @return 成功时返回获取到的对象 失败时返回null
  * @throws IllegalArgumentException 对类调用此函数
  */
 fun Any.getObjectOrNullByType(type: Class<*>): Any? {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     return try {
         this.getFieldByType(type).get(this)
     } catch (e: Exception) {
@@ -901,7 +981,6 @@ fun <T> Class<*>.getStaticObjectOrNullByTypeAs(type: Class<*>): T? {
 /**
  * 扩展函数 设置对象中对象的值
  *
- * 注意: 请勿对类使用此函数
  * @param objName 需要设置的对象名称
  * @param value 值
  * @param fieldType 对象类型
@@ -909,7 +988,6 @@ fun <T> Class<*>.getStaticObjectOrNullByTypeAs(type: Class<*>): T? {
  * @throws IllegalArgumentException 对象名为空
  */
 fun Any.putObject(objName: String, value: Any?, fieldType: Class<*>? = null) {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
     try {
         this.getFieldByClassOrObject(objName, false, fieldType).let {
@@ -923,14 +1001,11 @@ fun Any.putObject(objName: String, value: Any?, fieldType: Class<*>? = null) {
 
 /**
  * 扩展函数 设置对象中对象的值
- *
- * 注意: 请勿对类使用此函数
  * @param field 属性
  * @param value 值
  * @throws IllegalArgumentException 对类调用此函数
  */
 fun Any.putObject(field: Field, value: Any?) {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     try {
         field.let {
             it.isAccessible = true
@@ -950,7 +1025,6 @@ fun Any.putObject(field: Field, value: Any?) {
  * @throws IllegalArgumentException 对类调用此函数
  */
 fun Any.putObjectByType(value: Any?, type: Class<*>) {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     try {
         val f = this.getFieldByType(type)
         f.let {
@@ -991,9 +1065,8 @@ fun Class<*>.putStaticObjectByType(value: Any?, type: Class<*>) {
 fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? = null) {
     try {
         if (objName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
-        val f: Field
-        try {
-            f = this.getStaticFiledByClass(objName, fieldType)
+        val f = try {
+            this.getStaticFiledByClass(objName, fieldType)
         } catch (e: NoSuchFieldException) {
             return
         }
@@ -1009,7 +1082,6 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
 /**
  * 扩展函数 调用对象的方法
  *
- * 注意: 请勿对类使用此函数
  * @param methodName 方法名
  * @param args 形参表 可空
  * @param argTypes 形参类型 可空
@@ -1026,7 +1098,6 @@ fun Any.invokeMethod(
     returnType: Class<*>? = null
 ): Any? {
     if (methodName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     val m: Method
     if (args.isEmpty()) {
@@ -1081,13 +1152,11 @@ fun <T> Any.invokeMethodAs(
  * @param methodName 方法名
  * @param args 形参
  * @return 函数调用时的返回值
- * @throws IllegalArgumentException 当对象是一个Class时
  */
 fun Any.invokeMethodAuto(
     methodName: String,
     vararg args: Any?
 ): Any? {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     return XposedHelpers.callMethod(this, methodName, *args)
 }
 
@@ -1096,14 +1165,12 @@ fun Any.invokeMethodAuto(
  * @param methodName 方法名
  * @param args 形参
  * @return 函数调用时的返回值
- * @throws IllegalArgumentException 当对象是一个Class时
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAutoAs(
     methodName: String,
     vararg args: Any?
 ): T? {
-    if (this is Class<*>) throw IllegalArgumentException("Do not use it on a class!")
     return XposedHelpers.callMethod(this, methodName, *args) as T?
 }
 
