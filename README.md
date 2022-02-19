@@ -1,13 +1,13 @@
 # EzXHelper
 
 一个使Xposed模块开发变的更轻松的kotlin库    
-当前最新版本:0.6.2
+当前最新版本:0.6.3
 
 注意：0.5.0版本更改了部分函数命名，比如findXxxByCondition一律改成了findXxx，并且参数也进行了修改，更新到此版本时请注意修改。
 
 ## 使用方式
 
-在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.6.2'`   
+在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.6.3'`   
 调用`EzXHelperInit.initHandleLoadPackage(lpparam)`初始化 就可以使用大部分工具类啦
 
 ### 例子
@@ -24,12 +24,13 @@
 - 在宿主内以宿主的身份启动模块(未注册)的Activity
 
 ### 使用本库的项目
-| 项目名称 | 项目介绍 |
-| :----: | :---- |
-| [Template](https://github.com/KyuubiRan/ezxhepler-template) | EzXHelper模板 |
-| [QAssistant](https://github.com/KitsunePie/QAssistant) | 兼具实用与美观于一身的 QQ 小帮手 |
-| [QQCleaner](https://github.com/KyuubiRan/QQCleaner) | 瘦身模块 |
-| [HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist) | 隐藏应用列表 |
-| [OneText](https://github.com/lz233/OneText_For_Android) | A neat little application that can display some custom sentences through widgets on the launcher. |
-| [XAutoDaily](https://github.com/LuckyPray/XAutoDaily) | XAutoDaily 是一个兼容QQ大部分版本的开源签到 Xposed 模块 |
+
+|                            项目名称                             | 项目介绍                                                                                              |
+|:-----------------------------------------------------------:|:--------------------------------------------------------------------------------------------------|
+| [Template](https://github.com/KyuubiRan/ezxhepler-template) | EzXHelper模板                                                                                       |
+|   [QAssistant](https://github.com/KitsunePie/QAssistant)    | 兼具实用与美观于一身的 QQ 小帮手                                                                                |
+|     [QQCleaner](https://github.com/KyuubiRan/QQCleaner)     | 瘦身模块                                                                                              |
+| [HideMyApplist](https://github.com/Dr-TSNG/Hide-My-Applist) | 隐藏应用列表                                                                                            |
+|   [OneText](https://github.com/lz233/OneText_For_Android)   | A neat little application that can display some custom sentences through widgets on the launcher. |
+|    [XAutoDaily](https://github.com/LuckyPray/XAutoDaily)    | XAutoDaily 是一个兼容QQ大部分版本的开源签到 Xposed 模块                                                            |
 
