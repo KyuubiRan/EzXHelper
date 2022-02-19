@@ -2,6 +2,7 @@ package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import android.content.res.Resources
+import com.github.kyuubiran.ezxhelper.utils.interfaces.Logs
 
 object InitFields {
     /**
@@ -75,4 +76,18 @@ object InitFields {
      */
     var TOAST_TAG: String? = null
         internal set
+
+    /**
+     * Log 接口
+     * @see Logs
+     */
+    var LOGS: Logs = object :Logs{}
+        internal set
+
+    /**
+     * 输出日志到 Xposed
+     */
+    var LOG_XP: Boolean = true
+        internal set
+
 }

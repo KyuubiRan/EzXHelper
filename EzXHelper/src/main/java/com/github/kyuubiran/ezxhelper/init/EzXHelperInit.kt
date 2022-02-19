@@ -4,7 +4,9 @@ import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.XModuleResources
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOGS
 import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_XP
 import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
@@ -12,6 +14,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.interfaces.Logs
 import com.github.kyuubiran.ezxhelper.utils.invokeMethod
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityHelper
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityProxyManager
@@ -90,6 +93,22 @@ object EzXHelperInit {
      */
     fun setToastTag(tag: String) {
         TOAST_TAG = tag
+    }
+
+    /**
+     * 设置 Log
+     * @see Logs
+     */
+    fun setLogs(log: Logs) {
+        LOGS = log
+    }
+
+    /**
+     * 设置 输出日志到 Xposed
+     * @see Log.eToXposed
+     */
+    fun setLogXp(xp: Boolean) {
+        LOG_XP = xp
     }
 
     /**

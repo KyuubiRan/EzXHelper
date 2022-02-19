@@ -1,11 +1,12 @@
 package com.github.kyuubiran.ezxhelper.utils
 
-import android.util.Log
 import android.widget.Toast
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit.setToastTag
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOGS
+import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_XP
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import de.robv.android.xposed.XposedBridge
 
 object Log {
     /**
@@ -14,7 +15,7 @@ object Log {
      * @param thr 异常
      */
     fun i(msg: String, thr: Throwable? = null) {
-        Log.i(LOG_TAG, msg, thr)
+        LOGS.i(msg, thr)
     }
 
     /**
@@ -23,7 +24,7 @@ object Log {
      * @param thr 异常
      */
     fun d(msg: String, thr: Throwable? = null) {
-        Log.d(LOG_TAG, msg, thr)
+        LOGS.d( msg, thr)
     }
 
     /**
@@ -32,7 +33,7 @@ object Log {
      * @param thr 异常
      */
     fun w(msg: String, thr: Throwable? = null) {
-        Log.w(LOG_TAG, msg, thr)
+        LOGS.w( msg, thr)
     }
 
     /**
@@ -41,7 +42,7 @@ object Log {
      * @param thr 异常
      */
     fun e(msg: String, thr: Throwable? = null) {
-        Log.e(LOG_TAG, msg, thr)
+        LOGS.e( msg, thr)
     }
 
     /**
@@ -50,7 +51,7 @@ object Log {
      * @param msg 消息
      */
     fun i(thr: Throwable, msg: String = "") {
-        Log.i(LOG_TAG, msg, thr)
+        LOGS.i( msg, thr)
     }
 
     /**
@@ -59,7 +60,7 @@ object Log {
      * @param msg 消息
      */
     fun d(thr: Throwable, msg: String = "") {
-        Log.d(LOG_TAG, msg, thr)
+        LOGS.d( msg, thr)
     }
 
     /**
@@ -68,7 +69,7 @@ object Log {
      * @param msg 消息
      */
     fun w(thr: Throwable, msg: String = "") {
-        Log.w(LOG_TAG, msg, thr)
+        LOGS.w( msg, thr)
     }
 
     /**
@@ -77,7 +78,31 @@ object Log {
      * @param msg 消息
      */
     fun e(thr: Throwable, msg: String = "") {
-        Log.e(LOG_TAG, msg, thr)
+        LOGS.e( msg, thr)
+    }
+
+    /**
+     * 打印日志到Xposed 等级:Error
+     * @param thr 异常
+     * @param msg 消息
+     */
+    fun ex(thr: Throwable, msg: String = "") {
+        if (LOG_XP) {
+            XposedBridge.log(thr)
+        }
+        LOGS.e( msg, thr)
+    }
+
+    /**
+     * 打印日志到Xposed 等级:Error
+     * @param msg 消息
+     * @param thr 异常
+     */
+    fun ex(msg: String, thr: Throwable? = null) {
+        if (LOG_XP) {
+            XposedBridge.log(thr)
+        }
+        LOGS.e( msg, thr)
     }
 
     /**
