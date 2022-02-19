@@ -38,8 +38,7 @@ fun Method.hookBefore(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
@@ -78,8 +77,7 @@ fun Constructor<*>.hookBefore(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
@@ -119,8 +117,7 @@ fun Method.hookAfter(
             try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
@@ -159,8 +156,7 @@ fun Constructor<*>.hookAfter(
             try {
                 hooker(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
@@ -199,8 +195,7 @@ fun Method.hookReplace(
             return try {
                 hook(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
@@ -241,8 +236,7 @@ fun Constructor<*>.hookReplace(
             return try {
                 hooker(param)
             } catch (thr: Throwable) {
-                Log.e(thr)
-                XposedBridge.log(thr)
+                Log.eToXposed(thr)
             }
         }
     })
