@@ -82,11 +82,23 @@ object Log {
     }
 
     /**
-     * 打印日志 等级:Error
+     * 打印日志到Xposed 等级:Error
      * @param thr 异常
      * @param msg 消息
      */
-    fun eToXposed(thr: Throwable, msg: String = "") {
+    fun ex(thr: Throwable, msg: String = "") {
+        if (LOG_XP) {
+            XposedBridge.log(thr)
+        }
+        LOGS.e( msg, thr)
+    }
+
+    /**
+     * 打印日志到Xposed 等级:Error
+     * @param msg 消息
+     * @param thr 异常
+     */
+    fun ex(msg: String, thr: Throwable? = null) {
         if (LOG_XP) {
             XposedBridge.log(thr)
         }
