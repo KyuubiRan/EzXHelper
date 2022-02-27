@@ -2,7 +2,7 @@ package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import android.content.res.Resources
-import com.github.kyuubiran.ezxhelper.utils.interfaces.Logs
+import com.github.kyuubiran.ezxhelper.utils.interfaces.ILogs
 
 object InitFields {
     /**
@@ -79,9 +79,9 @@ object InitFields {
 
     /**
      * Log 接口
-     * @see Logs
+     * @see ILogs
      */
-    var LOGS: Logs = object :Logs{}
+    var LOGS: ILogs = object : ILogs {}
         internal set
 
     /**

@@ -1,13 +1,19 @@
 # EzXHelper
 
 一个使Xposed模块开发变的更轻松的kotlin库    
-当前最新版本:0.6.3
+当前最新版本:0.7.1
 
-注意：0.5.0版本更改了部分函数命名，比如findXxxByCondition一律改成了findXxx，并且参数也进行了修改，更新到此版本时请注意修改。
+本库依旧处于开发过程中，你可能会遇到包括但不限于以下问题：
+
+- 出现八哥
+- 函数名称、参数变动
+
+注意：0.5.0版本更改了部分函数命名，比如findXxxByCondition一律改成了findXxx，并且参数也进行了修改，更新到此版本时请注意修改。   
+注意：0.7.1版本更改了方法、构造的调用参数类型，请将原来的`arrayOf()`函数替换成`args()`以及`argTypes()`。
 
 ## 使用方式
 
-在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.6.3'`   
+在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.7.0'`   
 调用`EzXHelperInit.initHandleLoadPackage(lpparam)`初始化 就可以使用大部分工具类啦
 
 ### 例子

@@ -1,5 +1,8 @@
 package com.github.kyuubiran.ezxhelper.utils
 
+import dalvik.system.BaseDexClassLoader
+import java.util.*
+
 /**
  * 尝试执行一块代码，如果成功返true，失败则返回false
  * @param block 执行的代码块
@@ -65,4 +68,23 @@ inline fun <E> MutableList<E>.keepIf(predicate: ((E) -> Boolean)) {
 inline fun <E> MutableList<E>.applyKeepIf(predicate: (E) -> Boolean): MutableList<E> {
     this.keepIf(predicate)
     return this
+}
+
+/**
+ * 取自 哔哩漫游
+ * 获取所有类名
+ * @see `https://github.com/yujincheng08/BiliRoaming`
+ */
+fun ClassLoader.getAllClassesList(delegate: (BaseDexClassLoader) -> BaseDexClassLoader = { loader -> loader }): List<String> {
+    var loader = this
+    while (loader !is BaseDexClassLoader) {
+        loader = loader.parent ?: return emptyList()
+    }
+    return delegate(loader).getObjectOrNull("pathList")
+        ?.getObjectOrNullAs<Array<Any>>("dexElements")
+        ?.flatMap {
+            it.getObjectOrNull("dexFile")
+                ?.invokeMethodAutoAs<Enumeration<String>>("entries")
+                ?.toList().orEmpty()
+        }.orEmpty()
 }
