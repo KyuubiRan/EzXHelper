@@ -14,7 +14,9 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.interfaces.Logs
+import com.github.kyuubiran.ezxhelper.utils.argTypes
+import com.github.kyuubiran.ezxhelper.utils.args
+import com.github.kyuubiran.ezxhelper.utils.interfaces.ILogs
 import com.github.kyuubiran.ezxhelper.utils.invokeMethod
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityHelper
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityProxyManager
@@ -70,9 +72,9 @@ object EzXHelperInit {
      * @param initModuleResources 是否初始化moduleRes
      */
     fun initAppContext(
-            context: Context = AndroidAppHelper.currentApplication(),
-            addPath: Boolean = false,
-            initModuleResources: Boolean = false
+        context: Context = AndroidAppHelper.currentApplication(),
+        addPath: Boolean = false,
+        initModuleResources: Boolean = false
     ) {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
@@ -97,15 +99,15 @@ object EzXHelperInit {
 
     /**
      * 设置 Log
-     * @see Logs
+     * @see ILogs
      */
-    fun setLogs(log: Logs) {
+    fun setLogs(log: ILogs) {
         LOGS = log
     }
 
     /**
      * 设置 输出日志到 Xposed
-     * @see Log.eToXposed
+     * @see Log.ex
      */
     fun setLogXp(xp: Boolean) {
         LOG_XP = xp
@@ -140,9 +142,9 @@ object EzXHelperInit {
 
     fun addModuleAssetPath(resources: Resources) {
         resources.assets.invokeMethod(
-                "addAssetPath",
-                arrayOf(modulePath),
-                arrayOf(String::class.java)
+            "addAssetPath",
+            args(modulePath),
+            argTypes(String::class.java)
         )
     }
 
@@ -159,14 +161,14 @@ object EzXHelperInit {
      * @see TransferActivity
      */
     fun initActivityProxyManager(
-            modulePackageName: String,
-            hostActivityProxyName: String,
-            moduleClassLoader: ClassLoader,
-            hostClassLoader: ClassLoader = AndroidAppHelper.currentApplication().classLoader!!
+        modulePackageName: String,
+        hostActivityProxyName: String,
+        moduleClassLoader: ClassLoader,
+        hostClassLoader: ClassLoader = AndroidAppHelper.currentApplication().classLoader!!
     ) {
         ActivityProxyManager.MODULE_PACKAGE_NAME_ID = modulePackageName
         ActivityProxyManager.ACTIVITY_PROXY_INTENT =
-                "${modulePackageName.replace('.', '_')}_intent_proxy"
+            "${modulePackageName.replace('.', '_')}_intent_proxy"
         ActivityProxyManager.HOST_ACTIVITY_PROXY_NAME = hostActivityProxyName
         ActivityProxyManager.MODULE_CLASS_LOADER = moduleClassLoader
         ActivityProxyManager.HOST_CLASS_LOADER = hostClassLoader

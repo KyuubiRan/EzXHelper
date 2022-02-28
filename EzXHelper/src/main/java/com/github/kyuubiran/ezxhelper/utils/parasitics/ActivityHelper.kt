@@ -27,7 +27,7 @@ object ActivityHelper {
     internal fun initSubActivity() {
         if (isStubHooked) return
         try {
-            //-----Instrumentation-----
+            //region Instrumentation
             val cActivityThread = Class.forName("android.app.ActivityThread")
             val fCurrentActivityThread =
                 cActivityThread.getStaticFiledByClass("sCurrentActivityThread")
@@ -43,7 +43,8 @@ object ActivityHelper {
                 sCurrentActivityThread,
                 MyInstrumentation(mInstrumentation)
             )
-            //-----Handler-----
+            //endregion
+            //region Handler
             val fmH = cActivityThread.getFieldByClassOrObject("mH")
             val originHandler = fmH.get(sCurrentActivityThread) as Handler
             val fHandlerCallback = Handler::class.java.getFieldByClassOrObject("mCallback")
@@ -51,7 +52,8 @@ object ActivityHelper {
             if (currHCallback == null || currHCallback::class.java.name != MyHandler::class.java.name) {
                 fHandlerCallback.set(originHandler, MyHandler(currHCallback))
             }
-            //-----IActivityManager-----
+            //endregion
+            //region IActivityManager
             var cActivityManager: Class<*>
             var fgDefault: Field
             try {
@@ -92,6 +94,7 @@ object ActivityHelper {
             } catch (ignored: Exception) {
             }
             isStubHooked = true
+            //endregion
         } catch (e: Exception) {
             Log.e(e)
         }
@@ -522,11 +525,13 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                                 )
                                             fmIntent.set(item, rIntent)
                                             if (Build.VERSION.SDK_INT >= 31) {
-                                                val cActivityThread = Class.forName("android.app.ActivityThread")
+                                                val cActivityThread =
+                                                    Class.forName("android.app.ActivityThread")
                                                 val currentActivityThread =
                                                     cActivityThread.getDeclaredMethod("currentActivityThread")
                                                 currentActivityThread.isAccessible = true
-                                                val activityThread = currentActivityThread.invoke(null)
+                                                val activityThread =
+                                                    currentActivityThread.invoke(null)
                                                 val acr = activityThread.javaClass.getMethod(
                                                     "getLaunchingActivity",
                                                     IBinder::class.java
@@ -536,7 +541,8 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                                         .invoke(cTrans)
                                                 )
                                                 if (acr != null) {
-                                                    val fAcrIntent = acr.javaClass.getDeclaredField("intent")
+                                                    val fAcrIntent =
+                                                        acr.javaClass.getDeclaredField("intent")
                                                     fAcrIntent.isAccessible = true
                                                     fAcrIntent[acr] = rIntent
                                                 }

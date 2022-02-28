@@ -18,6 +18,22 @@ fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoade
     return clzLoader.loadClass(clzName)
 }
 
+//region Argdef
+
+@JvmInline
+value class Args(val args: Array<out Any?>)
+
+@JvmInline
+value class ArgTypes(val argTypes: Array<out Class<*>>)
+
+fun args(vararg args: Any?) = Args(args)
+
+fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
+
+//endregion
+
+//region MethodReflect
+
 /**
  * 获取类的所有方法
  * @param clzName 类名
@@ -54,7 +70,7 @@ fun getFields(clzName: String): Array<Field> {
  * @param methodName 方法名
  * @param isStatic 是否为静态方法
  * @param returnType 方法返回值 填入null为无视返回值
- * @param argTypes 方法参数类型
+ * @param paramTypes 方法参数类型
  * @return 符合条件的方法
  * @throws IllegalArgumentException 方法名为空
  * @throws NoSuchMethodException 未找到方法
@@ -63,7 +79,7 @@ fun Any.getMethodByClassOrObject(
     methodName: String,
     returnType: Class<*>? = null,
     isStatic: Boolean = false,
-    vararg argTypes: Class<*>
+    paramTypes: ArgTypes = argTypes()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var c = if (this is Class<*>) this else this.javaClass
@@ -71,9 +87,9 @@ fun Any.getMethodByClassOrObject(
         c.declaredMethods.toMutableList().apply {
             dropIf { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
             dropIf { it.name != methodName }
-            dropIf { it.parameterTypes.size != argTypes.size }
+            dropIf { it.parameterTypes.size != paramTypes.argTypes.size }
             dropIf { returnType != null && it.returnType != returnType }
-            dropIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != argTypes[itTypes] } }
+            dropIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != paramTypes.argTypes[itTypes] } }
         }.getOrNull(0)?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
     throw NoSuchMethodException()
@@ -89,10 +105,10 @@ fun Any.getMethodByClassOrObject(
 fun Class<*>.getStaticMethodByClass(
     methodName: String,
     returnType: Class<*>? = null,
-    vararg argTypes: Class<*>
+    argTypes: ArgTypes = argTypes()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
+    return this.getMethodByClassOrObject(methodName, returnType, true, paramTypes = argTypes)
 }
 
 /**
@@ -109,14 +125,14 @@ fun getMethod(
     methodName: String,
     returnType: Class<*>? = null,
     isStatic: Boolean = false,
-    vararg argTypes: Class<*>
+    argTypes: ArgTypes
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     return loadClass(clzName).getMethodByClassOrObject(
         methodName,
         returnType,
         isStatic,
-        argTypes = argTypes
+        paramTypes = argTypes
     )
 }
 
@@ -274,128 +290,6 @@ fun findConstructorOrNull(
     return tryOrNull { loadClass(clzName).declaredConstructors.findConstructor(condition) }
 }
 
-typealias ObjectCondition = Any?.() -> Boolean
-
-/**
- * 强烈不推荐!!非常慢!!
- *
- * 扩展函数 遍历对象中的属性并返回符合条件的对象
- * @param condition 条件
- * @return 成功时返回找到的对象 失败时返回null
- */
-fun Any.findObject(condition: ObjectCondition): Any? {
-    for (f in this::class.java.declaredFields) {
-        f.isAccessible = true
-        f.get(this).let {
-            if (it.condition()) {
-                return it
-            }
-        }
-    }
-    return null
-}
-
-typealias FieldCondition = Field.() -> Boolean
-
-/**
- * 强烈不推荐!!非常慢!!
- *
- * 扩展函数 遍历对象中的属性并返回符合条件的对象
- * @param fieldCond 属性条件
- * @param objCond 对象条件
- * @return 成功时返回找到的对象 失败时返回null
- */
-fun Any.findObject(
-    fieldCond: FieldCondition,
-    objCond: ObjectCondition
-): Any? {
-    for (f in this::class.java.declaredFields) {
-        if (f.fieldCond()) {
-            f.isAccessible = true
-            f.get(this).let {
-                if (it.objCond()) {
-                    return it
-                }
-            }
-        }
-    }
-    return null
-}
-
-/**
- * 强烈不推荐!!非常慢!!
- *
- * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
- * @param condition 条件
- * @return 成功时返回找到的静态对象 失败时返回null
- */
-fun Class<*>.findStaticObject(condition: ObjectCondition): Any? {
-    for (f in this.declaredFields) {
-        if (!f.isStatic) continue
-        f.isAccessible = true
-        f.get(null).let {
-            if (it.condition()) {
-                return it
-            }
-        }
-    }
-    return null
-}
-
-/**
- * 强烈不推荐!!非常慢!!
- *
- * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
- * @param fieldCond 属性条件
- * @param objCond 对象条件
- * @return 成功时返回找到的静态对象 失败时返回null
- */
-fun Any.findStaticObject(
-    fieldCond: FieldCondition,
-    objCond: ObjectCondition
-): Any? {
-    for (f in this::class.java.declaredFields) {
-        if (!f.isStatic) continue
-        if (f.fieldCond()) {
-            f.isAccessible = true
-            f.get(this).let {
-                if (it.objCond()) {
-                    return it
-                }
-            }
-        }
-    }
-    return null
-}
-
-/**
- * 扩展函数 调用对象中符合条件的方法
- * @param args 参数
- * @param condition 条件
- * @return 方法的返回值
- * @throws NoSuchMethodException 未找到方法
- */
-fun Any.invokeMethod(vararg args: Any?, condition: MethodCondition): Any? {
-    this::class.java.declaredMethods.firstOrNull { it.condition() }
-        ?.let { it.isAccessible = true;return it(this, *args) }
-    throw NoSuchMethodException()
-}
-
-/**
- * 扩展函数 调用类中符合条件的静态方法
- * @param args 参数表
- * @param condition 条件
- * @return 方法的返回值
- * @throws NoSuchMethodException 未找到方法
- */
-fun Class<*>.invokeStaticMethod(
-    vararg args: Any?,
-    condition: MethodCondition
-): Any? {
-    this::class.java.declaredMethods.firstOrNull { it.isStatic && it.condition() }
-        ?.let { it.isAccessible = true;return it(this, *args) }
-    throw NoSuchMethodException()
-}
 
 /**
  * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
@@ -443,6 +337,10 @@ fun findAllMethods(
 ): Array<Method> {
     return findAllMethods(loadClass(clzName), findSuper, condition)
 }
+
+//endregion
+
+//region FieldReflect
 
 /**
  * 通过条件查找类中的属性
@@ -601,7 +499,7 @@ fun Any.getFieldByClassOrObject(
     var c: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         c.declaredFields
-            .filter { !(isStatic && !it.isStatic) || !(!isStatic && it.isStatic) }
+            .filter { (isStatic && it.isStatic) || (!isStatic && !it.isStatic) }
             .firstOrNull {
                 (fieldType == null || it.type == fieldType) && (it.name == fieldName)
             }?.let { it.isAccessible = true;return it }
@@ -620,7 +518,7 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     var c: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         c.declaredFields
-            .filter { !(isStatic && !it.isStatic) || !(!isStatic && it.isStatic) }
+            .filter { (isStatic && it.isStatic) || (!isStatic && !it.isStatic) }
             .firstOrNull {
                 it.type == type
             }?.let { it.isAccessible = true;return it }
@@ -643,6 +541,175 @@ fun Any.getStaticFieldByType(type: Class<*>): Field {
 fun Class<*>.getStaticFiledByClass(fieldName: String, type: Class<*>? = null): Field {
     if (fieldName.isEmpty()) throw IllegalArgumentException("Field name must not be null or empty!")
     return this.getFieldByClassOrObject(fieldName, true, type)
+}
+
+
+/**
+ * 扩展函数 获取静态对象 并转换为T?类型
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getStaticAs(): T? {
+    this.isAccessible = true
+    return this.get(null) as T?
+}
+
+/**
+ * 扩展函数 获取非空对象
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun Field.getNonNull(obj: Any?): Any {
+    this.isAccessible = true
+    return this.get(obj)!!
+}
+
+/**
+ * 扩展函数 获取非空对象 并转换为T类型
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getNonNullAs(obj: Any?): T {
+    this.isAccessible = true
+    return this.get(obj)!! as T
+}
+
+/**
+ * 扩展函数 获取静态非空对象
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+fun Field.getStaticNonNull(): Any {
+    this.isAccessible = true
+    return this.get(null)!!
+}
+
+/**
+ * 扩展函数 获取静态非空对象 并转换为T类型
+ * @return 成功时返回获取到的对象 失败时抛出异常
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getStaticNonNullAs(): T {
+    this.isAccessible = true
+    return this.get(null)!! as T
+}
+
+/**
+ * 扩展函数 获取对象 并转换为T?类型
+ * @param obj 对象
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Field.getAs(obj: Any?): T? {
+    this.isAccessible = true
+    return this.get(obj) as T?
+}
+
+/**
+ * 扩展函数 获取静态对象
+ * @return 成功时返回获取到的对象 失败时返回null
+ */
+fun Field.getStatic(): Any? {
+    this.isAccessible = true
+    return this.get(null)
+}
+
+//endregion
+
+//region ObjectReflect
+
+typealias ObjectCondition = Any?.() -> Boolean
+
+/**
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历对象中的属性并返回符合条件的对象
+ * @param condition 条件
+ * @return 成功时返回找到的对象 失败时返回null
+ */
+fun Any.findObject(condition: ObjectCondition): Any? {
+    for (f in this::class.java.declaredFields) {
+        f.isAccessible = true
+        f.get(this).let {
+            if (it.condition()) {
+                return it
+            }
+        }
+    }
+    return null
+}
+
+typealias FieldCondition = Field.() -> Boolean
+
+/**
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历对象中的属性并返回符合条件的对象
+ * @param fieldCond 属性条件
+ * @param objCond 对象条件
+ * @return 成功时返回找到的对象 失败时返回null
+ */
+fun Any.findObject(
+    fieldCond: FieldCondition,
+    objCond: ObjectCondition
+): Any? {
+    for (f in this::class.java.declaredFields) {
+        if (f.fieldCond()) {
+            f.isAccessible = true
+            f.get(this).let {
+                if (it.objCond()) {
+                    return it
+                }
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
+ * @param condition 条件
+ * @return 成功时返回找到的静态对象 失败时返回null
+ */
+fun Class<*>.findStaticObject(condition: ObjectCondition): Any? {
+    for (f in this.declaredFields) {
+        if (!f.isStatic) continue
+        f.isAccessible = true
+        f.get(null).let {
+            if (it.condition()) {
+                return it
+            }
+        }
+    }
+    return null
+}
+
+/**
+ * 强烈不推荐!!非常慢!!
+ *
+ * 扩展函数 遍历类中的静态属性并返回符合条件的静态对象
+ * @param fieldCond 属性条件
+ * @param objCond 对象条件
+ * @return 成功时返回找到的静态对象 失败时返回null
+ */
+fun Any.findStaticObject(
+    fieldCond: FieldCondition,
+    objCond: ObjectCondition
+): Any? {
+    for (f in this::class.java.declaredFields) {
+        if (!f.isStatic) continue
+        if (f.fieldCond()) {
+            f.isAccessible = true
+            f.get(this).let {
+                if (it.objCond()) {
+                    return it
+                }
+            }
+        }
+    }
+    return null
 }
 
 /**
@@ -1079,6 +1146,39 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
     }
 }
 
+//endregion
+
+//region MethodInvoke
+
+/**
+ * 扩展函数 调用对象中符合条件的方法
+ * @param args 参数
+ * @param condition 条件
+ * @return 方法的返回值
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun Any.invokeMethod(vararg args: Any?, condition: MethodCondition): Any? {
+    this::class.java.declaredMethods.firstOrNull { it.condition() }
+        ?.let { it.isAccessible = true;return it(this, *args) }
+    throw NoSuchMethodException()
+}
+
+/**
+ * 扩展函数 调用类中符合条件的静态方法
+ * @param args 参数表
+ * @param condition 条件
+ * @return 方法的返回值
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun Class<*>.invokeStaticMethod(
+    vararg args: Any?,
+    condition: MethodCondition
+): Any? {
+    this::class.java.declaredMethods.firstOrNull { it.isStatic && it.condition() }
+        ?.let { it.isAccessible = true;return it(this, *args) }
+    throw NoSuchMethodException()
+}
+
 /**
  * 扩展函数 调用对象的方法
  *
@@ -1093,14 +1193,14 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
  */
 fun Any.invokeMethod(
     methodName: String,
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray(),
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes(),
     returnType: Class<*>? = null
 ): Any? {
     if (methodName.isEmpty()) throw IllegalArgumentException("Object name must not be null or empty!")
-    if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
+    if (args.args.size != argTypes.argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     val m: Method
-    if (args.isEmpty()) {
+    if (args.args.isEmpty()) {
         try {
             m = this.getMethodByClassOrObject(methodName, returnType, false)
         } catch (e: NoSuchMethodException) {
@@ -1112,13 +1212,13 @@ fun Any.invokeMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, returnType, false, argTypes = argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, false, paramTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
         m.let {
             it.isAccessible = true
-            return it.invoke(this, *args)
+            return it.invoke(this, *args.args)
         }
     }
 }
@@ -1140,8 +1240,8 @@ fun Any.invokeMethod(
 @Suppress("UNCHECKED_CAST")
 fun <T> Any.invokeMethodAs(
     methodName: String,
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray(),
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes(),
     returnType: Class<*>? = null
 ): T? {
     return this.invokeMethod(methodName, args, argTypes, returnType) as T?
@@ -1185,13 +1285,13 @@ fun <T> Any.invokeMethodAutoAs(
  */
 fun Class<*>.invokeStaticMethod(
     methodName: String,
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray(),
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes(),
     returnType: Class<*>? = null
 ): Any? {
-    if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
+    if (args.args.size != argTypes.argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     val m: Method
-    if (args.isEmpty()) {
+    if (args.args.isEmpty()) {
         try {
             m = this.getMethodByClassOrObject(methodName, returnType, true)
         } catch (e: NoSuchMethodException) {
@@ -1203,13 +1303,13 @@ fun Class<*>.invokeStaticMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, true, paramTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
         m.let {
             it.isAccessible = true
-            return it.invoke(this, *args)
+            return it.invoke(this, *args.args)
         }
     }
 }
@@ -1226,8 +1326,8 @@ fun Class<*>.invokeStaticMethod(
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.invokeStaticMethodAs(
     methodName: String,
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray(),
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes(),
     returnType: Class<*>? = null
 ): T? {
     return this.invokeStaticMethod(methodName, args, argTypes, returnType) as T?
@@ -1268,21 +1368,21 @@ fun <T> Class<*>.invokeStaticMethodAutoAs(
  * @throws IllegalArgumentException 当args的长度与argTypes的长度不符时
  */
 fun Class<*>.newInstance(
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray()
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes()
 ): Any? {
-    if (args.size != argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
+    if (args.args.size != argTypes.argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     return try {
         val constructor: Constructor<*> =
-            if (argTypes.isNotEmpty())
-                this.getDeclaredConstructor(*argTypes)
+            if (argTypes.argTypes.isNotEmpty())
+                this.getDeclaredConstructor(*argTypes.argTypes)
             else
                 this.getDeclaredConstructor()
         constructor.isAccessible = true
-        if (args.isEmpty()) {
+        if (args.args.isEmpty()) {
             constructor.newInstance()
         } else {
-            constructor.newInstance(*args)
+            constructor.newInstance(*args.args)
         }
     } catch (e: Exception) {
         Log.e(e)
@@ -1299,8 +1399,8 @@ fun Class<*>.newInstance(
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> Class<*>.newInstanceAs(
-    args: Array<out Any?> = emptyArray(),
-    argTypes: Array<out Class<*>> = emptyArray()
+    args: Args = args(),
+    argTypes: ArgTypes = argTypes()
 ): T? {
     return this.newInstance(args, argTypes) as T?
 }
@@ -1338,6 +1438,10 @@ fun <T> Method.invokeAs(obj: Any?, vararg args: Any?): T? {
     this.isAccessible = true
     return this.invoke(obj, *args) as T?
 }
+
+//endregion
+
+//region MemberExtension
 
 /**
  * 扩展属性 判断是否为Static
@@ -1455,30 +1559,9 @@ val Constructor<*>.emptyParam: Boolean
 val Constructor<*>.notEmptyParam: Boolean
     inline get() = this.paramCount != 0
 
-/**
- * 深拷贝一个对象
- * @param srcObj 源对象
- * @param newObj 新对象
- * @return 成功返回拷贝后的对象 失败返回null
- */
-fun <T> fieldCpy(srcObj: T, newObj: T): T? {
-    return try {
-        var clz: Class<*> = srcObj!!::class.java
-        var fields: Array<Field>
-        while (Object::class.java != clz) {
-            fields = clz.declaredFields
-            for (f in fields) {
-                f.isAccessible = true
-                f.set(newObj, f.get(srcObj))
-            }
-            clz = clz.superclass
-        }
-        newObj
-    } catch (e: Exception) {
-        Log.e(e)
-        null
-    }
-}
+//endregion
+
+//region Descriptor
 
 /**
  * 通过Descriptor获取方法
@@ -1525,72 +1608,29 @@ fun ClassLoader.getFieldByDesc(desc: String): Field {
     return getFieldByDesc(desc, this)
 }
 
-/**
- * 扩展函数 获取对象 并转换为T?类型
- * @param obj 对象
- * @return 成功时返回获取到的对象 失败时返回null
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> Field.getAs(obj: Any?): T? {
-    this.isAccessible = true
-    return this.get(obj) as T?
-}
+//endregion
 
 /**
- * 扩展函数 获取静态对象
- * @return 成功时返回获取到的对象 失败时返回null
+ * 深拷贝一个对象
+ * @param srcObj 源对象
+ * @param newObj 新对象
+ * @return 成功返回拷贝后的对象 失败返回null
  */
-fun Field.getStatic(): Any? {
-    this.isAccessible = true
-    return this.get(null)
-}
-
-/**
- * 扩展函数 获取静态对象 并转换为T?类型
- * @return 成功时返回获取到的对象 失败时返回null
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> Field.getStaticAs(): T? {
-    this.isAccessible = true
-    return this.get(null) as T?
-}
-
-/**
- * 扩展函数 获取非空对象
- * @param obj 对象
- * @return 成功时返回获取到的对象 失败时抛出异常
- */
-fun Field.getNonNull(obj: Any?): Any {
-    this.isAccessible = true
-    return this.get(obj)!!
-}
-
-/**
- * 扩展函数 获取非空对象 并转换为T类型
- * @param obj 对象
- * @return 成功时返回获取到的对象 失败时抛出异常
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> Field.getNonNullAs(obj: Any?): T {
-    this.isAccessible = true
-    return this.get(obj)!! as T
-}
-
-/**
- * 扩展函数 获取静态非空对象
- * @return 成功时返回获取到的对象 失败时抛出异常
- */
-fun Field.getStaticNonNull(): Any {
-    this.isAccessible = true
-    return this.get(null)!!
-}
-
-/**
- * 扩展函数 获取静态非空对象 并转换为T类型
- * @return 成功时返回获取到的对象 失败时抛出异常
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> Field.getStaticNonNullAs(): T {
-    this.isAccessible = true
-    return this.get(null)!! as T
+fun <T> fieldCpy(srcObj: T, newObj: T): T? {
+    return try {
+        var clz: Class<*> = srcObj!!::class.java
+        var fields: Array<Field>
+        while (Object::class.java != clz) {
+            fields = clz.declaredFields
+            for (f in fields) {
+                f.isAccessible = true
+                f.set(newObj, f.get(srcObj))
+            }
+            clz = clz.superclass
+        }
+        newObj
+    } catch (e: Exception) {
+        Log.e(e)
+        null
+    }
 }

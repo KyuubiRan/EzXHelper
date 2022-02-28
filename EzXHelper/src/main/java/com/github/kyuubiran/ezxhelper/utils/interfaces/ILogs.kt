@@ -3,7 +3,7 @@ package com.github.kyuubiran.ezxhelper.utils.interfaces
 import android.util.Log
 import com.github.kyuubiran.ezxhelper.init.InitFields
 
-interface Logs {
+interface ILogs {
 
     /**
      * 打印日志 等级:Info
@@ -19,7 +19,7 @@ interface Logs {
      * @param msg 消息
      * @param thr 异常
      */
-     fun d(msg: String, thr: Throwable?) {
+    fun d(msg: String, thr: Throwable?) {
         Log.d(InitFields.LOG_TAG, msg, thr)
     }
 
@@ -28,7 +28,7 @@ interface Logs {
      * @param msg 消息
      * @param thr 异常
      */
-     fun w(msg: String, thr: Throwable?) {
+    fun w(msg: String, thr: Throwable?) {
         Log.w(InitFields.LOG_TAG, msg, thr)
     }
 
@@ -37,7 +37,7 @@ interface Logs {
      * @param msg 消息
      * @param thr 异常
      */
-     fun e(msg: String, thr: Throwable?) {
+    fun e(msg: String, thr: Throwable?) {
         Log.e(InitFields.LOG_TAG, msg, thr)
     }
 
