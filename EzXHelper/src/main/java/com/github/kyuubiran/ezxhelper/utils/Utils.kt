@@ -88,3 +88,21 @@ fun ClassLoader.getAllClassesList(delegate: (BaseDexClassLoader) -> BaseDexClass
                 ?.toList().orEmpty()
         }.orEmpty()
 }
+
+/**
+ * 扩展函数 往列表中添加非空元素
+ * @param element 元素
+ */
+fun <T> MutableList<T>.addIfNonNull(element: T?) {
+    if (element != null) {
+        this.add(element)
+    }
+}
+
+/**
+ * 扩展函数 尝试往列表中添加元素
+ * @param action 行为
+ */
+inline fun <T> MutableList<T>.tryAdd(action: () -> T?) {
+    runCatching { this.addIfNonNull(action()) }
+}
