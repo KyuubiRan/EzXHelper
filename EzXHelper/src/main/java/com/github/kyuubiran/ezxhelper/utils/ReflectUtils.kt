@@ -279,6 +279,35 @@ fun Array<String>.loadAndFindMethods(
     return this.loadAllClasses(classLoader).findMethods(findSuper, condition)
 }
 
+
+// Method condition pair
+infix fun String.mcp(condition: MethodCondition) = this to condition
+infix fun Class<*>.mcp(condition: MethodCondition) = this to condition
+
+/**
+ * 扩展函数 通过条件查找数组中对应的方法 每个类只搜索一个方法
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<Class<*>, MethodCondition>>.findMethods(
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> findMethod(k, findSuper, v) }.toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<String, MethodCondition>>.loadAndFindMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> findMethod(loadClass(k, classLoader), findSuper, v) }.toTypedArray()
+}
+
 /**
  * 扩展函数 通过条件搜索所有方法
  * @param findSuper 是否查找父类
@@ -294,6 +323,33 @@ fun Array<Class<*>>.findAllMethods(
         arr.addAll(findAllMethods(clz, findSuper, condition))
     }
     return arr.toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<Class<*>, MethodCondition>>.findAllMethods(
+    findSuper: Boolean = false
+): Array<Method> {
+    return arrayListOf<Method>()
+        .apply { this@findAllMethods.forEach { (k, v) -> addAll(findAllMethods(k, findSuper, v)) } }
+        .toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<String, MethodCondition>>.loadAndFindAllMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> loadClass(k, classLoader) to v }.toTypedArray()
+        .findAllMethods(findSuper)
 }
 
 /**
