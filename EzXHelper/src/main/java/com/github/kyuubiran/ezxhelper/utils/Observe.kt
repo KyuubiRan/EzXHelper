@@ -3,23 +3,24 @@ package com.github.kyuubiran.ezxhelper.utils
 /**
  * 监听一个对象，当值发生变化时调用 onValueChanged 中所有回调
  */
-class Observe<T>(init: T, onValueChanged: (T) -> Unit) {
+class Observe<T>(init: T, onValueChanged: ((T) -> Unit)? = null) {
     private var _value: T = init
 
     var value: T
         get() = _value
-        set(value) = synchronized(this) {
-            _value = value
+        set(newValue) = synchronized(this) {
+            if (_value == newValue) return@synchronized
+            _value = newValue
             if (onValueChanged.unsafeInvoke)
-                onValueChanged.unsafeInvoke(value)
+                onValueChanged.unsafeInvoke(newValue)
             else
-                onValueChanged.invoke(value)
+                onValueChanged.invoke(newValue)
         }
 
     val onValueChanged = ValueChangedEvent<T>()
 
     init {
-        this.onValueChanged += onValueChanged
+        if (onValueChanged != null) this.onValueChanged += onValueChanged
     }
 
     class ValueChangedEvent<T> {

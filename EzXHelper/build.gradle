@@ -7,7 +7,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = "com.github.kyuubiran"        //项目包名
     PUBLISH_ARTIFACT_ID = 'EzXHelper'                //项目名
-    PUBLISH_VERSION = "0.7.4"                        //版本号
+    PUBLISH_VERSION = "0.7.5"                        //版本号
 }
 
 try {
@@ -20,10 +20,10 @@ android {
     buildToolsVersion "32.0"
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 32
-        versionCode 74
-        versionName "0.7.4"
+        versionCode 75
+        versionName "0.7.5"
 
         consumerProguardFiles "consumer-rules.pro"
     }
