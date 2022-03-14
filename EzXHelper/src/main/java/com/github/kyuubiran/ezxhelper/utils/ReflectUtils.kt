@@ -5,6 +5,8 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import java.lang.reflect.*
 
+//region LoadClass
+
 /**
  * 通过模块加载类
  * @param clzName 类名
@@ -17,6 +19,44 @@ fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoade
     if (clzName.isEmpty()) throw  IllegalArgumentException("Class name must not be null or empty!")
     return clzLoader.loadClass(clzName)
 }
+
+/**
+ * 尝试加载一个类 如果失败则返回null
+ * @param clzName 类名
+ * @param clzLoader 类加载器
+ * @return 被加载的类
+ */
+fun loadClassOrNull(
+    clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Class<*>? {
+    if (clzName.isEmpty()) throw  IllegalArgumentException("Class name must not be null or empty!")
+    return XposedHelpers.findClassIfExists(clzName, clzLoader)
+}
+
+/**
+ * 扩展函数 加载数组中的所有类
+ * @param clzLoader 类加载器
+ * @return 类数组
+ */
+fun Array<String>.loadAllClasses(clzLoader: ClassLoader = InitFields.ezXClassLoader): Array<Class<*>> {
+    return Array(this.size) { i -> loadClass(this[i], clzLoader) }
+}
+
+/**
+ * 扩展函数 尝试加载数组中的所有类
+ * @param clzLoader 类加载器
+ * @return 加载成功的类数组
+ */
+fun Array<String>.loadClassesIfExists(clzLoader: ClassLoader = InitFields.ezXClassLoader): Array<Class<*>> {
+    return ArrayList<Class<*>>().apply {
+        this@loadClassesIfExists.forEachIndexed { i, _ ->
+            runCatching { loadClass(this@loadClassesIfExists[i], clzLoader) }
+        }
+    }.toTypedArray()
+}
+
+//endregion
 
 //region Argdef
 
@@ -37,12 +77,16 @@ fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
 /**
  * 获取类的所有方法
  * @param clzName 类名
+ * @param clzLoader 类加载器
  * @return 方法数组
  * @throws IllegalArgumentException 类名为空
  */
-fun getDeclaredMethods(clzName: String): Array<Method> {
+fun getDeclaredMethods(
+    clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Array<Method> {
     if (clzName.isEmpty()) throw IllegalArgumentException("Class name must not be null or empty!")
-    return loadClass(clzName).declaredMethods
+    return loadClass(clzName, clzLoader).declaredMethods
 }
 
 /**
@@ -57,12 +101,13 @@ fun Any.getMethodsByObject(): Array<Method> {
 /**
  * 获取类的所有属性
  * @param clzName 类名
+ * @param clzLoader 类加载器
  * @return 属性数组
  * @throws IllegalArgumentException 类名为空
  */
-fun getFields(clzName: String): Array<Field> {
+fun getFields(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Array<Field> {
     if (clzName.isEmpty()) throw  IllegalArgumentException("Class name must not be null or empty!")
-    return loadClass(clzName).declaredFields
+    return loadClass(clzName, clzLoader).declaredFields
 }
 
 /**
@@ -70,7 +115,7 @@ fun getFields(clzName: String): Array<Field> {
  * @param methodName 方法名
  * @param isStatic 是否为静态方法
  * @param returnType 方法返回值 填入null为无视返回值
- * @param paramTypes 方法参数类型
+ * @param argTypes 方法参数类型
  * @return 符合条件的方法
  * @throws IllegalArgumentException 方法名为空
  * @throws NoSuchMethodException 未找到方法
@@ -79,18 +124,18 @@ fun Any.getMethodByClassOrObject(
     methodName: String,
     returnType: Class<*>? = null,
     isStatic: Boolean = false,
-    paramTypes: ArgTypes = argTypes()
+    argTypes: ArgTypes = argTypes()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
     var c = if (this is Class<*>) this else this.javaClass
     do {
-        c.declaredMethods.toMutableList().apply {
-            dropIf { (isStatic && !it.isStatic) || (!isStatic && it.isStatic) }
-            dropIf { it.name != methodName }
-            dropIf { it.parameterTypes.size != paramTypes.argTypes.size }
-            dropIf { returnType != null && it.returnType != returnType }
-            dropIf { it.parameterTypes.indices.any { itTypes -> it.parameterTypes[itTypes] != paramTypes.argTypes[itTypes] } }
-        }.getOrNull(0)?.let { it.isAccessible = true;return it }
+        c.declaredMethods.toList().stream()
+            .filter { it.name == methodName }
+            .filter { it.parameterTypes.size == argTypes.argTypes.size }
+            .apply { if (returnType != null) filter { returnType == it.returnType } }
+            .filter { it.parameterTypes.indices.all { i -> it.parameterTypes[i] == argTypes.argTypes[i] } }
+            .filter { it.isStatic == isStatic }
+            .runCatching { findFirst().get().let { it.isAccessible = true;return it } }
     } while (c.superclass?.also { c = it } != null)
     throw NoSuchMethodException()
 }
@@ -108,32 +153,7 @@ fun Class<*>.getStaticMethodByClass(
     argTypes: ArgTypes = argTypes()
 ): Method {
     if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return this.getMethodByClassOrObject(methodName, returnType, true, paramTypes = argTypes)
-}
-
-/**
- * 获取单个方法
- * @param clzName 类名
- * @param isStatic 是否为静态方法
- * @param methodName 方法名
- * @param returnType 方法返回值 填入null为无视返回值
- * @param argTypes 方法形参表类型
- * @throws IllegalArgumentException 方法名为空
- */
-fun getMethod(
-    clzName: String,
-    methodName: String,
-    returnType: Class<*>? = null,
-    isStatic: Boolean = false,
-    argTypes: ArgTypes
-): Method {
-    if (methodName.isEmpty()) throw IllegalArgumentException("Method name must not be null or empty!")
-    return loadClass(clzName).getMethodByClassOrObject(
-        methodName,
-        returnType,
-        isStatic,
-        paramTypes = argTypes
-    )
+    return this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
 }
 
 typealias MethodCondition = Method.() -> Boolean
@@ -151,39 +171,39 @@ fun findMethod(
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Method {
-    var c = clz
-    c.declaredMethods.firstOrNull {
-        it.condition()
-    }?.let { it.isAccessible = true;return it }
-
-    if (findSuper) {
-        while (c.superclass?.also { c = it } != null) {
-            c.declaredMethods.firstOrNull {
-                it.condition()
-            }?.let { it.isAccessible = true;return it }
-        }
-    }
-    throw NoSuchMethodException()
+    return findMethodOrNull(clz, findSuper, condition) ?: throw NoSuchMethodException()
 }
 
 /**
- * 通过条件查找类中的方法 果没有则为null
+ * 通过条件查找类中的方法
  * @param clz 类
  * @param findSuper 是否查找父类
  * @param condition 条件
- * @return 符合条件的方法 果没有则为null
+ * @return 符合条件的方法 未找到时返回null
  */
 fun findMethodOrNull(
     clz: Class<*>,
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Method? {
-    return tryOrNull { findMethod(clz, findSuper, condition) }
+    var c = clz
+    c.declaredMethods.firstOrNull { it.condition() }
+        ?.let { it.isAccessible = true;return it }
+
+    if (findSuper) {
+        while (c.superclass?.also { c = it } != null) {
+            c.declaredMethods
+                .firstOrNull { it.condition() }
+                ?.let { it.isAccessible = true;return it }
+        }
+    }
+    return null
 }
 
 /**
  * 通过条件查找方法
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的方法
@@ -191,25 +211,28 @@ fun findMethodOrNull(
  */
 fun findMethod(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Method {
-    return findMethod(loadClass(clzName), findSuper, condition)
+    return findMethod(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 /**
- * 通过条件查找类中的方法 果没有则为null
- * @param clz 类
+ * 通过条件查找类中的方法
+ * @param clzName 类名
+ * @param classLoader 类加载器
  * @param findSuper 是否查找父类
  * @param condition 条件
- * @return 符合条件的方法 果没有则为null
+ * @return 符合条件的方法 未找到时返回null
  */
 fun findMethodOrNull(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Method? {
-    return tryOrNull { findMethod(clzName, findSuper, condition) }
+    return findMethodOrNull(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 /**
@@ -219,8 +242,137 @@ fun findMethodOrNull(
  *  @throws NoSuchMethodException 未找到方法
  */
 fun Array<Method>.findMethod(condition: MethodCondition): Method {
-    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
-    throw NoSuchMethodException()
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchMethodException()
+}
+
+/**
+ *  扩展函数 通过条件查找方法
+ *  @param condition 方法的条件
+ *  @return 符合条件的方法 未找到时返回null
+ */
+fun Array<Method>.findMethodOrNull(condition: MethodCondition): Method? {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+}
+
+/**
+ * 扩展函数 通过条件查找方法 每个类只搜索一个方法
+ * @param findSuper 是否查找父类
+ * @param condition 方法条件
+ * @return 方法数组
+ */
+fun Array<Class<*>>.findMethods(
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Array<Method> {
+    val arr = ArrayList<Method>()
+    this.forEach { clz ->
+        arr.tryAdd { findMethod(clz, findSuper, condition) }
+    }
+    return arr.toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @param condition 方法条件
+ * @return 方法数组
+ */
+fun Array<String>.loadAndFindMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Array<Method> {
+    return this.loadAllClasses(classLoader).findMethods(findSuper, condition)
+}
+
+
+// Method condition pair
+infix fun String.mcp(condition: MethodCondition) = this to condition
+infix fun Class<*>.mcp(condition: MethodCondition) = this to condition
+
+/**
+ * 扩展函数 通过条件查找数组中对应的方法 每个类只搜索一个方法
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<Class<*>, MethodCondition>>.findMethods(
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> findMethod(k, findSuper, v) }.toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<String, MethodCondition>>.loadAndFindMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> findMethod(loadClass(k, classLoader), findSuper, v) }.toTypedArray()
+}
+
+/**
+ * 扩展函数 通过条件搜索所有方法
+ * @param findSuper 是否查找父类
+ * @param condition 方法条件
+ * @return 方法数组
+ */
+fun Array<Class<*>>.findAllMethods(
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Array<Method> {
+    val arr = ArrayList<Method>()
+    this.forEach { clz ->
+        arr.addAll(findAllMethods(clz, findSuper, condition))
+    }
+    return arr.toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<Class<*>, MethodCondition>>.findAllMethods(
+    findSuper: Boolean = false
+): Array<Method> {
+    return arrayListOf<Method>()
+        .apply { this@findAllMethods.forEach { (k, v) -> addAll(findAllMethods(k, findSuper, v)) } }
+        .toTypedArray()
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @return 方法数组
+ */
+fun Array<Pair<String, MethodCondition>>.loadAndFindAllMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): Array<Method> {
+    return this.map { (k, v) -> loadClass(k, classLoader) to v }.toTypedArray()
+        .findAllMethods(findSuper)
+}
+
+/**
+ * 扩展函数 加载数组中的类并且通过条件查找所有方法
+ * @param classLoader 类加载器
+ * @param findSuper 是否查找父类
+ * @param condition 方法条件
+ * @return 方法数组
+ */
+fun Array<String>.loadAndFindAllMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): Array<Method> {
+    return this.loadAllClasses(classLoader).findAllMethods(findSuper, condition)
 }
 
 typealias ConstructorCondition = Constructor<*>.() -> Boolean
@@ -232,8 +384,17 @@ typealias ConstructorCondition = Constructor<*>.() -> Boolean
  *  @throws NoSuchMethodException 未找到构造方法
  */
 fun Array<Constructor<*>>.findConstructor(condition: ConstructorCondition): Constructor<*> {
-    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
-    throw NoSuchMethodException()
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchMethodException()
+}
+
+/**
+ *  扩展函数 通过条件查找构造方法
+ *  @param condition 构造方法的条件
+ *  @return 符合条件的构造方法 未找到时返回null
+ */
+fun Array<Constructor<*>>.findConstructorOrNull(condition: ConstructorCondition): Constructor<*>? {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
 /**
@@ -251,45 +412,48 @@ fun findConstructor(
 }
 
 /**
- * 通过条件查找构造方法 如果没有则为null
+ * 通过条件查找构造方法
  * @param clz 类
  * @param condition 条件
- * @return 符合条件的构造方法
+ * @return 符合条件的构造方法 未找到时返回null
  */
 fun findConstructorOrNull(
     clz: Class<*>,
     condition: ConstructorCondition
 ): Constructor<*>? {
-    return tryOrNull { clz.declaredConstructors.findConstructor(condition) }
+    return clz.declaredConstructors.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
 /**
  * 通过条件查找构造方法
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param condition 条件
  * @return 符合条件的构造方法
  * @throws NoSuchMethodException 未找到构造方法
  */
 fun findConstructor(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     condition: ConstructorCondition
 ): Constructor<*> {
-    return loadClass(clzName).declaredConstructors.findConstructor(condition)
+    return loadClass(clzName, classLoader).declaredConstructors.findConstructor(condition)
 }
 
 /**
- * 通过条件查找构造方法 如果没有则为null
+ * 通过条件查找构造方法
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param condition 条件
- * @return 符合条件的构造方法
+ * @return 符合条件的构造方法 未找到时返回null
  */
 fun findConstructorOrNull(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     condition: ConstructorCondition
 ): Constructor<*>? {
-    return tryOrNull { loadClass(clzName).declaredConstructors.findConstructor(condition) }
+    return loadClass(clzName, classLoader).declaredConstructors.findConstructorOrNull(condition)
 }
-
 
 /**
  * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
@@ -326,16 +490,18 @@ fun findAllMethods(
 /**
  * 通过条件获取方法数组
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的方法数组
  */
 fun findAllMethods(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Array<Method> {
-    return findAllMethods(loadClass(clzName), findSuper, condition)
+    return findAllMethods(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 //endregion
@@ -355,6 +521,21 @@ fun findField(
     findSuper: Boolean = false,
     condition: FieldCondition
 ): Field {
+    return findFieldOrNull(clz, findSuper, condition) ?: throw NoSuchFieldException()
+}
+
+/**
+ * 通过条件查找类中的属性
+ * @param clz 类
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性 未找到时返回null
+ */
+fun findFieldOrNull(
+    clz: Class<*>,
+    findSuper: Boolean = false,
+    condition: FieldCondition
+): Field? {
     var c = clz
     c.declaredFields.firstOrNull { it.condition() }?.let {
         it.isAccessible = true;return it
@@ -365,27 +546,13 @@ fun findField(
                 ?.let { it.isAccessible = true;return it }
         }
     }
-    throw NoSuchFieldException()
-}
-
-/**
- * 通过条件查找类中的属性 如果没有则为null
- * @param clz 类
- * @param findSuper 是否查找父类
- * @param condition 条件
- * @return 符合条件的属性 如果没有则为null
- */
-fun findFieldOrNull(
-    clz: Class<*>,
-    findSuper: Boolean = false,
-    condition: FieldCondition
-): Field? {
-    return tryOrNull { findField(clz, findSuper, condition) }
+    return null
 }
 
 /**
  * 通过条件查找类中的属性
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的属性
@@ -393,25 +560,27 @@ fun findFieldOrNull(
  */
 fun findField(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: FieldCondition
 ): Field {
-    return findField(loadClass(clzName), findSuper, condition)
+    return findField(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 /**
- * 通过条件查找类中的属性 如果没有则为null
+ * 通过条件查找类中的属性
  * @param clzName 类名
  * @param findSuper 是否查找父类
  * @param condition 条件
- * @return 符合条件的属性 如果没有则为null
+ * @return 符合条件的属性 未找到时返回null
  */
 fun findFieldOrNull(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: FieldCondition
 ): Field? {
-    return tryOrNull { findField(clzName, findSuper, condition) }
+    return findFieldOrNull(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 /**
@@ -421,17 +590,17 @@ fun findFieldOrNull(
  * @throws NoSuchFieldException 未找到属性
  */
 fun Array<Field>.findField(condition: FieldCondition): Field {
-    this.firstOrNull { it.condition() }?.let { it.isAccessible = true;return it }
-    throw NoSuchFieldException()
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchFieldException()
 }
 
 /**
- * 扩展函数 通过条件查找属性 如果没有则为null
+ * 扩展函数 通过条件查找属性
  * @param condition 条件
- * @return 符合条件的属性 如果没有则为null
+ * @return 符合条件的属性 未找到时返回null
  */
 fun Array<Field>.findFieldOrNull(condition: FieldCondition): Field? {
-    return tryOrNull { this.findField(condition) }
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
 /**
@@ -469,16 +638,18 @@ fun findAllFields(
 /**
  * 通过条件获取属性数组
  * @param clzName 类名
+ * @param classLoader 类加载器
  * @param findSuper 是否查找父类
  * @param condition 条件
  * @return 符合条件的属性数组
  */
 fun findAllFields(
     clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: FieldCondition
 ): Array<Field> {
-    return findAllFields(loadClass(clzName), findSuper, condition)
+    return findAllFields(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 /**
@@ -499,7 +670,7 @@ fun Any.getFieldByClassOrObject(
     var c: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         c.declaredFields
-            .filter { (isStatic && it.isStatic) || (!isStatic && !it.isStatic) }
+            .filter { isStatic == it.isStatic }
             .firstOrNull {
                 (fieldType == null || it.type == fieldType) && (it.name == fieldName)
             }?.let { it.isAccessible = true;return it }
@@ -518,7 +689,7 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     var c: Class<*> = if (this is Class<*>) this else this.javaClass
     do {
         c.declaredFields
-            .filter { (isStatic && it.isStatic) || (!isStatic && !it.isStatic) }
+            .filter { isStatic == it.isStatic }
             .firstOrNull {
                 it.type == type
             }?.let { it.isAccessible = true;return it }
@@ -612,6 +783,31 @@ fun <T> Field.getAs(obj: Any?): T? {
 fun Field.getStatic(): Any? {
     this.isAccessible = true
     return this.get(null)
+}
+
+/**
+ * 深拷贝一个对象
+ * @param srcObj 源对象
+ * @param newObj 新对象
+ * @return 成功返回拷贝后的对象 失败返回null
+ */
+fun <T> fieldCpy(srcObj: T, newObj: T): T? {
+    return try {
+        var clz: Class<*> = srcObj!!::class.java
+        var fields: Array<Field>
+        while (Object::class.java != clz) {
+            fields = clz.declaredFields
+            for (f in fields) {
+                f.isAccessible = true
+                f.set(newObj, f.get(srcObj))
+            }
+            clz = clz.superclass
+        }
+        newObj
+    } catch (e: Exception) {
+        Log.e(e)
+        null
+    }
 }
 
 //endregion
@@ -1212,7 +1408,7 @@ fun Any.invokeMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, returnType, false, paramTypes = argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, false, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1303,7 +1499,7 @@ fun Class<*>.invokeStaticMethod(
         }
     } else {
         try {
-            m = this.getMethodByClassOrObject(methodName, returnType, true, paramTypes = argTypes)
+            m = this.getMethodByClassOrObject(methodName, returnType, true, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }
@@ -1451,12 +1647,22 @@ val Member.isStatic: Boolean
 val Member.isNotStatic: Boolean
     inline get() = !this.isStatic
 
+val Class<*>.isStatic: Boolean
+    inline get() = Modifier.isStatic(this.modifiers)
+val Class<*>.isNotStatic: Boolean
+    inline get() = !this.isStatic
+
 /**
  * 扩展属性 判断是否为Public
  */
 val Member.isPublic: Boolean
     inline get() = Modifier.isPublic(this.modifiers)
 val Member.isNotPublic: Boolean
+    inline get() = !this.isPublic
+
+val Class<*>.isPublic: Boolean
+    inline get() = Modifier.isPublic(this.modifiers)
+val Class<*>.isNotPublic: Boolean
     inline get() = !this.isPublic
 
 /**
@@ -1467,6 +1673,11 @@ val Member.isProtected: Boolean
 val Member.isNotProtected: Boolean
     inline get() = !this.isProtected
 
+val Class<*>.isProtected: Boolean
+    inline get() = Modifier.isProtected(this.modifiers)
+val Class<*>.isNotProtected: Boolean
+    inline get() = !this.isProtected
+
 /**
  * 扩展属性 判断是否为Private
  */
@@ -1475,12 +1686,22 @@ val Member.isPrivate: Boolean
 val Member.isNotPrivate: Boolean
     inline get() = !this.isPrivate
 
+val Class<*>.isPrivate: Boolean
+    inline get() = Modifier.isPrivate(this.modifiers)
+val Class<*>.isNotPrivate: Boolean
+    inline get() = !this.isPrivate
+
 /**
  * 扩展属性 判断是否为Final
  */
 val Member.isFinal: Boolean
     inline get() = Modifier.isFinal(this.modifiers)
 val Member.isNotFinal: Boolean
+    inline get() = !this.isFinal
+
+val Class<*>.isFinal: Boolean
+    inline get() = Modifier.isFinal(this.modifiers)
+val Class<*>.isNotFinal: Boolean
     inline get() = !this.isFinal
 
 /**
@@ -1513,6 +1734,11 @@ val Member.isNotSynchronized: Boolean
 val Member.isAbstract: Boolean
     inline get() = Modifier.isAbstract(this.modifiers)
 val Member.isNotAbstract: Boolean
+    inline get() = !this.isAbstract
+
+val Class<*>.isAbstract: Boolean
+    inline get() = Modifier.isAbstract(this.modifiers)
+val Class<*>.isNotAbstract: Boolean
     inline get() = !this.isAbstract
 
 /**
@@ -1609,28 +1835,3 @@ fun ClassLoader.getFieldByDesc(desc: String): Field {
 }
 
 //endregion
-
-/**
- * 深拷贝一个对象
- * @param srcObj 源对象
- * @param newObj 新对象
- * @return 成功返回拷贝后的对象 失败返回null
- */
-fun <T> fieldCpy(srcObj: T, newObj: T): T? {
-    return try {
-        var clz: Class<*> = srcObj!!::class.java
-        var fields: Array<Field>
-        while (Object::class.java != clz) {
-            fields = clz.declaredFields
-            for (f in fields) {
-                f.isAccessible = true
-                f.set(newObj, f.get(srcObj))
-            }
-            clz = clz.superclass
-        }
-        newObj
-    } catch (e: Exception) {
-        Log.e(e)
-        null
-    }
-}

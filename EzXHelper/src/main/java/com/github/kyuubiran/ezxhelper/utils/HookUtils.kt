@@ -471,3 +471,7 @@ fun Array<Constructor<*>>.hookMethod(
         }
     }.toTypedArray()
 }
+
+fun Array<XC_MethodHook.Unhook>.unhookAll() {
+    this.forEach { it.unhook() }
+}
