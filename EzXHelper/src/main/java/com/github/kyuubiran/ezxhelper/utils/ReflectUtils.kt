@@ -70,9 +70,11 @@ value class Args(val args: Array<out Any?>)
 @JvmInline
 value class ArgTypes(val argTypes: Array<out Class<*>>)
 
-fun args(vararg args: Any?) = Args(args)
+@Suppress("NOTHING_TO_INLINE")
+inline fun args(vararg args: Any?) = Args(args)
 
-fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
+@Suppress("NOTHING_TO_INLINE")
+inline fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
 
 //endregion
 
@@ -94,13 +96,14 @@ fun getDeclaredMethods(
 }
 
 /**
- * 扩展函数 获取类/实例化对象的所有方法
+ * 扩展属性 获取类/实例化对象的所有方法
  * @return 方法数组
  */
-fun Any.getMethodsByObject(): Array<Method> {
-    val clz: Class<*> = if (this is Class<*>) this else this::class.java
-    return clz.declaredMethods
-}
+val Any.methods: Array<Method>
+    get() {
+        val clz: Class<*> = if (this is Class<*>) this else this::class.java
+        return clz.declaredMethods
+    }
 
 /**
  * 获取类的所有属性
@@ -370,14 +373,14 @@ fun Array<Class<*>>.findAllMethods(
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Array<Method> {
-    return this.flatMap { c -> findAllMethods(c, findSuper, condition).toList() }.toTypedArray()
+    return this.flatMap { c -> findAllMethods(c, findSuper, condition) }.toTypedArray()
 }
 
 fun Iterable<Class<*>>.findAllMethods(
     findSuper: Boolean = false,
     condition: MethodCondition
 ): List<Method> {
-    return this.flatMap { c -> findAllMethods(c, findSuper, condition).toList() }
+    return this.flatMap { c -> findAllMethods(c, findSuper, condition) }
 }
 
 /**
@@ -534,6 +537,34 @@ fun findConstructorOrNull(
 }
 
 /**
+ * 查找所有符合条件的构造方法
+ * @param clzName 类名
+ * @param classLoader 类加载器
+ * @param condition 条件
+ * @return 所有符合条件的构造方法
+ */
+fun findAllConstructors(
+    clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    condition: ConstructorCondition
+): List<Constructor<*>> {
+    return loadClass(clzName, classLoader).declaredConstructors.filter(condition)
+}
+
+/**
+ * 查找所有符合条件的构造方法
+ * @param clz 类
+ * @param condition 条件
+ * @return 所有符合条件的构造方法
+ */
+fun findAllConstructors(
+    clz: Class<*>,
+    condition: ConstructorCondition
+): List<Constructor<*>> {
+    return clz.declaredConstructors.filter(condition)
+}
+
+/**
  * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
  * @param condition 条件
  * @return 符合条件的方法数组
@@ -557,7 +588,7 @@ fun findAllMethods(
     clz: Class<*>,
     findSuper: Boolean = false,
     condition: MethodCondition
-): Array<Method> {
+): List<Method> {
     var c = clz
     val arr = ArrayList<Method>()
     arr.addAll(c.declaredMethods.findAllMethods(condition))
@@ -566,7 +597,7 @@ fun findAllMethods(
             arr.addAll(c.declaredMethods.findAllMethods(condition))
         }
     }
-    return arr.toTypedArray()
+    return arr
 }
 
 /**
@@ -582,13 +613,23 @@ fun findAllMethods(
     classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: MethodCondition
-): Array<Method> {
+): List<Method> {
     return findAllMethods(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 //endregion
 
 //region FieldReflect
+
+/**
+ * 扩展属性 获取类/实例化对象的所有属性
+ * @return 属性数组
+ */
+val Any.fields: Array<Field>
+    get() {
+        val clz: Class<*> = if (this is Class<*>) this else this::class.java
+        return clz.declaredFields
+    }
 
 /**
  * 通过条件查找类中的属性
@@ -718,7 +759,7 @@ fun findAllFields(
     clz: Class<*>,
     findSuper: Boolean = false,
     condition: FieldCondition
-): Array<Field> {
+): List<Field> {
     var c = clz
     val arr = ArrayList<Field>()
     arr.addAll(c.declaredFields.findAllFields(condition))
@@ -727,7 +768,7 @@ fun findAllFields(
             arr.addAll(c.declaredFields.findAllFields(condition))
         }
     }
-    return arr.toTypedArray()
+    return arr
 }
 
 /**
@@ -743,7 +784,7 @@ fun findAllFields(
     classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: FieldCondition
-): Array<Field> {
+): List<Field> {
     return findAllFields(loadClass(clzName, classLoader), findSuper, condition)
 }
 
