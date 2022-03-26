@@ -54,12 +54,14 @@ fun Array<Method>.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookBefore(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookBefore(priority, hooker) }.toTypedArray()
+}
+
+fun Iterable<Method>.hookBefore(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookBefore(priority, hooker) }
 }
 
 /**
@@ -93,14 +95,16 @@ fun Array<Constructor<*>>.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookBefore(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookBefore(priority, hooker) }.toTypedArray()
 }
 
+@JvmName("hookConstructorBefore")
+fun Iterable<Constructor<*>>.hookBefore(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookBefore(priority, hooker) }
+}
 
 /**
  * 扩展函数 hook方法执行后
@@ -133,12 +137,14 @@ fun Array<Method>.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookAfter(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookAfter(priority, hooker) }.toTypedArray()
+}
+
+fun Iterable<Method>.hookAfter(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookAfter(priority, hooker) }
 }
 
 /**
@@ -172,12 +178,15 @@ fun Array<Constructor<*>>.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookAfter(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookAfter(priority, hooker) }.toTypedArray()
+}
+
+@JvmName("hookConstructorAfter")
+fun Iterable<Constructor<*>>.hookAfter(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: Hooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookAfter(priority, hooker) }
 }
 
 /**
@@ -204,7 +213,7 @@ fun Method.hookReplace(
 /**
  * 扩展函数 替换多个方法
  *
- * 注意:会忽略hooker的返回值
+ * 注意: 会忽略hooker的返回值
  * @param priority 优先级 默认50
  * @param hooker [Hooker] hook具体实现
  * @return unhooks Array<[XC_MethodHook.Unhook]>
@@ -213,12 +222,14 @@ fun Array<Method>.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: ReplaceHooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach { m ->
-                ret += m.hookReplace(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookReplace(priority, hooker) }.toTypedArray()
+}
+
+fun Iterable<Method>.hookReplace(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: ReplaceHooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookReplace(priority, hooker) }
 }
 
 /**
@@ -245,7 +256,7 @@ fun Constructor<*>.hookReplace(
 /**
  * 扩展函数 替换多个构造
  *
- * 注意:会忽略hooker的返回值
+ * 注意: 会忽略hooker的返回值
  * @param priority 优先级 默认50
  * @param hooker [Hooker] hook具体实现
  * @return unhooks Array<[XC_MethodHook.Unhook]>
@@ -254,12 +265,15 @@ fun Array<Constructor<*>>.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: ReplaceHooker
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>()
-        .also { ret ->
-            this.forEach {
-                ret += it.hookReplace(priority, hooker)
-            }
-        }.toTypedArray()
+    return this.map { it.hookReplace(priority, hooker) }.toTypedArray()
+}
+
+@JvmName("hookConstructorReplace")
+fun Iterable<Constructor<*>>.hookReplace(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: ReplaceHooker
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookReplace(priority, hooker) }
 }
 
 /**
@@ -349,7 +363,7 @@ fun hookAllConstructorReplace(
 /**
  * Hook工厂类
  */
-class XposedHookUtilFactory(priority: Int = XCallback.PRIORITY_DEFAULT) : XC_MethodHook(priority) {
+class XposedHookFactory(priority: Int = XCallback.PRIORITY_DEFAULT) : XC_MethodHook(priority) {
     private var beforeMethod: Hooker? = null
     private var afterMethod: Hooker? = null
 
@@ -386,16 +400,16 @@ class XposedHookUtilFactory(priority: Int = XCallback.PRIORITY_DEFAULT) : XC_Met
  *
  * 的形式进行hook 两者均为可选
  * @param priority 优先级 默认50
- * @param hook 传递的XposedHookUtilFactory
+ * @param hook 传递的XposedHookFactory
  * @return Unhook
- * @see XposedHookUtilFactory
+ * @see XposedHookFactory
  */
 fun Method.hookMethod(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+    hook: XposedHookFactory.() -> Unit
 ): XC_MethodHook.Unhook {
-    val factory = XposedHookUtilFactory(priority)
-    hook.invoke(factory)
+    val factory = XposedHookFactory(priority)
+    hook(factory)
     return this.hookMethod(factory)
 }
 
@@ -409,16 +423,16 @@ fun Method.hookMethod(
  *
  * 的形式进行hook 两者均为可选
  * @param priority 优先级 默认50
- * @param hook 传递的XposedHookUtilFactory
+ * @param hook 传递的XposedHookFactory
  * @return Unhook
- * @see XposedHookUtilFactory
+ * @see XposedHookFactory
  */
 fun Constructor<*>.hookMethod(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+    hook: XposedHookFactory.() -> Unit
 ): XC_MethodHook.Unhook {
-    val factory = XposedHookUtilFactory(priority)
-    hook.invoke(factory)
+    val factory = XposedHookFactory(priority)
+    hook(factory)
     return this.hookMethod(factory)
 }
 
@@ -432,19 +446,22 @@ fun Constructor<*>.hookMethod(
  *
  * 的形式进行hook 两者均为可选
  * @param priority 优先级 默认50
- * @param hook 传递的XposedHookUtilFactory
+ * @param hook 传递的XposedHookFactory
  * @return Array<Unhook>
- * @see XposedHookUtilFactory
+ * @see XposedHookFactory
  */
 fun Array<Method>.hookMethod(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+    hook: XposedHookFactory.() -> Unit
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>().also { ret ->
-        this.forEach { m ->
-            ret += m.hookMethod(priority, hook)
-        }
-    }.toTypedArray()
+    return this.map { it.hookMethod(priority, hook) }.toTypedArray()
+}
+
+fun Iterable<Method>.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hook: XposedHookFactory.() -> Unit
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookMethod(priority, hook) }
 }
 
 /**
@@ -457,21 +474,32 @@ fun Array<Method>.hookMethod(
  *
  * 的形式进行hook 两者均为可选
  * @param priority 优先级 默认50
- * @param hook 传递的XposedHookUtilFactory
+ * @param hooker 传递的XposedHookFactory
  * @return Array<Unhook>
- * @see XposedHookUtilFactory
+ * @see XposedHookFactory
  */
 fun Array<Constructor<*>>.hookMethod(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: XposedHookUtilFactory.() -> Unit
+    hooker: XposedHookFactory.() -> Unit
 ): Array<XC_MethodHook.Unhook> {
-    return ArrayList<XC_MethodHook.Unhook>().also { ret ->
-        this.forEach { m ->
-            ret += m.hookMethod(priority, hook)
-        }
-    }.toTypedArray()
+    return this.map { it.hookMethod(priority, hooker) }.toTypedArray()
 }
 
+@JvmName("hookConstructor")
+fun Iterable<Constructor<*>>.hookMethod(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    hooker: XposedHookFactory.() -> Unit
+): List<XC_MethodHook.Unhook> {
+    return this.map { it.hookMethod(priority, hooker) }
+}
+
+/**
+ * 执行数组中所有的unhook
+ */
 fun Array<XC_MethodHook.Unhook>.unhookAll() {
+    this.forEach { it.unhook() }
+}
+
+fun Iterable<XC_MethodHook.Unhook>.unhookAll() {
     this.forEach { it.unhook() }
 }

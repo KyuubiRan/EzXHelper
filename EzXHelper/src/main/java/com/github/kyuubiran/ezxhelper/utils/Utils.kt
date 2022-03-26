@@ -234,3 +234,5 @@ fun restartHostApp(activity: Activity) {
     activity.startActivity(intent)
     exitProcess(0)
 }
+
+fun <T> Array<T>.stream() = this.toList().stream()
