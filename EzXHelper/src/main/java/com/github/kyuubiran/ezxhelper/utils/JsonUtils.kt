@@ -7,69 +7,88 @@ import org.json.JSONObject
 /**
  * 返回一个空的JSONArray
  */
-fun emptyJSONArray(): JSONArray {
-    return JSONArray()
-}
+fun emptyJSONArray(): JSONArray = JSONArray()
 
 /**
- * 遍历JSONArray
- * @param T 类型
- * @param action 操作
+ * 扩展属性 判断JSONArray是否为空
  */
-@Suppress("UNCHECKED_CAST")
-inline fun <T> JSONArray.forEach(action: (obj: T) -> Unit) {
-    for (index in 0 until this.length()) {
-        action(this.get(index) as T)
-    }
-}
+val JSONArray.isEmpty: Boolean
+    inline get() = this.length() == 0
+val JSONArray.isNotEmpty: Boolean
+    inline get() = this.length() != 0
 
 /**
- * 遍历JSONArray 并且附带index
- * @param T 类型
- * @param action 操作
+ * 扩展属性 获取长度范围 用于for循环
  */
-@Suppress("UNCHECKED_CAST")
-inline fun <T> JSONArray.forEachIndexed(
-    action: (index: Int, obj: T) -> Unit
-) {
-    for (index in 0 until this.length()) {
-        action(index, this.get(index) as T)
-    }
-}
+val JSONArray.indices: IntRange
+    inline get() = 0 until this.length()
 
 /**
- * 将JSONArray 转换为ArrayList
- * @param T 类型
- * @return ArrayList
+ * 扩展函数 遍历JSONArray
+ * @param action 执行操作
  */
-fun <T> JSONArray.toArrayList(): ArrayList<T> {
-    val arr = ArrayList<T>()
-    this.forEach<T> { arr.add(it) }
-    return arr
+inline fun JSONArray.forEach(action: (Any) -> Unit) {
+    for (i in this.indices) action(this.get(i))
 }
 
 /**
- * 将JSONArray 转换为Array
- * @param T 类型
- * @return Array
+ * 扩展函数 遍历JSONArray 并包含索引
+ * @param action 执行操作
  */
-inline fun <reified T> JSONArray.toArray(): Array<T> {
-    return this.toArrayList<T>().toTypedArray()
+inline fun JSONArray.forEachIndexed(action: (Int, Any) -> Unit) {
+    for (i in this.indices) action(i, this.get(i))
 }
 
 /**
- * 将JSONArray 转换为HashSet
- * @param E 类型
- * @return HashSet
+ * 扩展函数 遍历JSONArray 并返回同一个JSONArray
+ * @param action 执行操作
  */
-fun <E> JSONArray.toHashSet(): HashSet<E> {
-    val hs = HashSet<E>()
-    this.forEach<E> { hs.add(it) }
-    return hs
+inline fun JSONArray.onEach(action: (Any) -> Unit): JSONArray {
+    for (i in this.indices) action(this.get(i))
+    return this
 }
 
 /**
- * 获取JSONObject中的 Long
+ * 扩展函数 遍历JSONArray 包含索引 并返回同一个JSONArray
+ * @param action 执行操作
+ */
+inline fun JSONArray.onEachIndexed(action: (Int, Any) -> Unit): JSONArray {
+    for (i in this.indices) action(i, this.get(i))
+    return this
+}
+
+/**
+ * 扩展函数 对JSONArray进行过滤 并返回新的JSONArray
+ * @param predicate 过滤条件
+ */
+inline fun JSONArray.filter(predicate: (Any) -> Boolean): JSONArray {
+    val result = JSONArray()
+    for (i in this.indices) if (predicate(this.get(i))) result.put(this.get(i))
+    return result
+}
+
+/**
+ * 扩展函数 对JSONArray进行转换 并返回新的JSONArray
+ * @param transform 转换函数
+ */
+inline fun JSONArray.map(transform: (Any) -> Any): JSONArray {
+    val result = JSONArray()
+    for (i in this.indices) result.put(transform(this.get(i)))
+    return result
+}
+
+/**
+ * 扩展函数 对JSONArray进行转换 并返List
+ * @param transform 转换函数
+ */
+inline fun <T> JSONArray.mapToList(transform: (Any) -> T): List<T> {
+    val result = ArrayList<T>(this.length())
+    for (i in this.indices) result.add(transform(this.get(i)))
+    return result
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 Long
  * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
@@ -84,7 +103,7 @@ fun JSONObject.getLongOrDefault(key: String, defValue: Long = 0L): Long {
 }
 
 /**
- * 获取JSONObject中的 Int
+ * 扩展函数 获取JSONObject中的 Int
  * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
@@ -99,7 +118,7 @@ fun JSONObject.getIntOrDefault(key: String, defValue: Int = 0): Int {
 }
 
 /**
- * 获取JSONObject中的 Int
+ * 扩展函数 获取JSONObject中的 Int
  * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
@@ -114,7 +133,7 @@ fun JSONObject.getBooleanOrDefault(key: String, defValue: Boolean = false): Bool
 }
 
 /**
- * 获取JSONObject中的 String
+ * 扩展函数 获取JSONObject中的 String
  * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
@@ -129,7 +148,7 @@ fun JSONObject.getStringOrDefault(key: String, defValue: String = ""): String {
 }
 
 /**
- * 获取JSONObject中的 Long
+ * 扩展函数 获取JSONObject中的 Long
  * 获取失败时返回缺省值
  * @param key 键值
  * @return 获取成功时返回获取到的值 否则返回null
@@ -143,7 +162,7 @@ fun JSONObject.getObjectOrNull(key: String): Any? {
 }
 
 /**
- * 获取JSONObject中的 Long
+ * 扩展函数 获取JSONObject中的 Long
  * 获取失败时返回缺省值
  * @param key 键值
  * @return 获取成功时返回JSONArray 否则返回空JSONArray
@@ -155,3 +174,13 @@ fun JSONObject.getJSONArrayOrEmpty(key: String): JSONArray {
         emptyJSONArray()
     }
 }
+
+/**
+ * 构建一个JSONObject
+ */
+inline fun buildJSONObject(builder: JSONObject.() -> Unit): JSONObject = JSONObject().apply(builder)
+
+/**
+ * 构建一个JSONArray
+ */
+inline fun buildJSONArray(builder: JSONArray.() -> Unit): JSONArray = JSONArray().apply(builder)

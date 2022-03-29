@@ -43,17 +43,21 @@ fun Array<String>.loadAllClasses(clzLoader: ClassLoader = InitFields.ezXClassLoa
     return Array(this.size) { i -> loadClass(this[i], clzLoader) }
 }
 
+fun Iterable<String>.loadAllClasses(clzLoader: ClassLoader = InitFields.ezXClassLoader): List<Class<*>> {
+    return this.map { loadClass(it, clzLoader) }
+}
+
 /**
  * 扩展函数 尝试加载数组中的所有类
  * @param clzLoader 类加载器
  * @return 加载成功的类数组
  */
 fun Array<String>.loadClassesIfExists(clzLoader: ClassLoader = InitFields.ezXClassLoader): Array<Class<*>> {
-    return ArrayList<Class<*>>().apply {
-        this@loadClassesIfExists.forEachIndexed { i, _ ->
-            runCatching { loadClass(this@loadClassesIfExists[i], clzLoader) }
-        }
-    }.toTypedArray()
+    return this.mapNotNull { loadClassOrNull(it, clzLoader) }.toTypedArray()
+}
+
+fun Iterable<String>.loadClassesIfExists(clzLoader: ClassLoader = InitFields.ezXClassLoader): List<Class<*>> {
+    return this.mapNotNull { loadClassOrNull(it, clzLoader) }
 }
 
 //endregion
@@ -66,9 +70,11 @@ value class Args(val args: Array<out Any?>)
 @JvmInline
 value class ArgTypes(val argTypes: Array<out Class<*>>)
 
-fun args(vararg args: Any?) = Args(args)
+@Suppress("NOTHING_TO_INLINE")
+inline fun args(vararg args: Any?) = Args(args)
 
-fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
+@Suppress("NOTHING_TO_INLINE")
+inline fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
 
 //endregion
 
@@ -90,13 +96,14 @@ fun getDeclaredMethods(
 }
 
 /**
- * 扩展函数 获取类/实例化对象的所有方法
+ * 扩展属性 获取类/实例化对象的所有方法
  * @return 方法数组
  */
-fun Any.getMethodsByObject(): Array<Method> {
-    val clz: Class<*> = if (this is Class<*>) this else this::class.java
-    return clz.declaredMethods
-}
+val Any.methods: Array<Method>
+    get() {
+        val clz: Class<*> = if (this is Class<*>) this else this::class.java
+        return clz.declaredMethods
+    }
 
 /**
  * 获取类的所有属性
@@ -246,12 +253,21 @@ fun Array<Method>.findMethod(condition: MethodCondition): Method {
         ?: throw NoSuchMethodException()
 }
 
+fun Iterable<Method>.findMethod(condition: MethodCondition): Method {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchMethodException()
+}
+
 /**
  *  扩展函数 通过条件查找方法
  *  @param condition 方法的条件
  *  @return 符合条件的方法 未找到时返回null
  */
 fun Array<Method>.findMethodOrNull(condition: MethodCondition): Method? {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+}
+
+fun Iterable<Method>.findMethodOrNull(condition: MethodCondition): Method? {
     return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
@@ -272,6 +288,17 @@ fun Array<Class<*>>.findMethods(
     return arr.toTypedArray()
 }
 
+fun Iterable<Class<*>>.findMethods(
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): List<Method> {
+    val arr = ArrayList<Method>()
+    this.forEach { clz ->
+        arr.tryAdd { findMethod(clz, findSuper, condition) }
+    }
+    return arr
+}
+
 /**
  * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法
  * @param classLoader 类加载器
@@ -287,6 +314,13 @@ fun Array<String>.loadAndFindMethods(
     return this.loadAllClasses(classLoader).findMethods(findSuper, condition)
 }
 
+fun Iterable<String>.loadAndFindMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): List<Method> {
+    return this.loadAllClasses(classLoader).findMethods(findSuper, condition)
+}
 
 // Method condition pair
 infix fun String.mcp(condition: MethodCondition) = this to condition
@@ -303,6 +337,12 @@ fun Array<Pair<Class<*>, MethodCondition>>.findMethods(
     return this.map { (k, v) -> findMethod(k, findSuper, v) }.toTypedArray()
 }
 
+fun Iterable<Pair<Class<*>, MethodCondition>>.findMethods(
+    findSuper: Boolean = false
+): List<Method> {
+    return this.map { (k, v) -> findMethod(k, findSuper, v) }
+}
+
 /**
  * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法
  * @param classLoader 类加载器
@@ -316,6 +356,13 @@ fun Array<Pair<String, MethodCondition>>.loadAndFindMethods(
     return this.map { (k, v) -> findMethod(loadClass(k, classLoader), findSuper, v) }.toTypedArray()
 }
 
+fun Iterable<Pair<String, MethodCondition>>.loadAndFindMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): List<Method> {
+    return this.map { (k, v) -> findMethod(loadClass(k, classLoader), findSuper, v) }
+}
+
 /**
  * 扩展函数 通过条件搜索所有方法
  * @param findSuper 是否查找父类
@@ -326,11 +373,14 @@ fun Array<Class<*>>.findAllMethods(
     findSuper: Boolean = false,
     condition: MethodCondition
 ): Array<Method> {
-    val arr = ArrayList<Method>()
-    this.forEach { clz ->
-        arr.addAll(findAllMethods(clz, findSuper, condition))
-    }
-    return arr.toTypedArray()
+    return this.flatMap { c -> findAllMethods(c, findSuper, condition) }.toTypedArray()
+}
+
+fun Iterable<Class<*>>.findAllMethods(
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): List<Method> {
+    return this.flatMap { c -> findAllMethods(c, findSuper, condition) }
 }
 
 /**
@@ -346,6 +396,13 @@ fun Array<Pair<Class<*>, MethodCondition>>.findAllMethods(
         .toTypedArray()
 }
 
+fun Iterable<Pair<Class<*>, MethodCondition>>.findAllMethods(
+    findSuper: Boolean = false
+): List<Method> {
+    return arrayListOf<Method>()
+        .apply { this@findAllMethods.forEach { (k, v) -> addAll(findAllMethods(k, findSuper, v)) } }
+}
+
 /**
  * 扩展函数 加载数组中的类并且通过条件查找方法
  * @param classLoader 类加载器
@@ -358,6 +415,13 @@ fun Array<Pair<String, MethodCondition>>.loadAndFindAllMethods(
 ): Array<Method> {
     return this.map { (k, v) -> loadClass(k, classLoader) to v }.toTypedArray()
         .findAllMethods(findSuper)
+}
+
+fun Iterable<Pair<String, MethodCondition>>.loadAndFindAllMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false
+): List<Method> {
+    return this.map { (k, v) -> loadClass(k, classLoader) to v }.findAllMethods(findSuper)
 }
 
 /**
@@ -375,6 +439,14 @@ fun Array<String>.loadAndFindAllMethods(
     return this.loadAllClasses(classLoader).findAllMethods(findSuper, condition)
 }
 
+fun Iterable<String>.loadAndFindAllMethods(
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    findSuper: Boolean = false,
+    condition: MethodCondition
+): List<Method> {
+    return this.loadAllClasses(classLoader).findAllMethods(findSuper, condition)
+}
+
 typealias ConstructorCondition = Constructor<*>.() -> Boolean
 
 /**
@@ -388,12 +460,21 @@ fun Array<Constructor<*>>.findConstructor(condition: ConstructorCondition): Cons
         ?: throw NoSuchMethodException()
 }
 
+fun Iterable<Constructor<*>>.findConstructor(condition: ConstructorCondition): Constructor<*> {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchMethodException()
+}
+
 /**
  *  扩展函数 通过条件查找构造方法
  *  @param condition 构造方法的条件
  *  @return 符合条件的构造方法 未找到时返回null
  */
 fun Array<Constructor<*>>.findConstructorOrNull(condition: ConstructorCondition): Constructor<*>? {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+}
+
+fun Iterable<Constructor<*>>.findConstructorOrNull(condition: ConstructorCondition): Constructor<*>? {
     return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
@@ -456,12 +537,44 @@ fun findConstructorOrNull(
 }
 
 /**
+ * 查找所有符合条件的构造方法
+ * @param clzName 类名
+ * @param classLoader 类加载器
+ * @param condition 条件
+ * @return 所有符合条件的构造方法
+ */
+fun findAllConstructors(
+    clzName: String,
+    classLoader: ClassLoader = InitFields.ezXClassLoader,
+    condition: ConstructorCondition
+): List<Constructor<*>> {
+    return loadClass(clzName, classLoader).declaredConstructors.filter(condition)
+}
+
+/**
+ * 查找所有符合条件的构造方法
+ * @param clz 类
+ * @param condition 条件
+ * @return 所有符合条件的构造方法
+ */
+fun findAllConstructors(
+    clz: Class<*>,
+    condition: ConstructorCondition
+): List<Constructor<*>> {
+    return clz.declaredConstructors.filter(condition)
+}
+
+/**
  * 扩展函数 通过遍历方法数组 返回符合条件的方法数组
  * @param condition 条件
  * @return 符合条件的方法数组
  */
 fun Array<Method>.findAllMethods(condition: MethodCondition): Array<Method> {
     return this.filter { it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
+}
+
+fun Iterable<Method>.findAllMethods(condition: MethodCondition): List<Method> {
+    return this.filter { it.condition() }.onEach { it.isAccessible = true }.toList()
 }
 
 /**
@@ -475,7 +588,7 @@ fun findAllMethods(
     clz: Class<*>,
     findSuper: Boolean = false,
     condition: MethodCondition
-): Array<Method> {
+): List<Method> {
     var c = clz
     val arr = ArrayList<Method>()
     arr.addAll(c.declaredMethods.findAllMethods(condition))
@@ -484,7 +597,7 @@ fun findAllMethods(
             arr.addAll(c.declaredMethods.findAllMethods(condition))
         }
     }
-    return arr.toTypedArray()
+    return arr
 }
 
 /**
@@ -500,13 +613,23 @@ fun findAllMethods(
     classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: MethodCondition
-): Array<Method> {
+): List<Method> {
     return findAllMethods(loadClass(clzName, classLoader), findSuper, condition)
 }
 
 //endregion
 
 //region FieldReflect
+
+/**
+ * 扩展属性 获取类/实例化对象的所有属性
+ * @return 属性数组
+ */
+val Any.fields: Array<Field>
+    get() {
+        val clz: Class<*> = if (this is Class<*>) this else this::class.java
+        return clz.declaredFields
+    }
 
 /**
  * 通过条件查找类中的属性
@@ -594,12 +717,21 @@ fun Array<Field>.findField(condition: FieldCondition): Field {
         ?: throw NoSuchFieldException()
 }
 
+fun Iterable<Field>.findField(condition: FieldCondition): Field {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+        ?: throw NoSuchFieldException()
+}
+
 /**
  * 扩展函数 通过条件查找属性
  * @param condition 条件
  * @return 符合条件的属性 未找到时返回null
  */
 fun Array<Field>.findFieldOrNull(condition: FieldCondition): Field? {
+    return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
+}
+
+fun Iterable<Field>.findFieldOrNull(condition: FieldCondition): Field? {
     return this.firstOrNull { it.condition() }?.also { it.isAccessible = true }
 }
 
@@ -610,6 +742,10 @@ fun Array<Field>.findFieldOrNull(condition: FieldCondition): Field? {
  */
 fun Array<Field>.findAllFields(condition: FieldCondition): Array<Field> {
     return this.filter { it.condition() }.onEach { it.isAccessible = true }.toTypedArray()
+}
+
+fun Iterable<Field>.findAllFields(condition: FieldCondition): List<Field> {
+    return this.filter { it.condition() }.map { it.isAccessible = true;it }
 }
 
 /**
@@ -623,7 +759,7 @@ fun findAllFields(
     clz: Class<*>,
     findSuper: Boolean = false,
     condition: FieldCondition
-): Array<Field> {
+): List<Field> {
     var c = clz
     val arr = ArrayList<Field>()
     arr.addAll(c.declaredFields.findAllFields(condition))
@@ -632,7 +768,7 @@ fun findAllFields(
             arr.addAll(c.declaredFields.findAllFields(condition))
         }
     }
-    return arr.toTypedArray()
+    return arr
 }
 
 /**
@@ -648,7 +784,7 @@ fun findAllFields(
     classLoader: ClassLoader = InitFields.ezXClassLoader,
     findSuper: Boolean = false,
     condition: FieldCondition
-): Array<Field> {
+): List<Field> {
     return findAllFields(loadClass(clzName, classLoader), findSuper, condition)
 }
 
@@ -671,9 +807,8 @@ fun Any.getFieldByClassOrObject(
     do {
         c.declaredFields
             .filter { isStatic == it.isStatic }
-            .firstOrNull {
-                (fieldType == null || it.type == fieldType) && (it.name == fieldName)
-            }?.let { it.isAccessible = true;return it }
+            .firstOrNull { (fieldType == null || it.type == fieldType) && (it.name == fieldName) }
+            ?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
     throw NoSuchFieldException(fieldName)
 }
@@ -690,9 +825,8 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
     do {
         c.declaredFields
             .filter { isStatic == it.isStatic }
-            .firstOrNull {
-                it.type == type
-            }?.let { it.isAccessible = true;return it }
+            .firstOrNull { it.type == type }
+            ?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
     throw NoSuchFieldException()
 }
@@ -827,9 +961,7 @@ fun Any.findObject(condition: ObjectCondition): Any? {
     for (f in this::class.java.declaredFields) {
         f.isAccessible = true
         f.get(this).let {
-            if (it.condition()) {
-                return it
-            }
+            if (it.condition()) return it
         }
     }
     return null
@@ -853,9 +985,7 @@ fun Any.findObject(
         if (f.fieldCond()) {
             f.isAccessible = true
             f.get(this).let {
-                if (it.objCond()) {
-                    return it
-                }
+                if (it.objCond()) return it
             }
         }
     }
@@ -874,9 +1004,7 @@ fun Class<*>.findStaticObject(condition: ObjectCondition): Any? {
         if (!f.isStatic) continue
         f.isAccessible = true
         f.get(null).let {
-            if (it.condition()) {
-                return it
-            }
+            if (it.condition()) return it
         }
     }
     return null
@@ -899,9 +1027,7 @@ fun Any.findStaticObject(
         if (f.fieldCond()) {
             f.isAccessible = true
             f.get(this).let {
-                if (it.objCond()) {
-                    return it
-                }
+                if (it.objCond()) return it
             }
         }
     }
@@ -1575,11 +1701,11 @@ fun Class<*>.newInstance(
             else
                 this.getDeclaredConstructor()
         constructor.isAccessible = true
-        if (args.args.isEmpty()) {
+
+        if (args.args.isEmpty())
             constructor.newInstance()
-        } else {
+        else
             constructor.newInstance(*args.args)
-        }
     } catch (e: Exception) {
         Log.e(e)
         null
