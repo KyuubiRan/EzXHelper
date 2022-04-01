@@ -183,6 +183,14 @@ object Log {
         }
     }
 
+    fun toast(stringRes: Int, duration: Int = Toast.LENGTH_SHORT) {
+        toast(appContext.getString(stringRes), duration)
+    }
+
+    fun toast(stringRes: Int, vararg args: Any?, duration: Int = Toast.LENGTH_SHORT) {
+        toast(appContext.getString(stringRes, *args), duration)
+    }
+
     /**
      * 扩展函数 配合runCatching使用
      * 如果抛出异常 则调用 Log.i 记录

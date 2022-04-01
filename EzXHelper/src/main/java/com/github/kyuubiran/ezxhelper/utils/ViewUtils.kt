@@ -73,8 +73,10 @@ fun ViewGroup.isNotEmpty(): Boolean {
  */
 fun ViewGroup.findViewByCondition(condition: (view: View) -> Boolean): View? {
     this.forEach {
-        if (condition(it)) {
-            return it
+        if (condition(it)) return it
+        else if (it is ViewGroup) {
+            val v = it.findViewByCondition(condition)
+            if (v != null) return v
         }
     }
     return null
