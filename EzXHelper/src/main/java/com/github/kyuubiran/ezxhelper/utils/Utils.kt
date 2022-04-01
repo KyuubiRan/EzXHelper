@@ -10,13 +10,11 @@ import kotlin.system.exitProcess
  * @param block 执行的代码块
  * @return 成功为true，失败为false
  */
-inline fun tryOrFalse(block: () -> Unit): Boolean {
-    return try {
-        block()
-        true
-    } catch (thr: Throwable) {
-        false
-    }
+inline fun tryOrFalse(block: () -> Unit): Boolean = try {
+    block()
+    true
+} catch (thr: Throwable) {
+    false
 }
 
 /**
@@ -24,27 +22,24 @@ inline fun tryOrFalse(block: () -> Unit): Boolean {
  * @param block 执行的代码块
  * @return 成功为true，失败为false
  */
-inline fun tryOrLogFalse(block: () -> Unit): Boolean {
-    return try {
-        block()
-        true
-    } catch (thr: Throwable) {
-        Log.e(thr)
-        false
-    }
+inline fun tryOrLogFalse(block: () -> Unit): Boolean = try {
+    block()
+    true
+} catch (thr: Throwable) {
+    Log.e(thr)
+    false
 }
+
 
 /**
  * 尝试执行一块代码，如果成功返回代码块执行的结果，失败则返回null
  * @param block 执行的代码块
  * @return 成功返回代码块执行的返回值，失败返回null
  */
-inline fun <T> tryOrNull(block: () -> T?): T? {
-    return try {
-        block()
-    } catch (thr: Throwable) {
-        null
-    }
+inline fun <T> tryOrNull(block: () -> T?): T? = try {
+    block()
+} catch (thr: Throwable) {
+    null
 }
 
 /**
@@ -52,14 +47,13 @@ inline fun <T> tryOrNull(block: () -> T?): T? {
  * @param block 执行的代码块
  * @return 成功返回代码块执行的返回值，失败返回null
  */
-inline fun <T> tryOrLogNull(block: () -> T?): T? {
-    return try {
-        block()
-    } catch (thr: Throwable) {
-        Log.e(thr)
-        null
-    }
+inline fun <T> tryOrLogNull(block: () -> T?): T? = try {
+    block()
+} catch (thr: Throwable) {
+    Log.e(thr)
+    null
 }
+
 
 /**
  * 扩展函数 移除可变列表中符合条件的元素
@@ -105,7 +99,7 @@ inline fun <E> MutableList<E>.applyKeepIf(predicate: (E) -> Boolean): MutableLis
  * 扩展函数 往列表中添加非空元素
  * @param element 元素
  */
-fun <T> MutableList<T>.addIfNonNull(element: T?) {
+fun <T> MutableCollection<T>.addIfNonNull(element: T?) {
     if (element != null) {
         this.add(element)
     }
@@ -115,7 +109,7 @@ fun <T> MutableList<T>.addIfNonNull(element: T?) {
  * 扩展函数 尝试往列表中添加元素
  * @param action 行为
  */
-inline fun <T> MutableList<T>.tryAdd(action: () -> T?) {
+inline fun <T> MutableCollection<T>.tryAdd(action: () -> T?) {
     runCatching { this.addIfNonNull(action()) }
 }
 
@@ -235,4 +229,7 @@ fun restartHostApp(activity: Activity) {
     exitProcess(0)
 }
 
+/**
+ * 将数组转化为流
+ */
 fun <T> Array<T>.stream() = this.toList().stream()

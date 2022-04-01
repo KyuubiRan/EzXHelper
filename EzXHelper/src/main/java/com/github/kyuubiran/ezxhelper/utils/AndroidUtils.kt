@@ -40,17 +40,6 @@ fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
 
 /**
  * 扩展函数 显示一个Toast
- * @param stringRes String ID
- * @param length Toast显示的时长
- */
-fun Context.showToast(stringRes: Int, length: Int = Toast.LENGTH_SHORT) {
-    runOnMainThread {
-        Toast.makeText(this, this.getString(stringRes), length).show()
-    }
-}
-
-/**
- * 扩展函数 显示一个Toast
  * @param msg Toast显示的消息
  * @param args 格式化的参数
  * @param length Toast显示的时长
@@ -58,18 +47,6 @@ fun Context.showToast(stringRes: Int, length: Int = Toast.LENGTH_SHORT) {
 fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) {
     runOnMainThread {
         Toast.makeText(this, msg.format(args), length).show()
-    }
-}
-
-/**
- * 扩展函数 显示一个Toast
- * @param stringRes String ID
- * @param args 格式化的参数
- * @param length Toast显示的时长
- */
-fun Context.showToast(stringRes: Int, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) {
-    runOnMainThread {
-        Toast.makeText(this, this.getString(stringRes, *args), length).show()
     }
 }
 
