@@ -280,24 +280,12 @@ fun Iterable<Method>.findMethodOrNull(condition: MethodCondition): Method? {
 fun Array<Class<*>>.findMethods(
     findSuper: Boolean = false,
     condition: MethodCondition
-): Array<Method> {
-    val arr = ArrayList<Method>()
-    this.forEach { clz ->
-        arr.tryAdd { findMethod(clz, findSuper, condition) }
-    }
-    return arr.toTypedArray()
-}
+): Array<Method> = mapNotNull { it.findMethodOrNull(findSuper, condition) }.toTypedArray()
 
 fun Iterable<Class<*>>.findMethods(
     findSuper: Boolean = false,
     condition: MethodCondition
-): List<Method> {
-    val arr = ArrayList<Method>()
-    this.forEach { clz ->
-        arr.tryAdd { findMethod(clz, findSuper, condition) }
-    }
-    return arr
-}
+): List<Method> = mapNotNull { it.findMethodOrNull(findSuper, condition) }
 
 /**
  * 扩展函数 加载数组中的类并且通过条件查找方法 每个类只搜索一个方法

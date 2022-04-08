@@ -16,15 +16,19 @@ val runtimeProcess: Runtime by lazy {
 }
 
 /**
- * 将函数放到主线程执行 如UI更新、显示Toast等
- * @param r 需要执行的内容
+ * 扩展函数 将函数放到主线程执行 如UI更新、显示Toast等
  */
-fun runOnMainThread(r: Runnable) {
+fun Runnable.runOnMainThread() {
     if (Looper.myLooper() == Looper.getMainLooper()) {
-        r.run()
+        this.run()
     } else {
-        mainHandler.post(r)
+        mainHandler.post(this)
     }
+}
+
+@JvmName("runOnUIThread")
+fun runOnMainThread(runnable: Runnable) {
+    runnable.runOnMainThread()
 }
 
 /**

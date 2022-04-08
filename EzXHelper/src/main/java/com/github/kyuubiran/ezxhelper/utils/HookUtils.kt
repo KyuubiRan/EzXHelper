@@ -1,6 +1,7 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XC_MethodHook.Unhook
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XCallback
@@ -359,6 +360,60 @@ fun hookAllConstructorReplace(
 ): Array<XC_MethodHook.Unhook> {
     return loadClass(clzName).declaredConstructors.hookReplace(priority, hooker)
 }
+
+/**
+ * 扩展函数 hook方法 使其直接返回一个值
+ * @param priority 优先级 默认50
+ * @param obj 要返回的值
+ * @return unhook [XC_MethodHook.Unhook]
+ */
+fun Method.hookReturnConstant(priority: Int = XCallback.PRIORITY_DEFAULT, obj: Any?): Unhook =
+    XposedBridge.hookMethod(this, XC_MethodReplacement.returnConstant(priority, obj))
+
+/**
+ * 扩展函数 hook方法数组中的所有方法 使其直接返回一个值
+ * @param priority 优先级 默认50
+ * @param obj 要返回的值
+ * @return unhooks Array<[XC_MethodHook.Unhook]>
+ */
+fun Array<Method>.hookReturnConstant(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    obj: Any?
+): Array<Unhook> =
+    this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
+        .toTypedArray()
+
+fun List<Method>.hookReturnConstant(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    obj: Any?
+): List<Unhook> =
+    this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
+
+/**
+ * 扩展函数 hook构造 使其直接返回一个值
+ * @param priority 优先级 默认50
+ * @param obj 要返回的值
+ * @return unhook [XC_MethodHook.Unhook]
+ */
+fun Constructor<*>.hookReturnConstant(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    obj: Any?
+): Unhook =
+    XposedBridge.hookMethod(this, XC_MethodReplacement.returnConstant(priority, obj))
+
+fun Array<Constructor<*>>.hookReturnConstant(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    obj: Any?
+): Array<Unhook> =
+    this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
+        .toTypedArray()
+
+@JvmName("hookConstructorReturnConstant")
+fun List<Constructor<*>>.hookReturnConstant(
+    priority: Int = XCallback.PRIORITY_DEFAULT,
+    obj: Any?
+): List<Unhook> =
+    this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
 
 /**
  * Hook工厂类
