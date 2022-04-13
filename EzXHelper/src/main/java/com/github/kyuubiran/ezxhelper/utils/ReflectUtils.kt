@@ -21,6 +21,29 @@ fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoade
 }
 
 /**
+ * 尝试加载列表中的一个类
+ * @param clzName 类名
+ * @param clzLoader 类加载器
+ * @return 第一个成功被加载的类
+ */
+fun loadClassAny(
+    vararg clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Class<*> = clzName.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) }
+    ?: throw ClassNotFoundException()
+
+/**
+ * 尝试加载列表中的一个类 失败则返回null
+ * @param clzName 类名
+ * @param clzLoader 类加载器
+ * @return 第一个成功被加载的类或者null
+ */
+fun loadClassAnyOrNull(
+    vararg clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Class<*>? = clzName.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) }
+
+/**
  * 尝试加载一个类 如果失败则返回null
  * @param clzName 类名
  * @param clzLoader 类加载器
@@ -59,6 +82,30 @@ fun Array<String>.loadClassesIfExists(clzLoader: ClassLoader = InitFields.ezXCla
 fun Iterable<String>.loadClassesIfExists(clzLoader: ClassLoader = InitFields.ezXClassLoader): List<Class<*>> {
     return this.mapNotNull { loadClassOrNull(it, clzLoader) }
 }
+
+/**
+ * 尝试加载数组中的一个类
+ * @param clzLoader 类加载器
+ * @return 第一个成功被加载的类
+ */
+@JvmName("loadClassAnyFromArray")
+fun Array<String>.loadClassAny(clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*> =
+    this.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) } ?: throw ClassNotFoundException()
+
+fun Iterable<String>.loadClassAny(clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*> =
+    this.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) } ?: throw ClassNotFoundException()
+
+/**
+ * 尝试加载数组中的一个类 失败则返回null
+ * @param clzLoader 类加载器
+ * @return 第一个成功被加载的类或者null
+ */
+@JvmName("loadClassAnyOrFromList")
+fun Array<String>.loadClassAnyOrNull(clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*>? =
+    this.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) }
+
+fun Iterable<String>.loadClassAnyOrNull(clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*>? =
+    this.firstNotNullOfOrNull { loadClassOrNull(it, clzLoader) }
 
 //endregion
 
