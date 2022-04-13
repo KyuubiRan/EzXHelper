@@ -39,6 +39,7 @@ jobs:
 
       - name: Build KDoc
         run: |
+          yes | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --licenses &> /dev/null
           cd ./EzXHelper
           ./gradlew :EzXHelper:dokkaHtml
 
