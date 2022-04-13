@@ -370,6 +370,8 @@ fun hookAllConstructorReplace(
 fun Method.hookReturnConstant(priority: Int = XCallback.PRIORITY_DEFAULT, obj: Any?): Unhook =
     XposedBridge.hookMethod(this, XC_MethodReplacement.returnConstant(priority, obj))
 
+fun Method.hookReturnConstant(obj: Any?) = this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
+
 /**
  * 扩展函数 hook方法数组中的所有方法 使其直接返回一个值
  * @param priority 优先级 默认50
@@ -383,11 +385,17 @@ fun Array<Method>.hookReturnConstant(
     this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
         .toTypedArray()
 
+fun Array<Method>.hookReturnConstant(obj: Any?) =
+    this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
+
 fun List<Method>.hookReturnConstant(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     obj: Any?
 ): List<Unhook> =
     this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
+
+fun List<Method>.hookReturnConstant(obj: Any?) =
+    this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
 
 /**
  * 扩展函数 hook构造 使其直接返回一个值
@@ -401,6 +409,9 @@ fun Constructor<*>.hookReturnConstant(
 ): Unhook =
     XposedBridge.hookMethod(this, XC_MethodReplacement.returnConstant(priority, obj))
 
+fun Constructor<*>.hookReturnConstant(obj: Any?) =
+    this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
+
 fun Array<Constructor<*>>.hookReturnConstant(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     obj: Any?
@@ -408,12 +419,19 @@ fun Array<Constructor<*>>.hookReturnConstant(
     this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
         .toTypedArray()
 
+fun Array<Constructor<*>>.hookReturnConstant(obj: Any?) =
+    this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
+
 @JvmName("hookConstructorReturnConstant")
 fun List<Constructor<*>>.hookReturnConstant(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     obj: Any?
 ): List<Unhook> =
     this.map { XposedBridge.hookMethod(it, XC_MethodReplacement.returnConstant(priority, obj)) }
+
+@JvmName("hookConstructorReturnConstant")
+fun List<Constructor<*>>.hookReturnConstant(obj: Any?) =
+    this.hookReturnConstant(XCallback.PRIORITY_DEFAULT, obj)
 
 /**
  * Hook工厂类
