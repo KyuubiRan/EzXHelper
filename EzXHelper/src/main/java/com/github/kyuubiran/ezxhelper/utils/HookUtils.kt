@@ -1,5 +1,6 @@
 package com.github.kyuubiran.ezxhelper.utils
 
+import com.github.kyuubiran.ezxhelper.init.InitFields
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodHook.Unhook
 import de.robv.android.xposed.XC_MethodReplacement
@@ -24,6 +25,20 @@ fun Constructor<*>.hookMethod(hookCallback: XC_MethodHook): XC_MethodHook.Unhook
     return XposedBridge.hookMethod(this, hookCallback)
 }
 
+inline fun hooker(crossinline hookCallback: Hooker): Hooker = object : Hooker {
+    override fun invoke(param: XC_MethodHook.MethodHookParam) {
+        hookCallback(param)
+    }
+}
+
+inline fun replaceHooker(crossinline hookCallback: ReplaceHooker):
+        ReplaceHooker = object : ReplaceHooker {
+    override fun invoke(param: XC_MethodHook.MethodHookParam): Any? {
+        return hookCallback(param)
+    }
+}
+
+
 /**
  * 扩展函数 hook方法执行前
  * @param priority 优先级 默认50
@@ -45,6 +60,11 @@ fun Method.hookBefore(
     })
 }
 
+fun Method.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 hook多个方法执行前
  * @param priority 优先级 默认50
@@ -58,12 +78,22 @@ fun Array<Method>.hookBefore(
     return this.map { it.hookBefore(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Method>.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 fun Iterable<Method>.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): List<XC_MethodHook.Unhook> {
     return this.map { it.hookBefore(priority, hooker) }
 }
+
+fun Iterable<Method>.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 hook构造执行前
@@ -86,6 +116,11 @@ fun Constructor<*>.hookBefore(
     })
 }
 
+fun Constructor<*>.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 hook多个构造执行前
  * @param priority 优先级 默认50
@@ -99,6 +134,11 @@ fun Array<Constructor<*>>.hookBefore(
     return this.map { it.hookBefore(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Constructor<*>>.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 @JvmName("hookConstructorBefore")
 fun Iterable<Constructor<*>>.hookBefore(
     priority: Int = XCallback.PRIORITY_DEFAULT,
@@ -107,26 +147,37 @@ fun Iterable<Constructor<*>>.hookBefore(
     return this.map { it.hookBefore(priority, hooker) }
 }
 
+@JvmName("hookConstructorBefore")
+fun Iterable<Constructor<*>>.hookBefore(hooker: Hooker) = this.hookBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 hook方法执行后
  * @param priority 优先级 默认50
- * @param hook [Hooker] hook具体实现
+ * @param hooker [Hooker] hook具体实现
  * @return unhook [XC_MethodHook.Unhook]
  */
 fun Method.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
-    hook: Hooker
+    hooker: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
         override fun afterHookedMethod(param: MethodHookParam) {
             try {
-                hook(param)
+                hooker(param)
             } catch (thr: Throwable) {
                 Log.ex(thr)
             }
         }
     })
 }
+
+fun Method.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 hook多个方法执行后
@@ -141,12 +192,22 @@ fun Array<Method>.hookAfter(
     return this.map { it.hookAfter(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Method>.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 fun Iterable<Method>.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): List<XC_MethodHook.Unhook> {
     return this.map { it.hookAfter(priority, hooker) }
 }
+
+fun Iterable<Method>.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 hook构造执行后
@@ -169,6 +230,11 @@ fun Constructor<*>.hookAfter(
     })
 }
 
+fun Constructor<*>.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 hook多个构造执行后
  * @param priority 优先级 默认50
@@ -182,6 +248,11 @@ fun Array<Constructor<*>>.hookAfter(
     return this.map { it.hookAfter(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Constructor<*>>.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 @JvmName("hookConstructorAfter")
 fun Iterable<Constructor<*>>.hookAfter(
     priority: Int = XCallback.PRIORITY_DEFAULT,
@@ -189,6 +260,12 @@ fun Iterable<Constructor<*>>.hookAfter(
 ): List<XC_MethodHook.Unhook> {
     return this.map { it.hookAfter(priority, hooker) }
 }
+
+@JvmName("hookConstructorAfter")
+fun Iterable<Constructor<*>>.hookAfter(hooker: Hooker) = this.hookAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 替换方法
@@ -211,6 +288,11 @@ fun Method.hookReplace(
     })
 }
 
+fun Method.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 替换多个方法
  *
@@ -226,12 +308,22 @@ fun Array<Method>.hookReplace(
     return this.map { it.hookReplace(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Method>.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 fun Iterable<Method>.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: ReplaceHooker
 ): List<XC_MethodHook.Unhook> {
     return this.map { it.hookReplace(priority, hooker) }
 }
+
+fun Iterable<Method>.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 替换构造
@@ -254,6 +346,11 @@ fun Constructor<*>.hookReplace(
     })
 }
 
+fun Constructor<*>.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 替换多个构造
  *
@@ -269,6 +366,11 @@ fun Array<Constructor<*>>.hookReplace(
     return this.map { it.hookReplace(priority, hooker) }.toTypedArray()
 }
 
+fun Array<Constructor<*>>.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 @JvmName("hookConstructorReplace")
 fun Iterable<Constructor<*>>.hookReplace(
     priority: Int = XCallback.PRIORITY_DEFAULT,
@@ -276,6 +378,13 @@ fun Iterable<Constructor<*>>.hookReplace(
 ): List<XC_MethodHook.Unhook> {
     return this.map { it.hookReplace(priority, hooker) }
 }
+
+@JvmName("hookConstructorReplace")
+fun Iterable<Constructor<*>>.hookReplace(hooker: ReplaceHooker) = this.hookReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 
 /**
  * 扩展函数 hook类的所有构造前
@@ -290,6 +399,11 @@ fun Class<*>.hookAllConstructorBefore(
     return this.declaredConstructors.hookBefore(priority, hooker)
 }
 
+fun Class<*>.hookAllConstructorBefore(hooker: Hooker) = this.hookAllConstructorBefore(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * 扩展函数 hook类的所有构造后
  * @param priority 优先级 默认50
@@ -302,6 +416,11 @@ fun Class<*>.hookAllConstructorAfter(
 ): Array<XC_MethodHook.Unhook> {
     return this.declaredConstructors.hookAfter(priority, hooker)
 }
+
+fun Class<*>.hookAllConstructorAfter(hooker: Hooker) = this.hookAllConstructorAfter(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
 
 /**
  * 扩展函数 替换类的所有构造
@@ -316,6 +435,11 @@ fun Class<*>.hookAllConstructorReplace(
     return this.declaredConstructors.hookReplace(priority, hooker)
 }
 
+fun Class<*>.hookAllConstructorReplace(hooker: ReplaceHooker) = this.hookAllConstructorReplace(
+    XCallback.PRIORITY_DEFAULT,
+    hooker
+)
+
 /**
  * hook类的所有构造前
  * @param clzName 类名
@@ -325,10 +449,11 @@ fun Class<*>.hookAllConstructorReplace(
  */
 fun hookAllConstructorBefore(
     clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader,
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return loadClass(clzName).declaredConstructors.hookBefore(priority, hooker)
+    return loadClass(clzName, clzLoader).declaredConstructors.hookBefore(priority, hooker)
 }
 
 /**
@@ -340,10 +465,11 @@ fun hookAllConstructorBefore(
  */
 fun hookAllConstructorAfter(
     clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader,
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return loadClass(clzName).declaredConstructors.hookAfter(priority, hooker)
+    return loadClass(clzName, clzLoader).declaredConstructors.hookAfter(priority, hooker)
 }
 
 /**
@@ -355,10 +481,11 @@ fun hookAllConstructorAfter(
  */
 fun hookAllConstructorReplace(
     clzName: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader,
     priority: Int = XCallback.PRIORITY_DEFAULT,
     hooker: Hooker
 ): Array<XC_MethodHook.Unhook> {
-    return loadClass(clzName).declaredConstructors.hookReplace(priority, hooker)
+    return loadClass(clzName, clzLoader).declaredConstructors.hookReplace(priority, hooker)
 }
 
 /**
