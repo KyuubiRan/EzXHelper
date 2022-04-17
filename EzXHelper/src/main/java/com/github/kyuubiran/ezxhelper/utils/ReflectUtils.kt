@@ -1131,10 +1131,12 @@ fun Any.getObject(objName: String, type: Class<*>? = null): Any {
  * @throws IllegalArgumentException 对类调用此函数
  * @throws IllegalArgumentException 目标对象名为空
  */
-fun <T> Any.getObjectAs(objName: String, type: Class<*>? = null): T {
-    @Suppress("UNCHECKED_CAST")
-    return this.getObject(objName, type) as T
-}
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.getObjectAs(objName: String, type: Class<*>? = null): T =
+    this.getObject(objName, type) as T
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.getObjectAs(field: Field): T = field.get(this) as T
 
 /**
  * 扩展函数 获取实例化对象中的对象
@@ -1270,9 +1272,10 @@ fun Class<*>.getStaticObjectOrNull(
 fun <T> Class<*>.getStaticObjectOrNullAs(
     objName: String,
     type: Class<*>? = null
-): T? {
-    return this.getStaticObjectOrNull(objName, type) as T?
-}
+): T? = this.getStaticObjectOrNull(objName, type) as T?
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<*>.getStaticObjectOrNullAs(field: Field): T? = field.get(null) as T?
 
 /**
  * 扩展函数 获取类中的静态对象
@@ -1303,9 +1306,10 @@ fun Class<*>.getStaticObject(
 fun <T> Class<*>.getStaticObjectAs(
     objName: String,
     type: Class<*>? = null
-): T {
-    return this.getStaticObject(objName, type) as T
-}
+): T = this.getStaticObject(objName, type) as T
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Class<*>.getStaticObjectAs(field: Field): T = field.get(null) as T
 
 /**
  * 获取Field中的对象
@@ -1501,6 +1505,54 @@ fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? 
     } catch (e: Exception) {
         Log.e(e)
     }
+}
+
+/**
+ * 扩展函数 查找符合条件的属性并获取对象
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性对象
+ * @throws NoSuchFieldException 未找到符合的属性
+ */
+fun Any.findFieldObject(findSuper: Boolean = false, condition: FieldCondition): Any {
+    val f = this.javaClass.findField(findSuper, condition)
+    return f.get(this)!!
+}
+
+/**
+ * 扩展函数 查找符合条件的属性并获取对象 并转化为T类型
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性对象
+ * @throws NoSuchFieldException 未找到符合的属性
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.findFieldObjectAs(findSuper: Boolean = false, condition: FieldCondition): T {
+    val f = this.javaClass.findField(findSuper, condition)
+    return f.get(this) as T
+}
+
+/**
+ * 扩展函数 查找符合条件的属性并获取对象
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性对象 未找到时返回null
+ */
+fun Any.findFieldObjectOrNull(findSuper: Boolean = false, condition: FieldCondition): Any? {
+    val f = this.javaClass.findFieldOrNull(findSuper, condition)
+    return f?.get(this)
+}
+
+/**
+ * 扩展函数 查找符合条件的属性并获取对象 并转化为T?类型
+ * @param findSuper 是否查找父类
+ * @param condition 条件
+ * @return 符合条件的属性对象 未找到时返回null
+ */
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.findFieldObjectOrNullAs(findSuper: Boolean = false, condition: FieldCondition): T? {
+    val f = this.javaClass.findFieldOrNull(findSuper, condition)
+    return f?.get(this) as T?
 }
 
 //endregion
