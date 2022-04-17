@@ -33,10 +33,16 @@ fun View.setGone() {
 }
 
 /**
+ * 扩展属性 获取长度范围 用于for循环
+ */
+inline val ViewGroup.indices: IntRange
+    get() = 0 until childCount
+
+/**
  * 扩展函数 遍历ViewGroup
  */
 inline fun ViewGroup.forEach(action: (view: View) -> Unit) {
-    for (index in 0 until childCount) {
+    for (index in this.indices) {
         action(getChildAt(index))
     }
 }
@@ -45,7 +51,7 @@ inline fun ViewGroup.forEach(action: (view: View) -> Unit) {
  * 扩展函数 带index遍历ViewGroup
  */
 inline fun ViewGroup.forEachIndexed(action: (index: Int, view: View) -> Unit) {
-    for (index in 0 until childCount) {
+    for (index in this.indices) {
         action(index, getChildAt(index))
     }
 }
@@ -73,11 +79,30 @@ fun ViewGroup.isNotEmpty(): Boolean {
  */
 fun ViewGroup.findViewByCondition(condition: (view: View) -> Boolean): View? {
     this.forEach {
-        if (condition(it)) {
-            return it
+        if (condition(it)) return it
+        else if (it is ViewGroup) {
+            val v = it.findViewByCondition(condition)
+            if (v != null) return v
         }
     }
     return null
+}
+
+/**
+ * 扩展函数 遍历ViewGroup 根据条件查找所有符合条件的View
+ * @param condition 条件
+ * @return 符合条件的ViewList
+ */
+fun ViewGroup.findAllViewsByCondition(condition: (view: View) -> Boolean): List<View> {
+    val list = mutableListOf<View>()
+    this.forEach {
+        if (condition(it)) list.add(it)
+        else if (it is ViewGroup) {
+            val v = it.findAllViewsByCondition(condition)
+            if (v.isNotEmpty()) list.addAll(v)
+        }
+    }
+    return list
 }
 
 /**

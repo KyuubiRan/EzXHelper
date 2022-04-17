@@ -16,15 +16,19 @@ val runtimeProcess: Runtime by lazy {
 }
 
 /**
- * 将函数放到主线程执行 如UI更新、显示Toast等
- * @param r 需要执行的内容
+ * 扩展函数 将函数放到主线程执行 如UI更新、显示Toast等
  */
-fun runOnMainThread(r: Runnable) {
+fun Runnable.runOnMainThread() {
     if (Looper.myLooper() == Looper.getMainLooper()) {
-        r.run()
+        this.run()
     } else {
-        mainHandler.post(r)
+        mainHandler.post(this)
     }
+}
+
+@JvmName("runOnUIThread")
+fun runOnMainThread(runnable: Runnable) {
+    runnable.runOnMainThread()
 }
 
 /**
@@ -32,9 +36,21 @@ fun runOnMainThread(r: Runnable) {
  * @param msg Toast显示的消息
  * @param length Toast显示的时长
  */
-fun Context.showToast(msg: String?, length: Int = Toast.LENGTH_SHORT) {
+fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
     runOnMainThread {
         Toast.makeText(this, msg, length).show()
+    }
+}
+
+/**
+ * 扩展函数 显示一个Toast
+ * @param msg Toast显示的消息
+ * @param args 格式化的参数
+ * @param length Toast显示的时长
+ */
+fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) {
+    runOnMainThread {
+        Toast.makeText(this, msg.format(args), length).show()
     }
 }
 

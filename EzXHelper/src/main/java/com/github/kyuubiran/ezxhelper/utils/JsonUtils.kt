@@ -5,11 +5,6 @@ import org.json.JSONException
 import org.json.JSONObject
 
 /**
- * 返回一个空的JSONArray
- */
-fun emptyJSONArray(): JSONArray = JSONArray()
-
-/**
  * 扩展属性 判断JSONArray是否为空
  */
 val JSONArray.isEmpty: Boolean
@@ -89,90 +84,128 @@ inline fun <T> JSONArray.mapToList(transform: (Any) -> T): List<T> {
 
 /**
  * 扩展函数 获取JSONObject中的 Long
- * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
  * @return 获取成功时返回获取到的值 否则返回缺省值
  */
-fun JSONObject.getLongOrDefault(key: String, defValue: Long = 0L): Long {
-    return try {
-        this.getLong(key)
-    } catch (e: JSONException) {
-        defValue
-    }
+fun JSONObject.getLongOrDefault(key: String, defValue: Long = 0L): Long = try {
+    this.getLong(key)
+} catch (e: JSONException) {
+    defValue
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 Long
+ * @param key 键值
+ * @param defValue 缺省值
+ * @return 获取成功时返回获取到的值 否则返回null
+ */
+fun JSONObject.getLongOrNull(key: String): Long? = try {
+    this.getLong(key)
+} catch (e: JSONException) {
+    null
 }
 
 /**
  * 扩展函数 获取JSONObject中的 Int
- * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
  * @return 获取成功时返回获取到的值 否则返回缺省值
  */
-fun JSONObject.getIntOrDefault(key: String, defValue: Int = 0): Int {
-    return try {
-        this.getInt(key)
-    } catch (e: JSONException) {
-        defValue
-    }
+fun JSONObject.getIntOrDefault(key: String, defValue: Int = 0): Int = try {
+    this.getInt(key)
+} catch (e: JSONException) {
+    defValue
 }
 
 /**
  * 扩展函数 获取JSONObject中的 Int
- * 获取失败时返回缺省值
+ * @param key 键值
+ * @return 获取成功时返回获取到的值 否则返回null
+ */
+fun JSONObject.getIntOrNull(key: String): Int? = try {
+    this.getInt(key)
+} catch (e: JSONException) {
+    null
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 Boolean
  * @param key 键值
  * @param defValue 缺省值
  * @return 获取成功时返回获取到的值 否则返回缺省值
  */
-fun JSONObject.getBooleanOrDefault(key: String, defValue: Boolean = false): Boolean {
-    return try {
-        this.getBoolean(key)
-    } catch (e: JSONException) {
-        defValue
-    }
+fun JSONObject.getBooleanOrDefault(key: String, defValue: Boolean = false): Boolean = try {
+    this.getBoolean(key)
+} catch (e: JSONException) {
+    defValue
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 Boolean
+ * @param key 键值
+ * @return 获取成功时返回获取到的值 否则返回null
+ */
+fun JSONObject.getBooleanOrNull(key: String): Boolean? = try {
+    this.getBoolean(key)
+} catch (e: JSONException) {
+    null
 }
 
 /**
  * 扩展函数 获取JSONObject中的 String
- * 获取失败时返回缺省值
  * @param key 键值
  * @param defValue 缺省值
  * @return 获取成功时返回获取到的值 否则返回缺省值
  */
-fun JSONObject.getStringOrDefault(key: String, defValue: String = ""): String {
-    return try {
-        this.getString(key)
-    } catch (e: JSONException) {
-        defValue
-    }
+fun JSONObject.getStringOrDefault(key: String, defValue: String = ""): String = try {
+    this.getString(key)
+} catch (e: JSONException) {
+    defValue
 }
 
 /**
- * 扩展函数 获取JSONObject中的 Long
- * 获取失败时返回缺省值
+ * 扩展函数 获取JSONObject中的 String
+ * @param key 键值
+ * @return 获取成功时返回获取到的值 否则null
+ */
+fun JSONObject.getStringOrNull(key: String): String? = try {
+    this.getString(key)
+} catch (e: JSONException) {
+    null
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 Object
  * @param key 键值
  * @return 获取成功时返回获取到的值 否则返回null
  */
-fun JSONObject.getObjectOrNull(key: String): Any? {
-    return try {
-        this.get(key)
-    } catch (e: JSONException) {
-        null
-    }
+fun JSONObject.getObjectOrNull(key: String): Any? = try {
+    this.get(key)
+} catch (e: JSONException) {
+    null
 }
 
 /**
- * 扩展函数 获取JSONObject中的 Long
- * 获取失败时返回缺省值
+ * 扩展函数 获取JSONObject中的 JSONArray
  * @param key 键值
  * @return 获取成功时返回JSONArray 否则返回空JSONArray
  */
-fun JSONObject.getJSONArrayOrEmpty(key: String): JSONArray {
-    return try {
-        this.getJSONArray(key)
-    } catch (e: JSONException) {
-        emptyJSONArray()
-    }
+fun JSONObject.getJSONArrayOrEmpty(key: String): JSONArray = try {
+    this.getJSONArray(key)
+} catch (e: JSONException) {
+    JSONArray()
+}
+
+/**
+ * 扩展函数 获取JSONObject中的 JSONArray
+ * @param key 键值
+ * @return 获取成功时返回JSONArray 否则返回null
+ */
+fun JSONObject.getJSONArrayOrNull(key: String): JSONArray? = try {
+    this.getJSONArray(key)
+} catch (e: JSONException) {
+    null
 }
 
 /**
