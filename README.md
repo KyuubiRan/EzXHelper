@@ -1,7 +1,7 @@
 # EzXHelper
 
 一个使Xposed模块开发变的更轻松的kotlin库    
-当前最新版本:0.8.6
+当前最新版本:0.8.7
 
 ### 注意事项
 
@@ -18,7 +18,7 @@
 
 ## 使用方式
 
-在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.8.6'`   
+在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:0.8.7'`   
 调用`EzXHelperInit.initHandleLoadPackage(lpparam)`初始化 就可以使用大部分工具类啦
 
 ### 例子
@@ -47,5 +47,5 @@
 |             [QAuxiliary](https://github.com/cinit/QAuxiliary)             | QAuxiliary 是一个基于 QNotified 的开源 Xposed 模块                                                          |
 |                   [TMoe](https://github.com/cinit/TMoe)                   | TMoe 是一个兼容若干第三方开源 Telegram 客户端的开源 Xposed 模块                                                       |
 | [FuckCoolapk R](https://github.com/Xposed-Modules-Repo/org.hello.coolapk) | Fuck Coolapk Again                                                                                |
-| [WooBox For MIUI](https://github.com/Simplicity-Team/WooBoxForMIUI) | 一个基于 MIUI13(Android 12) 适配的自定义工具 |
-| [WooBox For ColorOS](https://github.com/Simplicity-Team/WooBoxForColorOS) | 一个基于 ColorOS12(Android 12) 适配的自定义工具 |
+|    [WooBox For MIUI](https://github.com/Simplicity-Team/WooBoxForMIUI)    | 一个基于 MIUI13(Android 12) 适配的自定义工具                                                                  |
+| [WooBox For ColorOS](https://github.com/Simplicity-Team/WooBoxForColorOS) | 一个基于 ColorOS12(Android 12) 适配的自定义工具                                                               |

@@ -30,7 +30,6 @@ inline fun tryOrLogFalse(block: () -> Unit): Boolean = try {
     false
 }
 
-
 /**
  * 尝试执行一块代码，如果成功返回代码块执行的结果，失败则返回null
  * @param block 执行的代码块
@@ -53,7 +52,6 @@ inline fun <T> tryOrLogNull(block: () -> T?): T? = try {
     Log.e(thr)
     null
 }
-
 
 /**
  * 扩展函数 移除可变列表中符合条件的元素
@@ -233,3 +231,51 @@ fun restartHostApp(activity: Activity) {
  * 将数组转化为流
  */
 fun <T> Array<T>.stream() = this.toList().stream()
+
+/**
+ * 扩展函数 判断类是否相同(用于判断参数)
+ *
+ * eg: fun foo(a: Boolean, b: Int) { }
+ * foo.parameterTypes.sameAs(*array)
+ * foo.parameterTypes.sameAs(Boolean::class.java, Int::class.java)
+ * foo.parameterTypes.sameAs("boolean", "int")
+ * foo.parameterTypes.sameAs(Boolean::class.java, "int")
+ *
+ * @param other 其他类(支持String或者Class<*>)
+ * @return 是否相等
+ */
+fun Array<Class<*>>.sameAs(vararg other: Any): Boolean {
+    if (this.size != other.size) return false
+    for (i in this.indices) {
+        when (val otherClazz = other[i]) {
+            is Class<*> -> {
+                if (this[i] != otherClazz) return false
+            }
+            is String -> {
+                if (this[i].name != otherClazz) return false
+            }
+            else -> {
+                throw IllegalArgumentException("Only support Class<*> or String")
+            }
+        }
+    }
+    return true
+}
+
+fun List<Class<*>>.sameAs(vararg other: Any): Boolean {
+    if (this.size != other.size) return false
+    for (i in this.indices) {
+        when (val otherClazz = other[i]) {
+            is Class<*> -> {
+                if (this[i] != otherClazz) return false
+            }
+            is String -> {
+                if (this[i].name != otherClazz) return false
+            }
+            else -> {
+                throw IllegalArgumentException("Only support Class<*> or String")
+            }
+        }
+    }
+    return true
+}

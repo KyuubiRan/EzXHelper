@@ -187,7 +187,7 @@ fun Any.getMethodByClassOrObject(
             .filter { it.name == methodName }
             .filter { it.parameterTypes.size == argTypes.argTypes.size }
             .apply { if (returnType != null) filter { returnType == it.returnType } }
-            .filter { it.parameterTypes.indices.all { i -> it.parameterTypes[i] == argTypes.argTypes[i] } }
+            .filter { it.parameterTypes.sameAs(argTypes.argTypes) }
             .filter { it.isStatic == isStatic }
             .runCatching { findFirst().get().let { it.isAccessible = true;return it } }
     } while (c.superclass?.also { c = it } != null)
