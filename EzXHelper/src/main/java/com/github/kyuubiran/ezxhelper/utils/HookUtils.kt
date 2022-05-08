@@ -50,12 +50,10 @@ fun Method.hookBefore(
     hook: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
-        override fun beforeHookedMethod(param: MethodHookParam) {
-            try {
-                hook(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun beforeHookedMethod(param: MethodHookParam) = try {
+            hook(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }
@@ -106,12 +104,10 @@ fun Constructor<*>.hookBefore(
     hook: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
-        override fun beforeHookedMethod(param: MethodHookParam) {
-            try {
-                hook(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun beforeHookedMethod(param: MethodHookParam) = try {
+            hook(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }
@@ -164,12 +160,10 @@ fun Method.hookAfter(
     hooker: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
-        override fun afterHookedMethod(param: MethodHookParam) {
-            try {
-                hooker(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun afterHookedMethod(param: MethodHookParam) = try {
+            hooker(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }
@@ -220,12 +214,10 @@ fun Constructor<*>.hookAfter(
     hooker: Hooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodHook(priority) {
-        override fun afterHookedMethod(param: MethodHookParam) {
-            try {
-                hooker(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun afterHookedMethod(param: MethodHookParam) = try {
+            hooker(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }
@@ -278,12 +270,10 @@ fun Method.hookReplace(
     hook: ReplaceHooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodReplacement(priority) {
-        override fun replaceHookedMethod(param: MethodHookParam): Any? {
-            return try {
-                hook(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun replaceHookedMethod(param: MethodHookParam): Any? = try {
+            hook(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }
@@ -336,12 +326,10 @@ fun Constructor<*>.hookReplace(
     hooker: ReplaceHooker
 ): XC_MethodHook.Unhook {
     return this.hookMethod(object : XC_MethodReplacement(priority) {
-        override fun replaceHookedMethod(param: MethodHookParam): Any? {
-            return try {
-                hooker(param)
-            } catch (thr: Throwable) {
-                Log.ex(thr)
-            }
+        override fun replaceHookedMethod(param: MethodHookParam): Any? = try {
+            hooker(param)
+        } catch (thr: Throwable) {
+            Log.ex(thr)
         }
     })
 }

@@ -18,6 +18,16 @@ inline fun tryOrFalse(block: () -> Unit): Boolean = try {
 }
 
 /**
+ * 尝试执行一块代码，如果失败则记录日志
+ * @param block 执行的代码块
+ */
+inline fun tryOrLog(block: () -> Unit) = try {
+    block()
+} catch (thr: Throwable) {
+    Log.e(thr)
+}
+
+/**
  * 尝试执行一块代码，如果成功返true，失败则返回false并且记录日志
  * @param block 执行的代码块
  * @return 成功为true，失败为false
@@ -226,11 +236,6 @@ fun restartHostApp(activity: Activity) {
     activity.startActivity(intent)
     exitProcess(0)
 }
-
-/**
- * 将数组转化为流
- */
-fun <T> Array<T>.stream() = this.toList().stream()
 
 /**
  * 扩展函数 判断类是否相同(用于判断参数)

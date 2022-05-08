@@ -15,7 +15,10 @@ import android.os.*
 import android.view.KeyEvent
 import android.view.MotionEvent
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.utils.getStaticFiled
+import com.github.kyuubiran.ezxhelper.utils.getStaticObjectOrNull
 import java.lang.reflect.*
 
 
@@ -30,11 +33,11 @@ object ActivityHelper {
             //region Instrumentation
             val cActivityThread = Class.forName("android.app.ActivityThread")
             val fCurrentActivityThread =
-                cActivityThread.getStaticFiledByClass("sCurrentActivityThread")
+                cActivityThread.getStaticFiled("sCurrentActivityThread")
             val sCurrentActivityThread = fCurrentActivityThread.get(null)!!
             val fmInstrumentation =
-                cActivityThread.getFieldByClassOrObject("mInstrumentation")
-            val mGetInstrumentation = cActivityThread.getMethodByClassOrObject(
+                cActivityThread.getField("mInstrumentation")
+            val mGetInstrumentation = cActivityThread.getMethod(
                 "getInstrumentation"
             )
             val mInstrumentation =
@@ -45,9 +48,9 @@ object ActivityHelper {
             )
             //endregion
             //region Handler
-            val fmH = cActivityThread.getFieldByClassOrObject("mH")
+            val fmH = cActivityThread.getField("mH")
             val originHandler = fmH.get(sCurrentActivityThread) as Handler
-            val fHandlerCallback = Handler::class.java.getFieldByClassOrObject("mCallback")
+            val fHandlerCallback = Handler::class.java.getField("mCallback")
             val currHCallback = fHandlerCallback.get(originHandler) as Handler.Callback?
             if (currHCallback == null || currHCallback::class.java.name != MyHandler::class.java.name) {
                 fHandlerCallback.set(originHandler, MyHandler(currHCallback))
@@ -58,11 +61,11 @@ object ActivityHelper {
             var fgDefault: Field
             try {
                 cActivityManager = Class.forName("android.app.ActivityManagerNative")
-                fgDefault = cActivityManager.getStaticFiledByClass("gDefault")
+                fgDefault = cActivityManager.getStaticFiled("gDefault")
             } catch (e1: Exception) {
                 try {
                     cActivityManager = Class.forName("android.app.ActivityManager")
-                    fgDefault = cActivityManager.getStaticFiledByClass("IActivityManagerSingleton")
+                    fgDefault = cActivityManager.getStaticFiled("IActivityManagerSingleton")
                 } catch (e2: Exception) {
                     Log.e(e1)
                     Log.e(e2)
@@ -71,7 +74,7 @@ object ActivityHelper {
             }
             val gDefault = fgDefault.get(null)
             val cSingleton = Class.forName("android.util.Singleton")
-            val fmInstance = cSingleton.getFieldByClassOrObject("mInstance")
+            val fmInstance = cSingleton.getField("mInstance")
             val mInstance = fmInstance.get(gDefault)
             val proxy = Proxy.newProxyInstance(
                 ActivityProxyManager.MODULE_CLASS_LOADER,
@@ -468,12 +471,12 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
             100 -> {
                 try {
                     val record = msg.obj
-                    val fIntent = record::class.java.getFieldByClassOrObject("intent")
+                    val fIntent = record::class.java.getField("intent")
                     val intent = fIntent.get(record)!! as Intent
                     //获取bundle
                     var bundle: Bundle? = null
                     try {
-                        val fExtras = Intent::class.java.getFieldByClassOrObject("mExtras")
+                        val fExtras = Intent::class.java.getField("mExtras")
                         bundle = fExtras.get(intent) as Bundle?
                     } catch (e: Exception) {
                         Log.e(e)
@@ -498,19 +501,19 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                         //获取列表
                         val mGetCallbacks =
                             Class.forName("android.app.servertransaction.ClientTransaction")
-                                .getMethodByClassOrObject("getCallbacks")
+                                .getMethod("getCallbacks")
                         val cTransItems = mGetCallbacks.invoke(cTrans) as List<*>?
                         if (!cTransItems.isNullOrEmpty()) {
                             for (item in cTransItems) {
                                 val clz = item?.javaClass
                                 if (clz?.name?.contains("LaunchActivityItem") == true) {
-                                    val fmIntent = clz.getFieldByClassOrObject("mIntent")
+                                    val fmIntent = clz.getField("mIntent")
                                     val wrapper = fmIntent.get(item) as Intent
                                     //获取Bundle
                                     var bundle: Bundle? = null
                                     try {
                                         val fExtras =
-                                            Intent::class.java.getFieldByClassOrObject("mExtras")
+                                            Intent::class.java.getField("mExtras")
                                         bundle = fExtras.get(wrapper) as Bundle?
                                     } catch (e: Exception) {
                                         Log.e(e)
