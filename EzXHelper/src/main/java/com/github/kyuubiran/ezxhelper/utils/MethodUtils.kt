@@ -29,7 +29,7 @@ inline fun argTypes(vararg argTypes: Class<*>) = ArgTypes(argTypes)
  * @throws IllegalArgumentException 方法名为空
  * @throws NoSuchMethodException 未找到方法
  */
-fun Any.getMethod(
+fun Any.method(
     methodName: String,
     returnType: Class<*>? = null,
     isStatic: Boolean = false,
@@ -56,13 +56,13 @@ fun Any.getMethod(
  * @param argTypes 方法参数类型
  * @throws IllegalArgumentException 方法名为空
  */
-fun Class<*>.getStaticMethod(
+fun Class<*>.staticMethod(
     methodName: String,
     returnType: Class<*>? = null,
     argTypes: ArgTypes = argTypes()
 ): Method {
     if (methodName.isBlank()) throw IllegalArgumentException("Method name must not be empty!")
-    return this.getMethod(methodName, returnType, true, argTypes = argTypes)
+    return this.method(methodName, returnType, true, argTypes = argTypes)
 }
 
 typealias MethodCondition = Method.() -> Boolean
@@ -558,13 +558,13 @@ fun Any.invokeMethod(
     if (args.args.size != argTypes.argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     return if (args.args.isEmpty()) {
         try {
-            this.getMethod(methodName, returnType, false)
+            this.method(methodName, returnType, false)
         } catch (e: NoSuchMethodException) {
             return null
         }.invoke(this)
     } else {
         try {
-            this.getMethod(methodName, returnType, false, argTypes = argTypes)
+            this.method(methodName, returnType, false, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }.invoke(this, *args.args)
@@ -637,13 +637,13 @@ fun Class<*>.invokeStaticMethod(
     if (args.args.size != argTypes.argTypes.size) throw IllegalArgumentException("Method args size must equals argTypes size!")
     return if (args.args.isEmpty()) {
         try {
-            this.getMethod(methodName, returnType, true)
+            this.method(methodName, returnType, true)
         } catch (e: NoSuchMethodException) {
             return null
         }.invoke(this)
     } else {
         try {
-            this.getMethod(methodName, returnType, true, argTypes = argTypes)
+            this.method(methodName, returnType, true, argTypes = argTypes)
         } catch (e: NoSuchMethodException) {
             return null
         }.invoke(this, *args.args)

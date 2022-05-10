@@ -15,12 +15,8 @@ import android.os.*
 import android.view.KeyEvent
 import android.view.MotionEvent
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
-import com.github.kyuubiran.ezxhelper.utils.getStaticFiled
-import com.github.kyuubiran.ezxhelper.utils.getStaticObjectOrNull
+import com.github.kyuubiran.ezxhelper.utils.*
 import java.lang.reflect.*
-
 
 @SuppressLint("PrivateApi")
 object ActivityHelper {
@@ -33,11 +29,11 @@ object ActivityHelper {
             //region Instrumentation
             val cActivityThread = Class.forName("android.app.ActivityThread")
             val fCurrentActivityThread =
-                cActivityThread.getStaticFiled("sCurrentActivityThread")
+                cActivityThread.staticFiled("sCurrentActivityThread")
             val sCurrentActivityThread = fCurrentActivityThread.get(null)!!
             val fmInstrumentation =
-                cActivityThread.getField("mInstrumentation")
-            val mGetInstrumentation = cActivityThread.getMethod(
+                cActivityThread.field("mInstrumentation")
+            val mGetInstrumentation = cActivityThread.method(
                 "getInstrumentation"
             )
             val mInstrumentation =
@@ -48,9 +44,9 @@ object ActivityHelper {
             )
             //endregion
             //region Handler
-            val fmH = cActivityThread.getField("mH")
+            val fmH = cActivityThread.field("mH")
             val originHandler = fmH.get(sCurrentActivityThread) as Handler
-            val fHandlerCallback = Handler::class.java.getField("mCallback")
+            val fHandlerCallback = Handler::class.java.field("mCallback")
             val currHCallback = fHandlerCallback.get(originHandler) as Handler.Callback?
             if (currHCallback == null || currHCallback::class.java.name != MyHandler::class.java.name) {
                 fHandlerCallback.set(originHandler, MyHandler(currHCallback))
@@ -61,11 +57,11 @@ object ActivityHelper {
             var fgDefault: Field
             try {
                 cActivityManager = Class.forName("android.app.ActivityManagerNative")
-                fgDefault = cActivityManager.getStaticFiled("gDefault")
+                fgDefault = cActivityManager.staticFiled("gDefault")
             } catch (e1: Exception) {
                 try {
                     cActivityManager = Class.forName("android.app.ActivityManager")
-                    fgDefault = cActivityManager.getStaticFiled("IActivityManagerSingleton")
+                    fgDefault = cActivityManager.staticFiled("IActivityManagerSingleton")
                 } catch (e2: Exception) {
                     Log.e(e1)
                     Log.e(e2)
@@ -74,7 +70,7 @@ object ActivityHelper {
             }
             val gDefault = fgDefault.get(null)
             val cSingleton = Class.forName("android.util.Singleton")
-            val fmInstance = cSingleton.getField("mInstance")
+            val fmInstance = cSingleton.field("mInstance")
             val mInstance = fmInstance.get(gDefault)
             val proxy = Proxy.newProxyInstance(
                 ActivityProxyManager.MODULE_CLASS_LOADER,
@@ -86,7 +82,7 @@ object ActivityHelper {
                 val cActivityTaskManager = Class.forName("android.app.ActivityTaskManager")
                 val singleton =
                     cActivityTaskManager.getStaticObjectOrNull("IActivityTaskManagerSingleton")
-                cSingleton.getMethod("get").invoke(singleton)
+                cSingleton.method("get").invoke(singleton)
                 val mDefaultTaskMgr = fmInstance.get(singleton)
                 val proxy2 = Proxy.newProxyInstance(
                     ActivityProxyManager.MODULE_CLASS_LOADER,
@@ -431,11 +427,13 @@ class MyInstrumentation(private val mBase: Instrumentation) : Instrumentation() 
         mBase.callActivityOnPictureInPictureRequested(activity)
     }
 
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
     override fun startAllocCounting() {
         mBase.startAllocCounting()
     }
 
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
     override fun stopAllocCounting() {
         mBase.stopAllocCounting()
@@ -453,7 +451,6 @@ class MyInstrumentation(private val mBase: Instrumentation) : Instrumentation() 
         return mBase.uiAutomation
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
     override fun getUiAutomation(flags: Int): UiAutomation {
         return mBase.getUiAutomation(flags)
     }
@@ -471,12 +468,12 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
             100 -> {
                 try {
                     val record = msg.obj
-                    val fIntent = record::class.java.getField("intent")
+                    val fIntent = record::class.java.field("intent")
                     val intent = fIntent.get(record)!! as Intent
                     //获取bundle
                     var bundle: Bundle? = null
                     try {
-                        val fExtras = Intent::class.java.getField("mExtras")
+                        val fExtras = Intent::class.java.field("mExtras")
                         bundle = fExtras.get(intent) as Bundle?
                     } catch (e: Exception) {
                         Log.e(e)
@@ -501,19 +498,18 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                         //获取列表
                         val mGetCallbacks =
                             Class.forName("android.app.servertransaction.ClientTransaction")
-                                .getMethod("getCallbacks")
+                                .method("getCallbacks")
                         val cTransItems = mGetCallbacks.invoke(cTrans) as List<*>?
                         if (!cTransItems.isNullOrEmpty()) {
                             for (item in cTransItems) {
                                 val clz = item?.javaClass
                                 if (clz?.name?.contains("LaunchActivityItem") == true) {
-                                    val fmIntent = clz.getField("mIntent")
+                                    val fmIntent = clz.field("mIntent")
                                     val wrapper = fmIntent.get(item) as Intent
                                     //获取Bundle
                                     var bundle: Bundle? = null
                                     try {
-                                        val fExtras =
-                                            Intent::class.java.getField("mExtras")
+                                        val fExtras = Intent::class.java.field("mExtras")
                                         bundle = fExtras.get(wrapper) as Bundle?
                                     } catch (e: Exception) {
                                         Log.e(e)
@@ -522,31 +518,26 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                     bundle?.let {
                                         it.classLoader = ActivityProxyManager.HOST_CLASS_LOADER
                                         if (wrapper.hasExtra(ActivityProxyManager.ACTIVITY_PROXY_INTENT)) {
-                                            val rIntent =
-                                                wrapper.getParcelableExtra<Intent>(
-                                                    ActivityProxyManager.ACTIVITY_PROXY_INTENT
-                                                )
+                                            val rIntent = wrapper.getParcelableExtra<Intent>(
+                                                ActivityProxyManager.ACTIVITY_PROXY_INTENT
+                                            )
                                             fmIntent.set(item, rIntent)
                                             if (Build.VERSION.SDK_INT >= 31) {
                                                 val cActivityThread =
                                                     Class.forName("android.app.ActivityThread")
-                                                val currentActivityThread =
-                                                    cActivityThread.getDeclaredMethod("currentActivityThread")
-                                                currentActivityThread.isAccessible = true
                                                 val activityThread =
-                                                    currentActivityThread.invoke(null)
-                                                val acr = activityThread.javaClass.getMethod(
+                                                    cActivityThread.invokeStaticMethod("currentActivityThread")!!
+                                                val acr = activityThread.javaClass.method(
                                                     "getLaunchingActivity",
                                                     IBinder::class.java
                                                 ).invoke(
                                                     activityThread,
-                                                    cTrans.javaClass.getMethod("getActivityToken")
+                                                    cTrans.javaClass.method("getActivityToken")
                                                         .invoke(cTrans)
                                                 )
                                                 if (acr != null) {
-                                                    val fAcrIntent =
-                                                        acr.javaClass.getDeclaredField("intent")
-                                                    fAcrIntent.isAccessible = true
+                                                    val fAcrIntent = acr.javaClass.getDeclaredField("intent")
+                                                        .also { it.isAccessible = true }
                                                     fAcrIntent[acr] = rIntent
                                                 }
                                             }
