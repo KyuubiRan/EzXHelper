@@ -33,9 +33,7 @@ object ActivityHelper {
             val sCurrentActivityThread = fCurrentActivityThread.get(null)!!
             val fmInstrumentation =
                 cActivityThread.field("mInstrumentation")
-            val mGetInstrumentation = cActivityThread.method(
-                "getInstrumentation"
-            )
+            val mGetInstrumentation = cActivityThread.method("getInstrumentation")
             val mInstrumentation =
                 mGetInstrumentation.invoke(sCurrentActivityThread)!! as Instrumentation
             fmInstrumentation.set(
@@ -527,14 +525,11 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                                     Class.forName("android.app.ActivityThread")
                                                 val activityThread =
                                                     cActivityThread.invokeStaticMethod("currentActivityThread")!!
-                                                val acr = activityThread.javaClass.method(
-                                                    "getLaunchingActivity",
-                                                    IBinder::class.java
-                                                ).invoke(
-                                                    activityThread,
-                                                    cTrans.javaClass.method("getActivityToken")
-                                                        .invoke(cTrans)
-                                                )
+                                                val acr = activityThread.javaClass.method("getLaunchingActivity")
+                                                    .invoke(
+                                                        activityThread,
+                                                        cTrans.javaClass.method("getActivityToken").invoke(cTrans)
+                                                    )
                                                 if (acr != null) {
                                                     val fAcrIntent = acr.javaClass.getDeclaredField("intent")
                                                         .also { it.isAccessible = true }
