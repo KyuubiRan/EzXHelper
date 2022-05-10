@@ -121,7 +121,7 @@ object EzXHelperInit {
      * 1.在项目的build.gradle中修改资源id(不与宿主冲突即可) 如下:
      *
      * Kotlin Gradle DSL:
-     * androidResources.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
+     * androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
      *
      * Groovy:
      * aaptOptions.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
