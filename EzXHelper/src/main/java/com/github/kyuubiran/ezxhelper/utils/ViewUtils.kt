@@ -1,7 +1,10 @@
 package com.github.kyuubiran.ezxhelper.utils
 
+import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.github.kyuubiran.ezxhelper.init.InitFields
 
 /**
  * 扩展函数 将View布局的高度和宽度设置为0
@@ -9,27 +12,6 @@ import android.view.ViewGroup
 fun View.setViewZeroSize() {
     this.layoutParams.height = 0
     this.layoutParams.width = 0
-}
-
-/**
- * 扩展函数 将View的visibility设置为Invisible
- */
-fun View.setInvisible() {
-    this.visibility = View.INVISIBLE
-}
-
-/**
- * 扩展函数 将View的visibility设置为Visible
- */
-fun View.setVisible() {
-    this.visibility = View.VISIBLE
-}
-
-/**
- * 扩展函数 将View的visibility设置为Gone
- */
-fun View.setGone() {
-    this.visibility = View.GONE
 }
 
 /**
@@ -113,4 +95,30 @@ fun ViewGroup.findAllViewsByCondition(condition: (view: View) -> Boolean): List<
 @Suppress("UNCHECKED_CAST")
 fun <T : View> ViewGroup.findViewByConditionAs(condition: (view: View) -> Boolean): T? {
     return this.findViewByCondition(condition) as T?
+}
+
+/**
+ * 通过名字获取R.id中的组件id
+ * @param name 名字
+ * @return id ID 若无法找到则返回0
+ */
+fun getIdByName(name: String, ctx: Context = InitFields.appContext): Int {
+    return ctx.resources.getIdentifier(name, "id", ctx.packageName)
+}
+
+/**
+ * 通过名字查找View
+ * @param name 名字
+ * @return View 若无法找到则返回null
+ */
+fun View.findViewByName(name: String): View? {
+    val id = getIdByName(name, this.context)
+    if (id == 0) return null
+    return this.findViewById(id)
+}
+
+fun Activity.findViewByName(name: String): View? {
+    val id = getIdByName(name, this)
+    if (id == 0) return null
+    return this.findViewById(id)
 }
