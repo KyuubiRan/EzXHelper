@@ -1,7 +1,6 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import com.github.kyuubiran.ezxhelper.init.InitFields
-import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
@@ -729,26 +728,6 @@ fun <T> Class<*>.newInstanceAs(
     args: Args = args(),
     argTypes: ArgTypes = argTypes()
 ): T? = this.newInstance(args, argTypes) as T?
-
-/**
- * 扩展函数 调用原方法
- * @param obj 被调用对象
- * @param args 形参表 为null时则为无参
- * @return 原方法调用后的返回值
- */
-fun Method.invokedOriginal(obj: Any?, args: Array<Any?>? = null): Any? =
-    XposedBridge.invokeOriginalMethod(this, obj, args)
-
-/**
- * 扩展函数 调用原方法 并将返回值转换为T?类型
- * @param obj 被调用对象
- * @param args 形参表 为null时则为无参
- * @return 原方法调用后的返回值
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> Method.invokedOriginalAs(
-    obj: Any?, args: Array<Any?>? = null
-): T? = XposedBridge.invokeOriginalMethod(this, obj, args) as T?
 
 /**
  * 扩展函数 调用方法 并将返回值转换为T?类型

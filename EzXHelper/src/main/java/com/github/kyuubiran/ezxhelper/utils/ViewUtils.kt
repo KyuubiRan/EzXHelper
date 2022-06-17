@@ -42,17 +42,13 @@ inline fun ViewGroup.forEachIndexed(action: (index: Int, view: View) -> Unit) {
  * 扩展函数 判断ViewGroup是否为空
  * @return 是否为空
  */
-fun ViewGroup.isEmpty(): Boolean {
-    return this.childCount == 0
-}
+fun ViewGroup.isEmpty(): Boolean = this.childCount == 0
 
 /**
  * 扩展函数 判断ViewGroup是否不为空
  * @return 是否不为空
  */
-fun ViewGroup.isNotEmpty(): Boolean {
-    return this.childCount != 0
-}
+fun ViewGroup.isNotEmpty(): Boolean = this.childCount != 0
 
 /**
  * 扩展函数 遍历ViewGroup 根据条件查找View
@@ -111,13 +107,13 @@ fun getIdByName(name: String, ctx: Context = InitFields.appContext): Int {
  * @param name 名字
  * @return View 若无法找到则返回null
  */
-fun View.findViewByName(name: String): View? {
+fun View.findViewByIdName(name: String): View? {
     val id = getIdByName(name, this.context)
     if (id == 0) return null
     return this.findViewById(id)
 }
 
-fun Activity.findViewByName(name: String): View? {
+fun Activity.findViewByIdName(name: String): View? {
     val id = getIdByName(name, this)
     if (id == 0) return null
     return this.findViewById(id)

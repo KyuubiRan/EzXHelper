@@ -170,18 +170,15 @@ object Log {
      * 则不显示前缀
      * @see setToastTag
      */
-    fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-        runOnMainThread {
-            Toast.makeText(appContext, null, duration).run {
-                if (TOAST_TAG != null) {
-                    setText("${TOAST_TAG}: $msg")
-                } else {
-                    setText(msg)
-                }
-                show()
-            }
+    fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = runOnMainThread {
+        Toast.makeText(appContext, null, duration).run {
+            setText(if (TOAST_TAG != null) "${TOAST_TAG}: $msg" else msg)
+            show()
         }
     }
+
+    fun toast(msg: String, vararg formats: String, duration: Int = Toast.LENGTH_SHORT) =
+        toast(msg.format(*formats), duration)
 
     /**
      * 扩展函数 配合runCatching使用
@@ -191,12 +188,11 @@ object Log {
      * @see runCatching
      * @see i
      */
-    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) {
+    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
         this.exceptionOrNull()?.let {
             i(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合runCatching使用
@@ -206,12 +202,11 @@ object Log {
      * @see runCatching
      * @see ix
      */
-    inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) {
+    inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
         this.exceptionOrNull()?.let {
             i(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -221,12 +216,11 @@ object Log {
      * @see runCatching
      * @see d
      */
-    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             d(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -236,12 +230,11 @@ object Log {
      * @see runCatching
      * @see dx
      */
-    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             dx(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -251,12 +244,11 @@ object Log {
      * @see runCatching
      * @see w
      */
-    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             w(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -266,12 +258,11 @@ object Log {
      * @see runCatching
      * @see wx
      */
-    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             wx(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -281,12 +272,11 @@ object Log {
      * @see runCatching
      * @see e
      */
-    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             e(it, msg)
             then(it)
         }
-    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -296,10 +286,9 @@ object Log {
      * @see runCatching
      * @see ex
      */
-    inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) {
+    inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
             ex(it, msg)
             then(it)
         }
-    }
 }

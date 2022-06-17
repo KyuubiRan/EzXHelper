@@ -87,7 +87,7 @@ class Observe<T>(init: T, onValueChanged: ((T) -> Unit)? = null) {
         }
 
         operator fun invoke(value: T) {
-            _listeners.keepIf {
+            _listeners.retainIf {
                 try {
                     it(value);true
                 } catch (e: Throwable) {

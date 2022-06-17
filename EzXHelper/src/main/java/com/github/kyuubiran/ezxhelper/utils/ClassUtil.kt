@@ -12,7 +12,7 @@ import de.robv.android.xposed.XposedHelpers
  * @throws ClassNotFoundException 未找到类
  */
 fun loadClass(clzName: String, clzLoader: ClassLoader = InitFields.ezXClassLoader): Class<*> {
-    if (clzName.isBlank()) throw  IllegalArgumentException("Class name must not be null or empty!")
+    if (clzName.isBlank()) throw IllegalArgumentException("Class name must not be null or empty!")
     return clzLoader.loadClass(clzName)
 }
 
@@ -49,7 +49,7 @@ fun loadClassOrNull(
     clzName: String,
     clzLoader: ClassLoader = InitFields.ezXClassLoader
 ): Class<*>? {
-    if (clzName.isBlank()) throw  IllegalArgumentException("Class name must not be null or empty!")
+    if (clzName.isBlank()) throw IllegalArgumentException("Class name must not be null or empty!")
     return XposedHelpers.findClassIfExists(clzName, clzLoader)
 }
 

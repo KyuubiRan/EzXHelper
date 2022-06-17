@@ -64,33 +64,11 @@ inline fun <T> tryOrLogNull(block: () -> T?): T? = try {
 }
 
 /**
- * 扩展函数 移除可变列表中符合条件的元素
- * @param predicate 条件
- */
-inline fun <E> MutableList<E>.dropIf(predicate: ((E) -> Boolean)) {
-    val collection = arrayListOf<E>()
-    this.forEach { item -> if (predicate(item)) collection.add(item) }
-    this.removeAll(collection)
-}
-
-/**
- * 扩展函数 移除可变列表中符合条件的元素 并返回可变列表
- * @param predicate 条件
- * @return 移除符合条件的元素之后的可变列表
- */
-inline fun <E> MutableList<E>.applyDropIf(predicate: (E) -> Boolean): MutableList<E> {
-    this.dropIf(predicate)
-    return this
-}
-
-/**
  * 扩展函数 保留可变列表中符合条件的元素
  * @param predicate 条件
  */
-inline fun <E> MutableList<E>.keepIf(predicate: ((E) -> Boolean)) {
-    val collection = arrayListOf<E>()
-    this.forEach { item -> if (!predicate(item)) collection.add(item) }
-    this.removeAll(collection)
+inline fun <E> MutableList<E>.retainIf(predicate: ((E) -> Boolean)) {
+    this.filter { elem -> predicate(elem) }.forEach { this.remove(it) }
 }
 
 /**
@@ -98,37 +76,17 @@ inline fun <E> MutableList<E>.keepIf(predicate: ((E) -> Boolean)) {
  * @param predicate 条件
  * @return 保留符合条件的元素之后的可变列表
  */
-inline fun <E> MutableList<E>.applyKeepIf(predicate: (E) -> Boolean): MutableList<E> {
-    this.keepIf(predicate)
+inline fun <E> MutableList<E>.applyRetainIf(predicate: (E) -> Boolean): MutableList<E> {
+    this.retainIf(predicate)
     return this
-}
-
-/**
- * 扩展函数 往列表中添加非空元素
- * @param element 元素
- */
-fun <T> MutableCollection<T>.addIfNonNull(element: T?) {
-    if (element != null) {
-        this.add(element)
-    }
-}
-
-/**
- * 扩展函数 尝试往列表中添加元素
- * @param action 行为
- */
-inline fun <T> MutableCollection<T>.tryAdd(action: () -> T?) {
-    runCatching { this.addIfNonNull(action()) }
 }
 
 /**
  * 扩展函数 保留可变集合中符合条件的元素
  * @param predicate 条件
  */
-inline fun <E> MutableSet<E>.keepIf(predicate: (E) -> Boolean) {
-    val collection = mutableSetOf<E>()
-    this.forEach { item -> if (!predicate(item)) collection.add(item) }
-    this.removeAll(collection)
+inline fun <E> MutableSet<E>.retainIf(predicate: (E) -> Boolean) {
+    this.filter { elem -> predicate(elem) }.forEach { this.remove(it) }
 }
 
 /**
@@ -136,28 +94,8 @@ inline fun <E> MutableSet<E>.keepIf(predicate: (E) -> Boolean) {
  * @param predicate 条件
  * @return 保留符合条件的元素之后的可变集合
  */
-inline fun <E> MutableSet<E>.applyKeepIf(predicate: (E) -> Boolean): MutableSet<E> {
-    this.keepIf(predicate)
-    return this
-}
-
-/**
- * 扩展函数 移除可变字集合符合条件的元素
- * @param predicate 条件
- */
-inline fun <E> MutableSet<E>.dropIf(predicate: (E) -> Boolean) {
-    val collection = mutableSetOf<E>()
-    this.forEach { item -> if (predicate(item)) collection.add(item) }
-    this.removeAll(collection)
-}
-
-/**
- * 扩展函数 移除可变集合中符合条件的元素 并返回可变集合
- * @param predicate 条件
- * @return 移除符合条件的元素之后的可变集合
- */
-inline fun <E> MutableSet<E>.applyDropIf(predicate: (E) -> Boolean): MutableSet<E> {
-    this.dropIf(predicate)
+inline fun <E> MutableSet<E>.applyRetainIf(predicate: (E) -> Boolean): MutableSet<E> {
+    this.retainIf(predicate)
     return this
 }
 
@@ -165,12 +103,8 @@ inline fun <E> MutableSet<E>.applyDropIf(predicate: (E) -> Boolean): MutableSet<
  * 扩展函数 保留可变字典中符合条件的元素
  * @param predicate 条件
  */
-inline fun <K, V> MutableMap<K, V>.keepIf(predicate: (K, V) -> Boolean) {
-    val collection = mutableMapOf<K, V>()
-    this.forEach { (key, value) ->
-        if (!predicate(key, value)) collection[key] = value
-    }
-    collection.forEach { this.remove(it.key) }
+inline fun <K, V> MutableMap<K, V>.retainIf(predicate: (K, V) -> Boolean) {
+    this.filter { (key, value) -> predicate(key, value) }.forEach { this.remove(it.key) }
 }
 
 /**
@@ -178,8 +112,8 @@ inline fun <K, V> MutableMap<K, V>.keepIf(predicate: (K, V) -> Boolean) {
  * @param predicate 条件
  * @return 保留符合条件的元素之后的可变字典
  */
-inline fun <K, V> MutableMap<K, V>.applyKeepIf(predicate: (K, V) -> Boolean): MutableMap<K, V> {
-    this.keepIf(predicate)
+inline fun <K, V> MutableMap<K, V>.applyRetainIf(predicate: (K, V) -> Boolean): MutableMap<K, V> {
+    this.retainIf(predicate)
     return this
 }
 
@@ -187,12 +121,8 @@ inline fun <K, V> MutableMap<K, V>.applyKeepIf(predicate: (K, V) -> Boolean): Mu
  * 扩展函数 移除可变字典中符合条件的元素
  * @param predicate 条件
  */
-inline fun <K, V> MutableMap<K, V>.dropIf(predicate: (K, V) -> Boolean) {
-    val collection = mutableMapOf<K, V>()
-    this.forEach { (key, value) ->
-        if (predicate(key, value)) collection[key] = value
-    }
-    collection.forEach { this.remove(it.key) }
+inline fun <K, V> MutableMap<K, V>.removeIf(predicate: (K, V) -> Boolean) {
+    this.filter { (key, value) -> predicate(key, value) }.forEach { this.remove(it.key) }
 }
 
 /**
@@ -200,10 +130,10 @@ inline fun <K, V> MutableMap<K, V>.dropIf(predicate: (K, V) -> Boolean) {
  * @param predicate 条件
  * @return 移除符合条件的元素之后的可变字典
  */
-inline fun <K, V> MutableMap<K, V>.applyDropIf(
+inline fun <K, V> MutableMap<K, V>.applyRemoveIf(
     predicate: (K, V) -> Boolean
 ): MutableMap<K, V> {
-    this.dropIf(predicate)
+    this.removeIf(predicate)
     return this
 }
 
