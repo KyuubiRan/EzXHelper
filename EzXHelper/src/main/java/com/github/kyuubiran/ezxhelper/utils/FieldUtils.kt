@@ -183,7 +183,7 @@ fun Any.field(
             .firstOrNull { (fieldType == null || it.type == fieldType) && (it.name == fieldName) }
             ?.let { it.isAccessible = true;return it }
     } while (c.superclass?.also { c = it } != null)
-    throw NoSuchFieldException(fieldName)
+    throw NoSuchFieldException("Name: $fieldName,Static: $isStatic, Type: ${if (fieldType == null) "ignore" else fieldType.name}")
 }
 
 /**

@@ -16,6 +16,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
 import java.lang.reflect.*
 
 @SuppressLint("PrivateApi")
@@ -25,7 +26,7 @@ object ActivityHelper {
 
     internal fun initSubActivity() {
         if (isStubHooked) return
-        try {
+        runCatching {
             //region Instrumentation
             val cActivityThread = Class.forName("android.app.ActivityThread")
             val fCurrentActivityThread =
@@ -40,6 +41,7 @@ object ActivityHelper {
                 sCurrentActivityThread,
                 MyInstrumentation(mInstrumentation)
             )
+            Log.d("ActivityProxy Instrumentation part finished")
             //endregion
             //region Handler
             val fmH = cActivityThread.field("mH")
@@ -49,6 +51,7 @@ object ActivityHelper {
             if (currHCallback == null || currHCallback::class.java.name != MyHandler::class.java.name) {
                 fHandlerCallback.set(originHandler, MyHandler(currHCallback))
             }
+            Log.d("ActivityProxy Handler part finished")
             //endregion
             //region IActivityManager
             var cActivityManager: Class<*>
@@ -91,11 +94,10 @@ object ActivityHelper {
             } catch (ignored: Exception) {
             }
             isStubHooked = true
+            Log.d("ActivityProxy IActivityManager part finished")
             //endregion
-        } catch (e: Exception) {
-            Log.e(e)
-        }
-
+            Log.i("ActivityProxy successfully inited")
+        }.logexIfThrow("Activity proxy init failed!")
     }
 }
 
@@ -464,7 +466,7 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             100 -> {
-                try {
+                runCatching {
                     val record = msg.obj
                     val fIntent = record::class.java.field("intent")
                     val intent = fIntent.get(record)!! as Intent
@@ -485,13 +487,11 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                             fIntent.set(record, rIntent)
                         }
                     }
-                } catch (e: Exception) {
-                    Log.e(e)
-                }
+                }.logexIfThrow("ActivityProxy handle message error(what=100)")
             }
             159 -> {
                 val clientTranslation = msg.obj
-                try {
+                runCatching {
                     clientTranslation?.let { cTrans ->
                         //获取列表
                         val mGetCallbacks =
@@ -513,8 +513,8 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                         Log.e(e)
                                     }
                                     //设置
-                                    bundle?.let {
-                                        it.classLoader = ActivityProxyManager.HOST_CLASS_LOADER
+                                    bundle?.let { b ->
+                                        b.classLoader = ActivityProxyManager.HOST_CLASS_LOADER
                                         if (wrapper.hasExtra(ActivityProxyManager.ACTIVITY_PROXY_INTENT)) {
                                             val rIntent = wrapper.getParcelableExtra<Intent>(
                                                 ActivityProxyManager.ACTIVITY_PROXY_INTENT
@@ -524,16 +524,20 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                                                 val cActivityThread =
                                                     Class.forName("android.app.ActivityThread")
                                                 val activityThread =
-                                                    cActivityThread.invokeStaticMethod("currentActivityThread")!!
-                                                val acr = activityThread.javaClass.method("getLaunchingActivity")
+                                                    cActivityThread.staticMethod("currentActivityThread")
+                                                        .invoke(null)
+                                                val acr = activityThread.javaClass
+                                                    .method(
+                                                        "getLaunchingActivity",
+                                                        argTypes = argTypes(IBinder::class.java)
+                                                    )
                                                     .invoke(
                                                         activityThread,
                                                         cTrans.javaClass.method("getActivityToken").invoke(cTrans)
                                                     )
-                                                if (acr != null) {
-                                                    val fAcrIntent = acr.javaClass.getDeclaredField("intent")
-                                                        .also { it.isAccessible = true }
-                                                    fAcrIntent[acr] = rIntent
+                                                acr?.let {
+                                                    val fAcrIntent = it.javaClass.field("intent")
+                                                    fAcrIntent[it] = rIntent
                                                 }
                                             }
                                         }
@@ -542,9 +546,7 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
                             }
                         }
                     }
-                } catch (e: Exception) {
-                    Log.e(e)
-                }
+                }.logexIfThrow("ActivityProxy handle message error(what=159)")
             }
         }
         return mDefault?.handleMessage(msg) ?: false
@@ -554,15 +556,7 @@ class MyHandler(private val mDefault: Handler.Callback?) : Handler.Callback {
 class IActivityManagerHandler(private val mOrigin: Any) : InvocationHandler {
     override fun invoke(proxy: Any?, method: Method?, args: Array<Any>?): Any? {
         if ("startActivity" == method!!.name) {
-            var index = -1
-            args?.let {
-                for (i in it.indices) {
-                    if (args[i] is Intent) {
-                        index = i
-                        break
-                    }
-                }
-            }
+            val index = args?.indexOfFirst { it is Intent } ?: -1
             if (index != -1) {
                 args?.let {
                     val raw = it[index] as Intent

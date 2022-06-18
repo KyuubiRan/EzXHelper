@@ -45,7 +45,7 @@ fun Any.method(
             .filter { it.isStatic == isStatic }
             .firstOrNull()?.let { it.isAccessible = true; return it }
     } while (c.superclass?.also { c = it } != null)
-    throw NoSuchMethodException()
+    throw NoSuchMethodException("Name:$methodName, Static: $isStatic, ArgTypes:${argTypes.argTypes.joinToString(",")}")
 }
 
 /**
