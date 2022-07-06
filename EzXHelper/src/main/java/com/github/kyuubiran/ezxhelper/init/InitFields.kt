@@ -2,7 +2,6 @@ package com.github.kyuubiran.ezxhelper.init
 
 import android.content.Context
 import android.content.res.Resources
-import com.github.kyuubiran.ezxhelper.utils.interfaces.ILogs
 
 object InitFields {
     /**
@@ -64,30 +63,4 @@ object InitFields {
      */
     val isHostPackageNameInited: Boolean
         get() = this::hostPackageName.isInitialized
-
-    /**
-     * 日志TAG
-     */
-    var LOG_TAG: String = "EzXHelper"
-        internal set
-
-    /**
-     * Toast TAG
-     */
-    var TOAST_TAG: String? = null
-        internal set
-
-    /**
-     * Log 接口
-     * @see ILogs
-     */
-    var LOGS: ILogs = object : ILogs {}
-        internal set
-
-    /**
-     * 输出日志到 Xposed
-     */
-    var LOG_XP: Boolean = true
-        internal set
-
 }

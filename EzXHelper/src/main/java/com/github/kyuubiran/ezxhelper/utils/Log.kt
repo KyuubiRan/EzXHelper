@@ -2,20 +2,42 @@ package com.github.kyuubiran.ezxhelper.utils
 
 import android.widget.Toast
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit.setToastTag
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOGS
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_XP
-import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import de.robv.android.xposed.XposedBridge
 
-object Log {
+class Logger {
+    /**
+     * 日志等级 低于等级的日志不会被打印出来
+     * 可以配合BuildConfig.DEBUG / RELEASE来使用
+     */
+    var logLevel: Int = VERBOSE
+
+    /**
+     * 日志Tag
+     */
+    var logTag: String = "EZXHelper"
+
+    /**
+     * Toast Tag
+     */
+    var toastTag: String? = null
+
+    companion object LogLevel {
+        const val VERBOSE = 0
+        const val DEBUG = 1
+        const val INFO = 2
+        const val WARN = 3
+        const val ERROR = 4
+    }
+
     /**
      * 打印日志 等级: Info
      * @param msg 消息
      * @param thr 异常
      */
     fun i(msg: String, thr: Throwable? = null) {
-        LOGS.i(msg, thr)
+        if (logLevel > INFO) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -24,7 +46,8 @@ object Log {
      * @param thr 异常
      */
     fun d(msg: String, thr: Throwable? = null) {
-        LOGS.d(msg, thr)
+        if (logLevel > DEBUG) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -33,7 +56,8 @@ object Log {
      * @param thr 异常
      */
     fun w(msg: String, thr: Throwable? = null) {
-        LOGS.w(msg, thr)
+        if (logLevel > WARN) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -42,7 +66,8 @@ object Log {
      * @param thr 异常
      */
     fun e(msg: String, thr: Throwable? = null) {
-        LOGS.e(msg, thr)
+        if (logLevel > ERROR) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -51,7 +76,8 @@ object Log {
      * @param msg 消息
      */
     fun i(thr: Throwable, msg: String = "") {
-        LOGS.i(msg, thr)
+        if (logLevel > INFO) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -60,7 +86,8 @@ object Log {
      * @param msg 消息
      */
     fun d(thr: Throwable, msg: String = "") {
-        LOGS.d(msg, thr)
+        if (logLevel > DEBUG) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -69,7 +96,8 @@ object Log {
      * @param msg 消息
      */
     fun w(thr: Throwable, msg: String = "") {
-        LOGS.w(msg, thr)
+        if (logLevel > WARN) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -78,7 +106,8 @@ object Log {
      * @param msg 消息
      */
     fun e(thr: Throwable, msg: String = "") {
-        LOGS.e(msg, thr)
+        if (logLevel > ERROR) return
+        android.util.Log.i(logTag, msg, thr)
     }
 
     /**
@@ -87,8 +116,9 @@ object Log {
      * @param msg 消息
      */
     fun ix(thr: Throwable, msg: String = "") {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.i(msg, thr)
+        if (logLevel > INFO) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr.stackTraceToString()}")
     }
 
     /**
@@ -97,8 +127,9 @@ object Log {
      * @param thr 异常
      */
     fun ix(msg: String, thr: Throwable? = null) {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.i(msg, thr)
+        if (logLevel > INFO) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr?.stackTraceToString()}")
     }
 
     /**
@@ -107,8 +138,9 @@ object Log {
      * @param msg 消息
      */
     fun wx(thr: Throwable, msg: String = "") {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.w(msg, thr)
+        if (logLevel > WARN) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr.stackTraceToString()}")
     }
 
     /**
@@ -117,8 +149,9 @@ object Log {
      * @param thr 异常
      */
     fun wx(msg: String, thr: Throwable? = null) {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.w(msg, thr)
+        if (logLevel > WARN) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr?.stackTraceToString()}")
     }
 
     /**
@@ -127,8 +160,9 @@ object Log {
      * @param msg 消息
      */
     fun dx(thr: Throwable, msg: String = "") {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.d(msg, thr)
+        if (logLevel > DEBUG) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr.stackTraceToString()}")
     }
 
     /**
@@ -137,8 +171,9 @@ object Log {
      * @param thr 异常
      */
     fun dx(msg: String, thr: Throwable? = null) {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.d(msg, thr)
+        if (logLevel > DEBUG) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr?.stackTraceToString()}")
     }
 
     /**
@@ -147,8 +182,9 @@ object Log {
      * @param msg 消息
      */
     fun ex(thr: Throwable, msg: String = "") {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.e(msg, thr)
+        if (logLevel > ERROR) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr.stackTraceToString()}")
     }
 
     /**
@@ -157,8 +193,91 @@ object Log {
      * @param thr 异常
      */
     fun ex(msg: String, thr: Throwable? = null) {
-        if (LOG_XP) XposedBridge.log(thr)
-        LOGS.e(msg, thr)
+        if (logLevel > ERROR) return
+        android.util.Log.i(logTag, msg, thr)
+        XposedBridge.log("$msg: ${thr?.stackTraceToString()}")
+    }
+}
+
+object Log {
+    private val defaultLogger = Logger()
+    private var logger: Logger? = null
+
+    var currentLogger: Logger
+        get() = logger ?: defaultLogger
+        set(value) {
+            logger = value
+        }
+
+    /**
+     * 如果显示Toast时上一个Toast还没消失，设置是否取消上一个Toast，并显示本次Toast
+     */
+    var cancelLastToast: Boolean = false
+
+    private var toast: Toast? = null
+
+    fun i(msg: String, thr: Throwable? = null) {
+        currentLogger.i(msg, thr)
+    }
+
+    fun d(msg: String, thr: Throwable? = null) {
+        currentLogger.d(msg, thr)
+    }
+
+    fun w(msg: String, thr: Throwable? = null) {
+        currentLogger.w(msg, thr)
+    }
+
+    fun e(msg: String, thr: Throwable? = null) {
+        currentLogger.e(msg, thr)
+    }
+
+    fun ix(msg: String, thr: Throwable? = null) {
+        currentLogger.ix(msg, thr)
+    }
+
+    fun wx(msg: String, thr: Throwable? = null) {
+        currentLogger.wx(msg, thr)
+    }
+
+    fun dx(msg: String, thr: Throwable? = null) {
+        currentLogger.dx(msg, thr)
+    }
+
+    fun ex(msg: String, thr: Throwable? = null) {
+        currentLogger.ex(msg, thr)
+    }
+
+    fun i(thr: Throwable, msg: String = "") {
+        currentLogger.i(thr, msg)
+    }
+
+    fun d(thr: Throwable, msg: String = "") {
+        currentLogger.d(thr, msg)
+    }
+
+    fun w(thr: Throwable, msg: String = "") {
+        currentLogger.w(thr, msg)
+    }
+
+    fun e(thr: Throwable, msg: String = "") {
+        currentLogger.e(thr, msg)
+    }
+
+    fun ix(thr: Throwable, msg: String = "") {
+        currentLogger.ix(thr, msg)
+    }
+
+    fun wx(thr: Throwable, msg: String = "") {
+        currentLogger.wx(thr, msg)
+    }
+
+    fun dx(thr: Throwable, msg: String = "") {
+        currentLogger.dx(thr, msg)
+    }
+
+    fun ex(thr: Throwable, msg: String = "") {
+        currentLogger.ex(thr, msg)
     }
 
     /**
@@ -171,8 +290,10 @@ object Log {
      * @see setToastTag
      */
     fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = runOnMainThread {
-        Toast.makeText(appContext, null, duration).run {
-            setText(if (TOAST_TAG != null) "${TOAST_TAG}: $msg" else msg)
+        if (cancelLastToast) toast?.cancel()
+        toast = null
+        toast = Toast.makeText(appContext, null, duration).apply {
+            setText(if (currentLogger.toastTag != null) "${currentLogger.toastTag}: $msg" else msg)
             show()
         }
     }
@@ -190,7 +311,7 @@ object Log {
      */
     inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
         this.exceptionOrNull()?.let {
-            i(it, msg)
+            currentLogger.i(it, msg)
             then(it)
         }
 
@@ -204,7 +325,7 @@ object Log {
      */
     inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
         this.exceptionOrNull()?.let {
-            i(it, msg)
+            currentLogger.i(it, msg)
             then(it)
         }
 
@@ -218,7 +339,7 @@ object Log {
      */
     inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            d(it, msg)
+            currentLogger.d(it, msg)
             then(it)
         }
 
@@ -232,7 +353,7 @@ object Log {
      */
     inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            dx(it, msg)
+            currentLogger.dx(it, msg)
             then(it)
         }
 
@@ -246,7 +367,7 @@ object Log {
      */
     inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            w(it, msg)
+            currentLogger.w(it, msg)
             then(it)
         }
 
@@ -260,7 +381,7 @@ object Log {
      */
     inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            wx(it, msg)
+            currentLogger.wx(it, msg)
             then(it)
         }
 
@@ -274,7 +395,7 @@ object Log {
      */
     inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            e(it, msg)
+            currentLogger.e(it, msg)
             then(it)
         }
 
@@ -288,7 +409,7 @@ object Log {
      */
     inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
         this.exceptionOrNull()?.let {
-            ex(it, msg)
+            currentLogger.ex(it, msg)
             then(it)
         }
 }
