@@ -47,7 +47,7 @@ class Logger {
      */
     fun d(msg: String, thr: Throwable? = null) {
         if (logLevel > DEBUG) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.d(logTag, msg, thr)
     }
 
     /**
@@ -57,7 +57,7 @@ class Logger {
      */
     fun w(msg: String, thr: Throwable? = null) {
         if (logLevel > WARN) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.w(logTag, msg, thr)
     }
 
     /**
@@ -67,7 +67,7 @@ class Logger {
      */
     fun e(msg: String, thr: Throwable? = null) {
         if (logLevel > ERROR) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.e(logTag, msg, thr)
     }
 
     /**
@@ -87,7 +87,7 @@ class Logger {
      */
     fun d(thr: Throwable, msg: String = "") {
         if (logLevel > DEBUG) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.d(logTag, msg, thr)
     }
 
     /**
@@ -97,7 +97,7 @@ class Logger {
      */
     fun w(thr: Throwable, msg: String = "") {
         if (logLevel > WARN) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.w(logTag, msg, thr)
     }
 
     /**
@@ -107,7 +107,7 @@ class Logger {
      */
     fun e(thr: Throwable, msg: String = "") {
         if (logLevel > ERROR) return
-        android.util.Log.i(logTag, msg, thr)
+        android.util.Log.e(logTag, msg, thr)
     }
 
     /**
