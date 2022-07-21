@@ -1,2 +1,3 @@
 include ':EzXHelper'
+include ':sample'
 rootProject.name = "EzXHelper"
