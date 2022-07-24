@@ -9,10 +9,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.argTypes
-import com.github.kyuubiran.ezxhelper.utils.args
-import com.github.kyuubiran.ezxhelper.utils.invokeMethod
+import com.github.kyuubiran.ezxhelper.utils.*
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityHelper
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityProxyManager
 import com.github.kyuubiran.ezxhelper.utils.parasitics.TransferActivity
@@ -74,6 +71,22 @@ object EzXHelperInit {
         appContext = context
         if (addPath) addModuleAssetPath(appContext)
         if (initModuleResources) moduleRes = context.resources
+    }
+
+
+    /**
+     * 设置自定义的 Logger
+     */
+    fun setLogXp(log: Logger) {
+        Log.currentLogger = log
+    }
+
+
+    /**
+     * 设置是否输出日志到 Xposed
+     */
+    fun setLogXp(toXp: Boolean) {
+        Log.currentLogger.logXp = toXp
     }
 
     /**
