@@ -77,7 +77,7 @@ object EzXHelperInit {
     /**
      * 设置自定义的 Logger
      */
-    fun setLogXp(log: Logger) {
+    fun setLogger(log: Logger) {
         Log.currentLogger = log
     }
 
