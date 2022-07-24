@@ -75,7 +75,7 @@ object EzXHelperInit {
 
 
     /**
-     * 设置自定义的 Logger
+     * 设置自定义的 Logger,与 setLogXp setLogTag setToastTag 冲突！
      */
     fun setLogger(log: Logger) {
         Log.currentLogger = log
