@@ -58,7 +58,6 @@ open class Logger {
     }
 
 
-
     /**
      * 打印日志 等级: Warn
      * @param msg 消息
@@ -87,7 +86,8 @@ open class Logger {
      * @param msg 消息
      * @param thr 异常
      */
-    open fun px( level: String, msg: String,thr: Throwable?) {
+    open fun px( levelInt: Int, level: String, msg: String,thr: Throwable?) {
+        if (logLevel > levelInt) return
         if (logXp) XposedBridge.log("[$level/$logTag] $msg: ${thr?.stackTraceToString()}")
     }
 
@@ -135,9 +135,8 @@ open class Logger {
      * @param thr 异常
      */
     fun ix(msg: String, thr: Throwable? = null) {
-        if (logLevel > INFO) return
-        android.util.Log.i(logTag, msg, thr)
-        px("I",msg,thr)
+        i(msg,thr)
+        px(INFO,"I",msg,thr)
     }
 
 
@@ -157,9 +156,8 @@ open class Logger {
      * @param thr 异常
      */
     fun wx(msg: String, thr: Throwable? = null) {
-        if (logLevel > WARN) return
-        android.util.Log.i(logTag, msg, thr)
-        px("W",msg,thr)
+        w(msg,thr)
+        px(WARN,"W",msg,thr)
     }
 
 
@@ -179,9 +177,8 @@ open class Logger {
      * @param thr 异常
      */
     fun dx(msg: String, thr: Throwable? = null) {
-        if (logLevel > DEBUG) return
-        android.util.Log.i(logTag, msg, thr)
-        px("D",msg,thr)
+        d(msg,thr)
+        px(DEBUG,"D",msg,thr)
     }
 
 
@@ -201,10 +198,10 @@ open class Logger {
      * @param thr 异常
      */
     fun ex(msg: String, thr: Throwable? = null) {
-        if (logLevel > ERROR) return
-        android.util.Log.i(logTag, msg, thr)
-        px("E",msg,thr)
+        e(msg,thr)
+        px(ERROR,"E",msg,thr)
     }
+
 
     /**
      * 打印日志到Xposed 等级: Error
@@ -214,7 +211,6 @@ open class Logger {
     fun ex(thr: Throwable, msg: String = "") {
         ex(msg,thr)
     }
-
 }
 
 object Log {
@@ -223,7 +219,7 @@ object Log {
 
     var currentLogger: Logger
         get() = logger ?: defaultLogger
-         set(value) {
+        set(value) {
             logger = value
         }
 
