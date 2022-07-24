@@ -5,7 +5,7 @@ import com.github.kyuubiran.ezxhelper.init.EzXHelperInit.setToastTag
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import de.robv.android.xposed.XposedBridge
 
-class Logger {
+open class Logger {
     /**
      * 日志等级 低于等级的日志不会被打印出来
      * 可以配合BuildConfig.DEBUG / RELEASE来使用
