@@ -81,7 +81,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         else "L" + type.name.replace('.', '/') + ";"
     }
 
-    private fun getMethodTypeSig(method: Method): String {
+    private fun getMethodTypeDesc(method: Method): String {
         return buildString {
             append("(")
             method.parameterTypes.forEach {
@@ -100,12 +100,12 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
                     clzLoader
                 )
             clz.declaredMethods.forEach { m ->
-                if (m.name == name && getMethodTypeSig(m) == signature) return m
+                if (m.name == name && getMethodTypeDesc(m) == signature) return m
             }
             while (clz.superclass?.also { clz = it } != null) {
                 clz.declaredMethods.forEach { m ->
                     if (m.isPrivate || m.isStatic) return@forEach
-                    if (m.name == name && getMethodTypeSig(m) == signature) return m
+                    if (m.name == name && getMethodTypeDesc(m) == signature) return m
                 }
             }
             throw NoSuchMethodException("$declaringClass->$name$signature")

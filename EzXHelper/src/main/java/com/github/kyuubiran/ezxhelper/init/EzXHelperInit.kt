@@ -4,10 +4,6 @@ import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.XModuleResources
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOGS
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_TAG
-import com.github.kyuubiran.ezxhelper.init.InitFields.LOG_XP
-import com.github.kyuubiran.ezxhelper.init.InitFields.TOAST_TAG
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.hostPackageName
@@ -16,7 +12,6 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.moduleRes
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.argTypes
 import com.github.kyuubiran.ezxhelper.utils.args
-import com.github.kyuubiran.ezxhelper.utils.interfaces.ILogs
 import com.github.kyuubiran.ezxhelper.utils.invokeMethod
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityHelper
 import com.github.kyuubiran.ezxhelper.utils.parasitics.ActivityProxyManager
@@ -85,7 +80,7 @@ object EzXHelperInit {
      * 设置打印日志的标签
      */
     fun setLogTag(tag: String) {
-        LOG_TAG = tag
+        Log.currentLogger.logTag = tag
     }
 
     /**
@@ -94,23 +89,7 @@ object EzXHelperInit {
      * @see Log.toast
      */
     fun setToastTag(tag: String) {
-        TOAST_TAG = tag
-    }
-
-    /**
-     * 设置 Log
-     * @see ILogs
-     */
-    fun setLogs(log: ILogs) {
-        LOGS = log
-    }
-
-    /**
-     * 设置 输出日志到 Xposed
-     * @see Log.ex
-     */
-    fun setLogXp(xp: Boolean) {
-        LOG_XP = xp
+        Log.currentLogger.toastTag = tag
     }
 
     /**
@@ -121,7 +100,7 @@ object EzXHelperInit {
      * 1.在项目的build.gradle中修改资源id(不与宿主冲突即可) 如下:
      *
      * Kotlin Gradle DSL:
-     * androidResources.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
+     * androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
      *
      * Groovy:
      * aaptOptions.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'

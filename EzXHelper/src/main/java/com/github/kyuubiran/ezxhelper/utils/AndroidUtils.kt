@@ -18,7 +18,7 @@ val runtimeProcess: Runtime by lazy {
 /**
  * 扩展函数 将函数放到主线程执行 如UI更新、显示Toast等
  */
-fun Runnable.runOnMainThread() {
+fun Runnable.postOnMainThread() {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         this.run()
     } else {
@@ -26,9 +26,8 @@ fun Runnable.runOnMainThread() {
     }
 }
 
-@JvmName("runOnUIThread")
 fun runOnMainThread(runnable: Runnable) {
-    runnable.runOnMainThread()
+    runnable.postOnMainThread()
 }
 
 /**
@@ -36,10 +35,8 @@ fun runOnMainThread(runnable: Runnable) {
  * @param msg Toast显示的消息
  * @param length Toast显示的时长
  */
-fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
-    runOnMainThread {
-        Toast.makeText(this, msg, length).show()
-    }
+fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) = runOnMainThread {
+    Toast.makeText(this, msg, length).show()
 }
 
 /**
@@ -48,10 +45,8 @@ fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) {
  * @param args 格式化的参数
  * @param length Toast显示的时长
  */
-fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) {
-    runOnMainThread {
-        Toast.makeText(this, msg.format(args), length).show()
-    }
+fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) = runOnMainThread {
+    Toast.makeText(this, msg.format(args), length).show()
 }
 
 /**
