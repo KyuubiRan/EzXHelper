@@ -86,7 +86,7 @@ open class Logger {
      * @param msg 消息
      * @param thr 异常
      */
-    open fun px( levelInt: Int, level: String, msg: String,thr: Throwable?) {
+    open fun px(levelInt: Int, level: String, msg: String, thr: Throwable?) {
         if (logLevel > levelInt) return
         if (logXp) XposedBridge.log("[$level/$logTag] $msg: ${thr?.stackTraceToString()}")
     }
@@ -97,8 +97,8 @@ open class Logger {
      * @param thr 异常
      * @param msg 消息
      */
-     fun i(thr: Throwable, msg: String = "") {
-        i(msg,thr)
+    fun i(thr: Throwable, msg: String = "") {
+        i(msg, thr)
     }
 
     /**
@@ -106,8 +106,8 @@ open class Logger {
      * @param thr 异常
      * @param msg 消息
      */
-     fun d(thr: Throwable, msg: String = "") {
-        d(msg,thr)
+    fun d(thr: Throwable, msg: String = "") {
+        d(msg, thr)
     }
 
     /**
@@ -115,8 +115,8 @@ open class Logger {
      * @param thr 异常
      * @param msg 消息
      */
-     fun w(thr: Throwable, msg: String = "") {
-        w(msg,thr)
+    fun w(thr: Throwable, msg: String = "") {
+        w(msg, thr)
     }
 
     /**
@@ -124,8 +124,8 @@ open class Logger {
      * @param thr 异常
      * @param msg 消息
      */
-     fun e(thr: Throwable, msg: String = "") {
-        e(msg,thr)
+    fun e(thr: Throwable, msg: String = "") {
+        e(msg, thr)
     }
 
 
@@ -135,8 +135,8 @@ open class Logger {
      * @param thr 异常
      */
     fun ix(msg: String, thr: Throwable? = null) {
-        i(msg,thr)
-        px(INFO,"I",msg,thr)
+        i(msg, thr)
+        px(INFO, "I", msg, thr)
     }
 
 
@@ -146,7 +146,7 @@ open class Logger {
      * @param msg 消息
      */
     fun ix(thr: Throwable, msg: String = "") {
-        ix(msg,thr)
+        ix(msg, thr)
     }
 
 
@@ -156,8 +156,8 @@ open class Logger {
      * @param thr 异常
      */
     fun wx(msg: String, thr: Throwable? = null) {
-        w(msg,thr)
-        px(WARN,"W",msg,thr)
+        w(msg, thr)
+        px(WARN, "W", msg, thr)
     }
 
 
@@ -167,7 +167,7 @@ open class Logger {
      * @param msg 消息
      */
     fun wx(thr: Throwable, msg: String = "") {
-        wx(msg,thr)
+        wx(msg, thr)
     }
 
 
@@ -177,8 +177,8 @@ open class Logger {
      * @param thr 异常
      */
     fun dx(msg: String, thr: Throwable? = null) {
-        d(msg,thr)
-        px(DEBUG,"D",msg,thr)
+        d(msg, thr)
+        px(DEBUG, "D", msg, thr)
     }
 
 
@@ -188,7 +188,7 @@ open class Logger {
      * @param msg 消息
      */
     fun dx(thr: Throwable, msg: String = "") {
-        dx(msg,thr)
+        dx(msg, thr)
     }
 
 
@@ -198,8 +198,8 @@ open class Logger {
      * @param thr 异常
      */
     fun ex(msg: String, thr: Throwable? = null) {
-        e(msg,thr)
-        px(ERROR,"E",msg,thr)
+        e(msg, thr)
+        px(ERROR, "E", msg, thr)
     }
 
 
@@ -209,7 +209,7 @@ open class Logger {
      * @param msg 消息
      */
     fun ex(thr: Throwable, msg: String = "") {
-        ex(msg,thr)
+        ex(msg, thr)
     }
 }
 
