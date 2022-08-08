@@ -207,6 +207,14 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
 fun Any.getStaticFieldByType(type: Class<*>): Field = this.getFieldByType(type, true)
 
 /**
+ * @see staticField
+ * @deprecated staticField的拼写错误，请使用 [staticField]
+ */
+@Deprecated("Use staticField instead", ReplaceWith("staticField(fieldName, type)"))
+fun Class<*>.staticFiled(fieldName: String, type: Class<*>? = null): Field =
+    staticField(fieldName, type)
+
+/**
  * 扩展函数 通过类获取静态属性
  * @param fieldName 属性名称
  * @param type 属性类型
