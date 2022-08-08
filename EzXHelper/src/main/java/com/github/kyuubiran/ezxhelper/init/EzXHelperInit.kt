@@ -177,7 +177,7 @@ object EzXHelperInit {
      * @see addModuleAssetPath
      *
      * 需要在Application.onCreate之后调用 且只需要调用一次
-     * 并且模块所以的Activity需要继承于TransferActivity
+     * 并且模块所有的Activity需要继承于TransferActivity
      */
     fun initSubActivity() {
         ActivityHelper.initSubActivity()
