@@ -30,7 +30,7 @@ object ActivityHelper {
             //region Instrumentation
             val cActivityThread = Class.forName("android.app.ActivityThread")
             val fCurrentActivityThread =
-                cActivityThread.staticFiled("sCurrentActivityThread")
+                cActivityThread.staticField("sCurrentActivityThread")
             val sCurrentActivityThread = fCurrentActivityThread.get(null)!!
             val fmInstrumentation =
                 cActivityThread.field("mInstrumentation")
@@ -58,11 +58,11 @@ object ActivityHelper {
             var fgDefault: Field
             try {
                 cActivityManager = Class.forName("android.app.ActivityManagerNative")
-                fgDefault = cActivityManager.staticFiled("gDefault")
+                fgDefault = cActivityManager.staticField("gDefault")
             } catch (e1: Exception) {
                 try {
                     cActivityManager = Class.forName("android.app.ActivityManager")
-                    fgDefault = cActivityManager.staticFiled("IActivityManagerSingleton")
+                    fgDefault = cActivityManager.staticField("IActivityManagerSingleton")
                 } catch (e2: Exception) {
                     Log.e(e1)
                     Log.e(e2)

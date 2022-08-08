@@ -214,11 +214,10 @@ fun Any.getStaticFieldByType(type: Class<*>): Field = this.getFieldByType(type, 
  * @throws IllegalArgumentException 属性名为空
  * @throws NoSuchFieldException 未找到属性
  */
-fun Class<*>.staticFiled(fieldName: String, type: Class<*>? = null): Field {
+fun Class<*>.staticField(fieldName: String, type: Class<*>? = null): Field {
     if (fieldName.isBlank()) throw IllegalArgumentException("Field name must not be empty!")
     return this.field(fieldName, true, type)
 }
-
 
 /**
  * 扩展函数 获取静态对象 并转换为T?类型
@@ -501,7 +500,7 @@ fun Class<*>.getStaticObjectOrNull(
     type: Class<*>? = null
 ): Any? = tryOrLogNull {
     if (objName.isBlank()) throw IllegalArgumentException("Object name must not be empty!")
-    tryOrNull { this.staticFiled(objName, type) }?.get(null)
+    tryOrNull { this.staticField(objName, type) }?.get(null)
 }
 
 /**
@@ -531,7 +530,7 @@ fun Class<*>.getStaticObject(
     type: Class<*>? = null
 ): Any {
     if (objName.isBlank()) throw IllegalArgumentException("Object name must not be empty!")
-    return this.staticFiled(objName, type).get(this)!!
+    return this.staticField(objName, type).get(this)!!
 }
 
 /**
@@ -680,7 +679,7 @@ fun Class<*>.putStaticObjectByType(value: Any?, type: Class<*>) = tryOrLog {
 fun Class<*>.putStaticObject(objName: String, value: Any?, fieldType: Class<*>? = null) = tryOrLog {
     if (objName.isBlank()) throw IllegalArgumentException("Object name must not be empty!")
     try {
-        this.staticFiled(objName, fieldType)
+        this.staticField(objName, fieldType)
     } catch (e: NoSuchFieldException) {
         return
     }.set(null, value)
