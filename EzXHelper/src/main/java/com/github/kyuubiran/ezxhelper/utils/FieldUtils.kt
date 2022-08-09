@@ -207,14 +207,6 @@ fun Any.getFieldByType(type: Class<*>, isStatic: Boolean = false): Field {
 fun Any.getStaticFieldByType(type: Class<*>): Field = this.getFieldByType(type, true)
 
 /**
- * @see staticField
- * @deprecated staticField的拼写错误，请使用 [staticField]
- */
-@Deprecated("Use staticField instead", ReplaceWith("staticField(fieldName, type)"))
-fun Class<*>.staticFiled(fieldName: String, type: Class<*>? = null): Field =
-    staticField(fieldName, type)
-
-/**
  * 扩展函数 通过类获取静态属性
  * @param fieldName 属性名称
  * @param type 属性类型
@@ -744,9 +736,27 @@ fun getFieldByDesc(desc: String, clzLoader: ClassLoader = InitFields.ezXClassLoa
     DexDescriptor.newFieldDesc(desc).getField(clzLoader).apply { isAccessible = true }
 
 /**
- * 扩展函数 通过Descriptor获取方法
+ * 扩展函数 通过Descriptor获取属性
  * @param desc Descriptor
- * @return 找到的方法
- * @throws NoSuchMethodException 未找到方法
+ * @return 找到的属性
+ * @throws NoSuchFieldException 未找到属性
  */
-fun ClassLoader.getMethodByDesc(desc: String): Method = getMethodByDesc(desc, this)
+fun ClassLoader.getFieldByDesc(desc: String): Field = getFieldByDesc(desc, this)
+
+/**
+ * 通过Descriptor获取属性
+ * @param desc Descriptor
+ * @param clzLoader 类加载器
+ * @return 找到的属性 未找到则返回null
+ */
+fun getFieldByDescOrNull(
+    desc: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Field? = runCatching { getFieldByDesc(desc, clzLoader) }.getOrNull()
+
+/**
+ * 扩展函数 通过Descriptor获取属性
+ * @param desc Descriptor
+ * @return 找到的属性 未找到则返回null
+ */
+fun ClassLoader.getFieldByDescOrNull(desc: String): Field? = getFieldByDescOrNull(desc, this)

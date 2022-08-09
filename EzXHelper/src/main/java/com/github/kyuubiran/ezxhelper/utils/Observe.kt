@@ -89,10 +89,12 @@ class Observe<T>(init: T, onValueChanged: ((T) -> Unit)? = null) {
         operator fun invoke(value: T) {
             _listeners.retainIf {
                 try {
-                    it(value);true
+                    it(value)
+                    true
                 } catch (e: Throwable) {
                     onThrow?.invoke(e)
-                    Log.e("Event invoke failed", e);false
+                    Log.e("Event invoke failed", e)
+                    false
                 }
             }
         }

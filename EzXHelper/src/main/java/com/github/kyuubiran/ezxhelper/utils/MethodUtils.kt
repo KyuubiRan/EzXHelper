@@ -753,9 +753,28 @@ fun getMethodByDesc(
 ): Method = DexDescriptor.newMethodDesc(desc).getMethod(clzLoader).apply { isAccessible = true }
 
 /**
- * 扩展函数 通过Descriptor获取属性
+ * 通过Descriptor获取方法
  * @param desc Descriptor
- * @return 找到的属性
- * @throws NoSuchFieldException 未找到属性
+ * @param clzLoader 类加载器
+ * @return 找到的方法 未找到则返回null
  */
-fun ClassLoader.getFieldByDesc(desc: String): Field = getFieldByDesc(desc, this)
+fun getMethodByDescOrNull(
+    desc: String,
+    clzLoader: ClassLoader = InitFields.ezXClassLoader
+): Method? = runCatching { getMethodByDesc(desc, clzLoader) }.getOrNull()
+
+
+/**
+ * 扩展函数 通过Descriptor获取方法
+ * @param desc Descriptor
+ * @return 找到的方法
+ * @throws NoSuchMethodException 未找到方法
+ */
+fun ClassLoader.getMethodByDesc(desc: String): Method = getMethodByDesc(desc, this)
+
+/**
+ * 扩展函数 通过Descriptor获取方法
+ * @param desc Descriptor
+ * @return 找到的方法 未找到则返回null
+ */
+fun ClassLoader.getMethodByDescOrNull(desc: String): Method? = getMethodByDescOrNull(desc, this)
