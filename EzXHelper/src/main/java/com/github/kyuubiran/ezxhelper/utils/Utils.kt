@@ -139,22 +139,30 @@ inline fun <K, V> MutableMap<K, V>.applyRemoveIf(
 
 /**
  * 取自 哔哩漫游
+ * 查找DexClassLoader
+ * @see `https://github.com/yujincheng08/BiliRoaming`
+ */
+inline fun ClassLoader.findDexClassLoader(crossinline delegator: (BaseDexClassLoader) -> BaseDexClassLoader = { x -> x }): BaseDexClassLoader? {
+    var classLoader = this
+    while (classLoader !is BaseDexClassLoader) {
+        if (classLoader.parent != null) classLoader = classLoader.parent
+        else return null
+    }
+    return delegator(classLoader)
+}
+
+/**
+ * 取自 哔哩漫游
  * 获取所有类名
  * @see `https://github.com/yujincheng08/BiliRoaming`
  */
-fun ClassLoader.getAllClassesList(delegate: (BaseDexClassLoader) -> BaseDexClassLoader = { loader -> loader }): List<String> {
-    var loader = this
-    while (loader !is BaseDexClassLoader) {
-        loader = loader.parent ?: return emptyList()
-    }
-    return delegate(loader).getObjectOrNull("pathList")
+fun ClassLoader.getAllClassesList(delegator: (BaseDexClassLoader) -> BaseDexClassLoader = { loader -> loader }): List<String> =
+    findDexClassLoader(delegator)?.getObjectOrNull("pathList")
         ?.getObjectOrNullAs<Array<Any>>("dexElements")
         ?.flatMap {
-            it.getObjectOrNull("dexFile")
-                ?.invokeMethodAutoAs<Enumeration<String>>("entries")
-                ?.toList().orEmpty()
+            it.getObjectOrNull("dexFile")?.invokeMethodAutoAs<Enumeration<String>>("entries")?.toList()
+                .orEmpty()
         }.orEmpty()
-}
 
 /**
  * 重新启动宿主App
