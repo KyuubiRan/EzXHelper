@@ -54,6 +54,7 @@
 |    [WooBox For MIUI](https://github.com/Simplicity-Team/WooBoxForMIUI)    | 一个基于 MIUI13(Android 12) 适配的自定义工具                                                                  |
 | [WooBox For ColorOS](https://github.com/Simplicity-Team/WooBoxForColorOS) | 一个基于 ColorOS12(Android 12) 适配的自定义工具                                                               |
 |            [MiuiHome](https://github.com/qqlittleice/MiuiHome)            | 针对 Miui 桌面的自定义扩展                                                                                  |
+| [TwiFucker](https://github.com/Dr-TSNG/TwiFucker) | Yet Another Adkiller for Twitter |
 
 
 ### 捐赠支持
