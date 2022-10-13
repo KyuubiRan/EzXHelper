@@ -1,5 +1,6 @@
 package com.github.kyuubiran.ezxhelper.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.view.View
@@ -98,6 +99,7 @@ fun <T : View> ViewGroup.findViewByConditionAs(condition: (view: View) -> Boolea
  * @param name 名字
  * @return id ID 若无法找到则返回0
  */
+@SuppressLint("DiscouragedApi")
 fun getIdByName(name: String, ctx: Context = InitFields.appContext): Int {
     return ctx.resources.getIdentifier(name, "id", ctx.packageName)
 }
