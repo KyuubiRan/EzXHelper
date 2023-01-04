@@ -2,6 +2,8 @@ package com.example.sample
 
 import com.example.sample.hook.BaseHook
 import com.example.sample.hook.ExampleHook
+import com.example.sample.hook.FilterClassMethodExampleHook
+import com.example.sample.hook.MultiExampleHook
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
@@ -20,7 +22,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit /* Optional */ {
             EzXHelperInit.setLogTag(TAG)
             EzXHelperInit.setToastTag(TAG)
             // Init hooks
-            initHooks(ExampleHook)
+            initHooks(ExampleHook, MultiExampleHook, FilterClassMethodExampleHook)
         }
     }
 
@@ -35,8 +37,8 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit /* Optional */ {
                 if (it.isInit) return@forEach
                 it.init()
                 it.isInit = true
-                Log.i("Inited hook: ${it.javaClass.simpleName}")
-            }.logexIfThrow("Failed init hook: ${it.javaClass.simpleName}")
+                Log.i("Inited hook: ${it.name}")
+            }.logexIfThrow("Failed init hook: ${it.name}")
         }
     }
 }
