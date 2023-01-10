@@ -1,10 +1,12 @@
+@file:Suppress("unused")
+
 package com.github.kyuubiran.ezxhelper.utils.finders
 
 import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
 import java.lang.reflect.Constructor
 
 context (IXposedScope)
-class ConstructorFinder<C> private constructor(seq: Sequence<Constructor<C>>) : BaseExecutableFinder<Constructor<C>, MethodFinder>(seq) {
+class ConstructorFinder<C> internal constructor(seq: Sequence<Constructor<C>>) : ExecutableFinder<Constructor<C>, ConstructorFinder<C>>(seq) {
     // #region filter by
     // #endregion
 

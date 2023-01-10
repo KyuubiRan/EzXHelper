@@ -81,11 +81,11 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
-
                 groupId = 'com.github.kyuubiran'
                 artifactId = 'EzXHelper'
                 version = versionName
+
+                from components.release
 
                 pom {
                     name = 'EzXHelper'

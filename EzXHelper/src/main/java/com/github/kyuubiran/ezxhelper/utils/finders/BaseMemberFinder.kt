@@ -8,8 +8,8 @@ import java.lang.reflect.Modifier
 
 context (IXposedScope)
 @Suppress("UNCHECKED_CAST", "unused")
-abstract class BaseExecutableFinder<T, S> internal constructor(protected var memberSequence: Sequence<T>) where T : Member {
-    protected inline fun applyThis(block: BaseExecutableFinder<T, S>.() -> Unit) = this.apply { block() } as S
+abstract class BaseMemberFinder<T, Self> internal constructor(protected var memberSequence: Sequence<T>) where T : Member {
+    protected inline fun applyThis(block: BaseMemberFinder<T, Self>.() -> Unit) = this.apply { block() } as Self
 
     fun firstOrNull(): T? = memberSequence.firstOrNull()
 
@@ -17,28 +17,28 @@ abstract class BaseExecutableFinder<T, S> internal constructor(protected var mem
     fun first(): T = memberSequence.first()
 
     // #region contact
-    fun contact(other: BaseExecutableFinder<T, S>): S = applyThis {
+    fun contact(other: BaseMemberFinder<T, Self>): Self = applyThis {
         memberSequence += other.memberSequence
     }
 
-    fun contact(other: Sequence<T>): S = applyThis {
+    fun contact(other: Sequence<T>): Self = applyThis {
         memberSequence += other
     }
 
-    fun contact(other: Array<T>): S = applyThis {
+    fun contact(other: Array<T>): Self = applyThis {
         memberSequence += other.asSequence()
     }
 
-    fun contact(other: Iterable<T>): S = applyThis {
+    fun contact(other: Iterable<T>): Self = applyThis {
         memberSequence += other.asSequence()
     }
 
-    operator fun plus(other: BaseExecutableFinder<T, S>) = contact(other)
+    operator fun plus(other: BaseMemberFinder<T, Self>) = contact(other)
     operator fun plus(other: Sequence<T>) = contact(other)
     operator fun plus(other: Array<T>) = contact(other)
     operator fun plus(other: Iterable<T>) = contact(other)
 
-    operator fun plusAssign(other: BaseExecutableFinder<T, S>) {
+    operator fun plusAssign(other: BaseMemberFinder<T, Self>) {
         contact(other)
     }
 
@@ -55,61 +55,27 @@ abstract class BaseExecutableFinder<T, S> internal constructor(protected var mem
     }
     // #endregion
 
-    fun filter(filter: T.() -> Boolean): S = applyThis {
+    fun filter(filter: T.() -> Boolean): Self = applyThis {
         memberSequence.filter(filter)
     }
 
     // #region filter by
-    fun filterByParamTypes(vararg paramTypes: Class<*>?): S = applyThis {
-        memberSequence.filter f@{
-            val pt = getParameterTypes(it)
-            if (pt.size != paramTypes.size) return@f false
-
-            for (i in pt.indices) {
-                if (paramTypes[i] == null) continue
-                if (pt[i] != paramTypes[i]) return@f false
-            }
-
-            true
-        }
-    }
-
-    fun filterByParamTypes(predicate: (Array<Class<*>>) -> Boolean): S = applyThis {
-        memberSequence.filter { predicate(getParameterTypes(it)) }
-    }
-
-    fun filterByParamCount(count: Int): S = applyThis {
-        memberSequence.filter { getParameterTypes(it).size == count }
-    }
-
-    fun filterByParamCount(predicate: (Int) -> Boolean): S = applyThis {
-        memberSequence.filter { predicate(getParameterTypes(it).size) }
-    }
-
-    fun filterByParamCount(range: IntRange) = applyThis {
-        memberSequence.filter { getParameterTypes(it).size in range }
-    }
-
-    fun filterByExceptionTypes(vararg exceptionTypes: Class<*>): S = applyThis {
-        val set = exceptionTypes.toSet()
-        memberSequence.filter { getExceptionTypes(it).toSet() == set }
-    }
     // #endregion
 
     // #region filter modifiers
-    fun filterByModifiers(modifiers: Int): S = applyThis {
+    fun filterByModifiers(modifiers: Int): Self = applyThis {
         memberSequence.filter { it.modifiers == modifiers }
     }
 
-    fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): S = applyThis {
+    fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): Self = applyThis {
         memberSequence.filter { predicate(it.modifiers) }
     }
 
-    fun filterIncludeModifiers(modifiers: Int): S = applyThis {
+    fun filterIncludeModifiers(modifiers: Int): Self = applyThis {
         memberSequence.filter { (it.modifiers and modifiers) != 0 }
     }
 
-    fun filterExcludeModifiers(modifiers: Int): S = applyThis {
+    fun filterExcludeModifiers(modifiers: Int): Self = applyThis {
         memberSequence.filter { (it.modifiers and modifiers) == 0 }
     }
 
@@ -133,8 +99,8 @@ abstract class BaseExecutableFinder<T, S> internal constructor(protected var mem
     // #endregion
 
     // #region for-each
-    fun onEach(action: (T) -> Unit): S = applyThis { memberSequence.onEach(action) }
-    fun onEachIndexed(action: (index: Int, T) -> Unit): S = applyThis { memberSequence.onEachIndexed(action) }
+    fun onEach(action: (T) -> Unit): Self = applyThis { memberSequence.onEach(action) }
+    fun onEachIndexed(action: (index: Int, T) -> Unit): Self = applyThis { memberSequence.onEachIndexed(action) }
     fun forEach(action: (T) -> Unit) = memberSequence.forEach(action)
     fun forEachIndexed(action: (index: Int, T) -> Unit) = memberSequence.forEachIndexed(action)
     // #endregion
@@ -156,10 +122,5 @@ abstract class BaseExecutableFinder<T, S> internal constructor(protected var mem
     fun toMutableSet(): MutableSet<T> = memberSequence.toMutableSet()
     fun toHashSet(): HashSet<T> = memberSequence.toHashSet()
     fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.toCollection(collection)
-    // #endregion
-
-    // #region abstract
-    protected abstract fun getParameterTypes(member: T): Array<Class<*>>
-    protected abstract fun getExceptionTypes(member: T): Array<Class<*>>
     // #endregion
 }
