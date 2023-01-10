@@ -39,15 +39,15 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         var c = clazz?.superclass ?: return@applyThis
         var seq = emptySequence<Method>()
 
-        while (c != Any::class.java) {
+        while (c != Any::class.java) run r@{
             findSuper?.invoke(c)?.let {
-                if (it) return@applyThis
+                if (it) return@r
             }
 
             seq += c.declaredMethods.asSequence()
             seq += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
 
-            c = c.superclass ?: return@applyThis
+            c = c.superclass ?: return@r
         }
 
         this += seq
