@@ -2,6 +2,7 @@ package com.github.kyuubiran.ezxhelper.utils.finders
 
 import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
 import java.lang.reflect.Member
+import java.lang.reflect.Modifier
 
 context (IXposedScope)
 abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMemberFinder<E, Self>(seq) {
@@ -40,6 +41,14 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
         val set = exceptionTypes.toSet()
         memberSequence.filter { getExceptionTypes(it).toSet() == set }
     }
+    // #endregion
+
+    // #region filter modifiers
+    fun filterNative() = filterIncludeModifiers(Modifier.NATIVE)
+    fun filterNonNative() = filterExcludeModifiers(Modifier.NATIVE)
+
+    fun filterVarargs() = filterIncludeModifiers(0x0080)
+    fun filterNonVarargs() = filterExcludeModifiers(0x0080)
     // #endregion
 
     // #region abstract

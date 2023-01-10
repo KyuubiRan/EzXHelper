@@ -90,12 +90,6 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
 
     fun filterPackagePrivate() = filterExcludeModifiers(Modifier.PUBLIC or Modifier.PROTECTED or Modifier.PRIVATE)
     fun filterNonPackagePrivate() = filterExcludeModifiers(Modifier.PUBLIC or Modifier.PROTECTED or Modifier.PRIVATE)
-
-    fun filterNative() = filterIncludeModifiers(Modifier.NATIVE)
-    fun filterNonNative() = filterExcludeModifiers(Modifier.NATIVE)
-
-    fun filterVarargs() = filterIncludeModifiers(0x0080)
-    fun filterNonVarargs() = filterExcludeModifiers(0x0080)
     // #endregion
 
     // #region for-each
