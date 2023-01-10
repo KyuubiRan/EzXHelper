@@ -1,5 +1,5 @@
 # EzXHelper
-
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
 一个使Xposed模块开发变的更轻松的kotlin库    
 当前最新版本:1.0.3
 
