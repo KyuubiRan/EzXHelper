@@ -1,42 +1,7 @@
 # EzXHelper
 
 一个使Xposed模块开发变的更轻松的kotlin库    
-当前最新版本:1.0.3
-
-### 注意事项
-
-**大量扩展/Top-Level 函数/属性警告**
-
-**本库依旧处于开发过程中，你可能会遇到包括但不限于以下问题：**
-
-- 出现八哥
-- 函数名称、参数变动
-
-**较大变动：**
-
-- 0.5.0版本更改了部分函数命名，比如`findXxxByCondition`一律改成了`findXxx`，并且参数也进行了修改，更新到此版本时请注意修改。
-- 0.7.1版本更改了方法、构造的调用参数类型，请将原来的`arrayOf()`函数替换成`args()`以及`argTypes()`。
-- 0.7.5版本将`minSdkVersion`从 21 提升至 **24** 。
-- 0.9.2版本再次修改部分函数名字，比如`getXxxByClassOrObject`一律改成了`xxx`，变得简短了，同时将`ReflectUtils.kt`
-  拆分为多个部分，且移除了一些不必要的扩展属性/函数。
-
-## 使用方式
-
-在build.gradle的dependencies下添加语句 `implementation 'com.github.kyuubiran:EzXHelper:1.0.3'`   
-调用`EzXHelperInit.initHandleLoadPackage(lpparam)`初始化 就可以使用大部分工具类啦
-
-### 例子
-
-![image](docs/example.png)
-
-### 功能
-
-- 方法查找(通过条件、Descriptor等查找)
-- 属性查找(通过条件、Descriptor等查找)
-- 各种扩展属性(如Member 可以直接判断是否公开、私有、静态等)
-- 各种扩展函数(如可以直接用Class.newInstance调用有参构造实例化对象 obj.invokeMethod调用成员方法 obj.getObject获取对象等)
-- 资源注入(使用宿主的context时 也能使用模块的资源)
-- 在宿主内以宿主的身份启动模块(未注册)的Activity
+2.0版本重构中
 
 ### 使用本库的项目
 

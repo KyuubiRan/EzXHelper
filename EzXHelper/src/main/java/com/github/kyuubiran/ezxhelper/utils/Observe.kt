@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.github.kyuubiran.ezxhelper.utils
 
 /**
@@ -87,14 +89,11 @@ class Observe<T>(init: T, onValueChanged: ((T) -> Unit)? = null) {
         }
 
         operator fun invoke(value: T) {
-            _listeners.retainIf {
+            for (listener in _listeners) {
                 try {
-                    it(value)
-                    true
-                } catch (e: Throwable) {
-                    onThrow?.invoke(e)
-                    Log.e("Event invoke failed", e)
-                    false
+                    listener(value)
+                } catch (thr: Throwable) {
+                    onThrow?.invoke(thr)
                 }
             }
         }

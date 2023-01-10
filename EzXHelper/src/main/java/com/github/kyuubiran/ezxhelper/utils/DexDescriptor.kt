@@ -1,6 +1,10 @@
+@file:Suppress("unused")
+
 package com.github.kyuubiran.ezxhelper.utils
 
-import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.utils.MemberExtensions.isPrivate
+import com.github.kyuubiran.ezxhelper.utils.MemberExtensions.isStatic
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -20,6 +24,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
                 name = sig.substring(retIdx + 2, typeIdx)
                 signature = sig.substring(typeIdx + 1)
             }
+
             TYPE.METHOD -> {
                 val retIdx: Int = sig.indexOf("->")
                 val argsIdx: Int = sig.indexOf('(', retIdx)
@@ -92,13 +97,9 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    internal fun getMethod(clzLoader: ClassLoader = ezXClassLoader): Method {
+    internal fun getMethod(clzLoader: ClassLoader = EzXHelper.classLoader): Method {
         try {
-            var clz =
-                loadClass(
-                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
-                    clzLoader
-                )
+            var clz = Class.forName(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'), false, clzLoader)
             clz.declaredMethods.forEach { m ->
                 if (m.name == name && getMethodTypeDesc(m) == signature) return m
             }
@@ -114,13 +115,9 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    internal fun getField(clzLoader: ClassLoader = ezXClassLoader): Field {
+    internal fun getField(clzLoader: ClassLoader = EzXHelper.classLoader): Field {
         try {
-            var clz =
-                loadClass(
-                    declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'),
-                    clzLoader
-                )
+            var clz = Class.forName(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'), false, clzLoader)
             clz.declaredFields.forEach { f ->
                 if (f.name == name && getTypeSig(f.type) == signature) return f
             }

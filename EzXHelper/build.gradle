@@ -7,7 +7,7 @@ plugins {
 ext {
     PUBLISH_GROUP_ID = "com.github.kyuubiran"        //项目包名
     PUBLISH_ARTIFACT_ID = 'EzXHelper'                //项目名
-    PUBLISH_VERSION = "1.0.3"                        //版本号
+    PUBLISH_VERSION = "2.0.0"                        //版本号
 }
 
 try {
@@ -22,8 +22,6 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 103
-        versionName "1.0.3"
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -40,6 +38,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '11'
+        freeCompilerArgs = ["-Xcontext-receivers"]
     }
 }
 

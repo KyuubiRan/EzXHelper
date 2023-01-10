@@ -1,8 +1,12 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.github.kyuubiran.ezxhelper.utils
 
 import android.widget.Toast
-import com.github.kyuubiran.ezxhelper.init.EzXHelperInit.setToastTag
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.EzXHelper.setToastTag
+import com.github.kyuubiran.ezxhelper.utils.AndroidUtils.runOnMainThread
+import com.github.kyuubiran.ezxhelper.utils.Log.logiIfThrow
 import de.robv.android.xposed.XposedBridge
 
 open class Logger {
@@ -306,7 +310,7 @@ object Log {
     fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = runOnMainThread {
         if (cancelLastToast) toast?.cancel()
         toast = null
-        toast = Toast.makeText(appContext, null, duration).apply {
+        toast = Toast.makeText(EzXHelper.appContext, null, duration).apply {
             setText(if (currentLogger.toastTag != null) "${currentLogger.toastTag}: $msg" else msg)
             show()
         }
@@ -323,11 +327,13 @@ object Log {
      * @see runCatching
      * @see i
      */
-    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
+    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.i(it, msg)
             then(it)
         }
+    }
+
 
     /**
      * 扩展函数 配合runCatching使用
@@ -337,11 +343,12 @@ object Log {
      * @see runCatching
      * @see ix
      */
-    inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) =
+    inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
         this.exceptionOrNull()?.let {
-            currentLogger.i(it, msg)
+            currentLogger.ix(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -351,11 +358,12 @@ object Log {
      * @see runCatching
      * @see d
      */
-    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.d(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -365,11 +373,12 @@ object Log {
      * @see runCatching
      * @see dx
      */
-    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.dx(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -379,11 +388,12 @@ object Log {
      * @see runCatching
      * @see w
      */
-    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.w(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -393,11 +403,12 @@ object Log {
      * @see runCatching
      * @see wx
      */
-    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.wx(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -407,11 +418,12 @@ object Log {
      * @see runCatching
      * @see e
      */
-    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.e(it, msg)
             then(it)
         }
+    }
 
     /**
      * 扩展函数 配合 runCatching 使用
@@ -421,9 +433,10 @@ object Log {
      * @see runCatching
      * @see ex
      */
-    inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) =
+    inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.ex(it, msg)
             then(it)
         }
+    }
 }
