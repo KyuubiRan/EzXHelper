@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.github.kyuubiran.ezxhelper.utils.finders
 
 import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope

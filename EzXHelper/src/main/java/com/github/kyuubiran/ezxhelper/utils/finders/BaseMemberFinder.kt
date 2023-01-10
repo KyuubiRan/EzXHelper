@@ -1,4 +1,4 @@
-@file:Suppress("MemberVisibilityCanBePrivate")
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
@@ -7,7 +7,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
 context (IXposedScope)
-@Suppress("UNCHECKED_CAST", "unused")
+@Suppress("UNCHECKED_CAST")
 abstract class BaseMemberFinder<T, Self> internal constructor(protected var memberSequence: Sequence<T>) where T : Member {
     protected inline fun applyThis(block: BaseMemberFinder<T, Self>.() -> Unit) = this.apply { block() } as Self
 
