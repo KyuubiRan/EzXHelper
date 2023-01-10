@@ -2,19 +2,12 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'org.jetbrains.dokka'
+    id 'maven-publish'
+    id 'signing'
 }
 
-ext {
-    PUBLISH_GROUP_ID = "com.github.kyuubiran"        //项目包名
-    PUBLISH_ARTIFACT_ID = 'EzXHelper'                //项目名
-    PUBLISH_VERSION = "2.0.0"                        //版本号
-}
+def versionName = "2.0.0"
 
-try {
-    apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
-} catch (Exception ignored) {
-    //ignore
-}
 android {
     compileSdkVersion 33
     buildToolsVersion "33.0.0"
@@ -36,9 +29,17 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
         freeCompilerArgs = ["-Xcontext-receivers"]
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
@@ -51,6 +52,86 @@ dokkaHtml.configure {
     dokkaSourceSets {
         named("main") {
             noAndroidSdkLink.set(false)
+        }
+    }
+}
+
+
+def localPropFile = new File(projectDir, 'local.properties')
+def localPropFileExists = localPropFile.exists()
+def localProp
+
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = ''
+ext["ossrhPassword"] = ''
+
+if (localPropFileExists) {
+    localProp = new Properties()
+    def bufferedReader = new BufferedReader(new FileReader(localPropFile))
+    localProp.load(bufferedReader)
+
+    localProp.each { name, value ->
+        ext[name] = value
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'com.github.kyuubiran'
+                artifactId = 'EzXHelper'
+                version = versionName
+
+                pom {
+                    name = 'EzXHelper'
+                    description = '一个使Xposed模块开发变的更轻松的kotlin库'
+                    url = 'https://github.com/KyuubiRan/EzXHelper'
+                    licenses {
+                        license {
+                            name = 'Apache-2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'KyuubiRan'
+                            name = 'KyuubiRan'
+                            email = 'KyuubiRan@qq.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:github.com/KyuubiRan/EzXHelper.git'
+                        developerConnection = 'scm:git:ssh://github.com/KyuubiRan/EzXHelper.git'
+                        url = 'https://github.com/KyuubiRan/EzXHelper/tree/master'
+                    }
+                }
+            }
+        }
+    }
+
+    if (localPropFileExists) {
+        repositories {
+            maven {
+                name = "EzXHelper"
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
+                }
+            }
+        }
+    }
+
+    signing {
+        if (localPropFileExists) {
+            sign publishing.publications.release
         }
     }
 }
