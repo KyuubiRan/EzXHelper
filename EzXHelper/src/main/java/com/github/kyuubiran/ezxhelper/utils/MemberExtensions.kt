@@ -2,14 +2,12 @@
 
 package com.github.kyuubiran.ezxhelper.utils
 
-import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-context (IXposedScope)
 object MemberExtensions {
     /**
      * 扩展属性 判断是否为Static

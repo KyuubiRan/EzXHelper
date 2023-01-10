@@ -20,7 +20,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit /* Optional */ {
             EzXHelper.setLogTag(TAG)
             EzXHelper.setToastTag(TAG)
             // Init hooks
-            initHooks(ExampleHook, MultiExampleHook, FilterClassMethodExampleHook)
+            initHooks(ExampleHook)
         }
     }
 

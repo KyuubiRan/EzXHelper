@@ -32,7 +32,7 @@ android {
 
     kotlinOptions {
         jvmTarget = '11'
-        freeCompilerArgs = ["-Xcontext-receivers"]
+        // freeCompilerArgs = ["-Xcontext-receivers"]
     }
 
     publishing {

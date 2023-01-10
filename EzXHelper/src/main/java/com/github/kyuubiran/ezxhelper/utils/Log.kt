@@ -6,7 +6,6 @@ import android.widget.Toast
 import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.EzXHelper.setToastTag
 import com.github.kyuubiran.ezxhelper.utils.AndroidUtils.runOnMainThread
-import com.github.kyuubiran.ezxhelper.utils.Log.logiIfThrow
 import de.robv.android.xposed.XposedBridge
 
 open class Logger {

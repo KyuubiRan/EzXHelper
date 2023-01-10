@@ -2,19 +2,18 @@
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
-import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
+import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
-context (IXposedScope)
 @Suppress("UNCHECKED_CAST")
 abstract class BaseMemberFinder<T, Self> internal constructor(protected var memberSequence: Sequence<T>) where T : Member {
     protected inline fun applyThis(block: BaseMemberFinder<T, Self>.() -> Unit) = this.apply { block() } as Self
 
-    fun firstOrNull(): T? = memberSequence.firstOrNull()
+    fun firstOrNull(): T? = memberSequence.firstOrNull()?.also { allowAccess(it) }
 
     @Throws(NoSuchElementException::class)
-    fun first(): T = memberSequence.first()
+    fun first(): T = memberSequence.first().also { allowAccess(it) }
 
     // #region contact
     fun contact(other: BaseMemberFinder<T, Self>): Self = applyThis {
@@ -110,11 +109,15 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     // #endregion
 
     // #region toCollection
-    fun toList(): List<T> = memberSequence.toList()
-    fun toMutableList(): MutableList<T> = memberSequence.toMutableList()
-    fun toSet(): Set<T> = memberSequence.toSet()
-    fun toMutableSet(): MutableSet<T> = memberSequence.toMutableSet()
-    fun toHashSet(): HashSet<T> = memberSequence.toHashSet()
-    fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.toCollection(collection)
+    fun toList(): List<T> = memberSequence.onEach { allowAccess(it) }.toList()
+    fun toMutableList(): MutableList<T> = memberSequence.onEach { allowAccess(it) }.toMutableList()
+    fun toSet(): Set<T> = memberSequence.onEach { allowAccess(it) }.toSet()
+    fun toMutableSet(): MutableSet<T> = memberSequence.onEach { allowAccess(it) }.toMutableSet()
+    fun toHashSet(): HashSet<T> = memberSequence.onEach { allowAccess(it) }.toHashSet()
+    fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.onEach { allowAccess(it) }.toCollection(collection)
     // #endregion
+
+    protected fun allowAccess(member: Member) {
+        (member as? AccessibleObject)?.run { isAccessible = true }
+    }
 }

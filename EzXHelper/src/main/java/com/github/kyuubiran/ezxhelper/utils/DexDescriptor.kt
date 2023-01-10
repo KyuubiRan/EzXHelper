@@ -39,16 +39,18 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         private enum class TYPE {
             METHOD, FIELD
         }
+        fun getMethod(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Method =
+            DexDescriptor(sig, TYPE.METHOD).getMethod(clzLoader)
 
-        fun newMethodDesc(sig: String): DexDescriptor {
-            return DexDescriptor(sig, TYPE.METHOD)
-        }
+        fun getMethodOrNull(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Method? =
+            DexDescriptor(sig, TYPE.METHOD).getMethodOrNull(clzLoader)
 
-        fun newFieldDesc(sig: String): DexDescriptor {
-            return DexDescriptor(sig, TYPE.FIELD)
-        }
+        fun getField(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Field =
+            DexDescriptor(sig, TYPE.FIELD).getField(clzLoader)
+
+        fun getFieldOrNull(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Field? =
+            DexDescriptor(sig, TYPE.FIELD).getFieldOrNull(clzLoader)
     }
-
 
     override fun toString(): String {
         return "$declaringClass->$name$signature"
@@ -97,7 +99,7 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    internal fun getMethod(clzLoader: ClassLoader = EzXHelper.classLoader): Method {
+    private fun getMethod(clzLoader: ClassLoader = EzXHelper.classLoader): Method {
         try {
             var clz = Class.forName(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'), false, clzLoader)
             clz.declaredMethods.forEach { m ->
@@ -115,7 +117,13 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         }
     }
 
-    internal fun getField(clzLoader: ClassLoader = EzXHelper.classLoader): Field {
+    private fun getMethodOrNull(clzLoader: ClassLoader = EzXHelper.classLoader): Method? = try {
+        getMethod(clzLoader)
+    } catch (e: NoSuchMethodException) {
+        null
+    }
+
+    private fun getField(clzLoader: ClassLoader = EzXHelper.classLoader): Field {
         try {
             var clz = Class.forName(declaringClass.substring(1, declaringClass.length - 1).replace('/', '.'), false, clzLoader)
             clz.declaredFields.forEach { f ->
@@ -131,5 +139,11 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         } catch (e: ClassNotFoundException) {
             throw NoSuchFieldException("$declaringClass->$name$signature").initCause(e)
         }
+    }
+
+    private fun getFieldOrNull(clzLoader: ClassLoader = EzXHelper.classLoader): Field? = try {
+        getField(clzLoader)
+    } catch (e: NoSuchFieldException) {
+        null
     }
 }

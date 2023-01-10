@@ -3,12 +3,9 @@
 package com.github.kyuubiran.ezxhelper.utils
 
 import android.content.Context
-import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import com.github.kyuubiran.ezxhelper.EzXHelper
-import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
 
 object AndroidUtils {
     val mainHandler: Handler by lazy {
@@ -47,22 +44,5 @@ object AndroidUtils {
      */
     fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) = runOnMainThread {
         Toast.makeText(this, msg.format(args), length).show()
-    }
-
-    /**
-     * 扩展函数 将模块的资源路径添加到Context.resources内 允许直接以R.xx.xxx获取资源
-     * @see EzXHelper.addModuleAssetPath
-     */
-    fun Context.addModuleAssetPath() {
-        EzXHelper.addModuleAssetPath(this)
-    }
-
-    /**
-     * 扩展函数 将模块的资源路径添加到resources内 允许直接以R.xx.xxx获取资源
-     * @see EzXHelper.addModuleAssetPath
-     */
-    context(IXposedScope)
-    fun Resources.addModuleAssetPath() {
-        EzXHelper.addModuleAssetPath(this)
     }
 }

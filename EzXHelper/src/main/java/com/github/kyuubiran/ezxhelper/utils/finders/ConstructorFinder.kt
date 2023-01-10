@@ -2,11 +2,17 @@
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
-import com.github.kyuubiran.ezxhelper.interfaces.IXposedScope
 import java.lang.reflect.Constructor
 
-context (IXposedScope)
-class ConstructorFinder<C> internal constructor(seq: Sequence<Constructor<C>>) : ExecutableFinder<Constructor<C>, ConstructorFinder<C>>(seq) {
+class ConstructorFinder internal constructor(seq: Sequence<Constructor<*>>) : ExecutableFinder<Constructor<*>, ConstructorFinder>(seq) {
+    companion object {
+        fun fromClass(clazz: Class<*>): ConstructorFinder = ConstructorFinder(clazz.declaredConstructors.asSequence())
+        fun fromSequence(seq: Sequence<Constructor<*>>): ConstructorFinder = ConstructorFinder(seq)
+        fun fromArray(array: Array<Constructor<*>>): ConstructorFinder = ConstructorFinder(array.asSequence())
+        fun fromVararg(vararg array: Constructor<*>): ConstructorFinder = ConstructorFinder(array.asSequence())
+        fun fromIterable(iterable: Iterable<Constructor<*>>): ConstructorFinder = ConstructorFinder(iterable.asSequence())
+    }
+
     // #region filter by
     // #endregion
 
@@ -14,7 +20,7 @@ class ConstructorFinder<C> internal constructor(seq: Sequence<Constructor<C>>) :
     // #endregion
 
     // #region overrides
-    override fun getParameterTypes(member: Constructor<C>): Array<Class<*>> = member.parameterTypes
-    override fun getExceptionTypes(member: Constructor<C>): Array<Class<*>> = member.exceptionTypes
+    override fun getParameterTypes(member: Constructor<*>): Array<Class<*>> = member.parameterTypes
+    override fun getExceptionTypes(member: Constructor<*>): Array<Class<*>> = member.exceptionTypes
     // #endregion
 }
