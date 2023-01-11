@@ -39,12 +39,15 @@ internal class DexDescriptor private constructor(sig: String, type: TYPE) :
         private enum class TYPE {
             METHOD, FIELD
         }
+
+        @Throws(NoSuchMethodException::class)
         fun getMethod(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Method =
             DexDescriptor(sig, TYPE.METHOD).getMethod(clzLoader)
 
         fun getMethodOrNull(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Method? =
             DexDescriptor(sig, TYPE.METHOD).getMethodOrNull(clzLoader)
 
+        @Throws(NoSuchFieldException::class)
         fun getField(sig: String, clzLoader: ClassLoader = EzXHelper.classLoader): Field =
             DexDescriptor(sig, TYPE.FIELD).getField(clzLoader)
 

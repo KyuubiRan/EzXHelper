@@ -8,7 +8,9 @@ import java.lang.reflect.Modifier
 class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder<Method, MethodFinder>(seq) {
     private var clazz: Class<*>? = null
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
+        @JvmStatic
         fun fromClass(clazz: Class<*>): MethodFinder {
             var seq = emptySequence<Method>()
             seq += clazz.declaredMethods.asSequence()
@@ -16,18 +18,22 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
             return MethodFinder(seq).also { it.clazz = clazz }
         }
 
+        @JvmStatic
         fun fromSequence(seq: Sequence<Method>): MethodFinder {
             return MethodFinder(seq)
         }
 
+        @JvmStatic
         fun fromArray(array: Array<Method>): MethodFinder {
             return MethodFinder(array.asSequence())
         }
 
+        @JvmStatic
         fun fromVararg(vararg array: Method): MethodFinder {
             return MethodFinder(array.asSequence())
         }
 
+        @JvmStatic
         fun fromIterable(iterable: Iterable<Method>): MethodFinder {
             return MethodFinder(iterable.asSequence())
         }
@@ -37,20 +43,17 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         if (clazz == null || clazz == Any::class.java) return@applyThis
 
         var c = clazz?.superclass ?: return@applyThis
-        var seq = emptySequence<Method>()
 
-        while (c != Any::class.java) run r@{
+        while (c != Any::class.java) {
             findSuper?.invoke(c)?.let {
-                if (it) return@r
+                if (it) return@applyThis
             }
 
-            seq += c.declaredMethods.asSequence()
-            seq += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
+            memberSequence += c.declaredMethods.asSequence()
+            memberSequence += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
 
-            c = c.superclass ?: return@r
+            c = c.superclass ?: return@applyThis
         }
-
-        this += seq
     }
 
     // #region filter by

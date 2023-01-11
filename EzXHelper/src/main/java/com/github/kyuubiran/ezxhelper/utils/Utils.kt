@@ -14,6 +14,7 @@ object Utils {
      * 查找DexClassLoader
      * @see `https://github.com/yujincheng08/BiliRoaming`
      */
+    @JvmStatic
     inline fun ClassLoader.findDexClassLoader(crossinline delegator: (BaseDexClassLoader) -> BaseDexClassLoader = { x -> x }): BaseDexClassLoader? {
         var classLoader = this
         while (classLoader !is BaseDexClassLoader) {
@@ -30,6 +31,7 @@ object Utils {
      */
     @Suppress("UNCHECKED_CAST")
     @SuppressLint("DiscouragedPrivateApi")
+    @JvmStatic
     fun ClassLoader.getAllClassesList(delegator: (BaseDexClassLoader) -> BaseDexClassLoader = { loader -> loader }): List<String> =
         findDexClassLoader(delegator)?.let {
             val f = it.javaClass.getDeclaredField("pathList").also { f -> f.isAccessible = true }
@@ -47,6 +49,7 @@ object Utils {
     /**
      * 重新启动宿主App
      */
+    @JvmStatic
     fun restartHostApp(activity: Activity) {
         val pm = activity.packageManager
         val intent = pm.getLaunchIntentForPackage(activity.packageName)

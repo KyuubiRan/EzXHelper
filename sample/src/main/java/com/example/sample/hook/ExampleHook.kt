@@ -3,7 +3,7 @@ package com.example.sample.hook
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import com.github.kyuubiran.ezxhelper.utils.HookFactory.Companion.createHook
+import com.github.kyuubiran.ezxhelper.utils.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.finders.ConstructorFinder
 import com.github.kyuubiran.ezxhelper.utils.finders.FieldFinder

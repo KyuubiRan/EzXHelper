@@ -233,66 +233,82 @@ object Log {
 
     private var toast: Toast? = null
 
+    @JvmStatic
     fun i(msg: String, thr: Throwable? = null) {
         currentLogger.i(msg, thr)
     }
 
+    @JvmStatic
     fun d(msg: String, thr: Throwable? = null) {
         currentLogger.d(msg, thr)
     }
 
+    @JvmStatic
     fun w(msg: String, thr: Throwable? = null) {
         currentLogger.w(msg, thr)
     }
 
+    @JvmStatic
     fun e(msg: String, thr: Throwable? = null) {
         currentLogger.e(msg, thr)
     }
 
+    @JvmStatic
     fun ix(msg: String, thr: Throwable? = null) {
         currentLogger.ix(msg, thr)
     }
 
+    @JvmStatic
     fun wx(msg: String, thr: Throwable? = null) {
         currentLogger.wx(msg, thr)
     }
 
+    @JvmStatic
     fun dx(msg: String, thr: Throwable? = null) {
         currentLogger.dx(msg, thr)
     }
 
+    @JvmStatic
     fun ex(msg: String, thr: Throwable? = null) {
         currentLogger.ex(msg, thr)
     }
 
+    @JvmStatic
     fun i(thr: Throwable, msg: String = "") {
         currentLogger.i(thr, msg)
     }
 
+    @JvmStatic
     fun d(thr: Throwable, msg: String = "") {
         currentLogger.d(thr, msg)
     }
 
+    @JvmStatic
     fun w(thr: Throwable, msg: String = "") {
         currentLogger.w(thr, msg)
     }
 
+    @JvmStatic
     fun e(thr: Throwable, msg: String = "") {
         currentLogger.e(thr, msg)
     }
 
+    @JvmStatic
     fun ix(thr: Throwable, msg: String = "") {
         currentLogger.ix(thr, msg)
     }
 
+    @JvmStatic
     fun wx(thr: Throwable, msg: String = "") {
         currentLogger.wx(thr, msg)
     }
 
+    @JvmStatic
     fun dx(thr: Throwable, msg: String = "") {
         currentLogger.dx(thr, msg)
     }
 
+    @JvmStatic
     fun ex(thr: Throwable, msg: String = "") {
         currentLogger.ex(thr, msg)
     }
@@ -306,6 +322,7 @@ object Log {
      * 则不显示前缀
      * @see setToastTag
      */
+    @JvmStatic
     fun toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = runOnMainThread {
         if (cancelLastToast) toast?.cancel()
         toast = null
@@ -315,6 +332,7 @@ object Log {
         }
     }
 
+    @JvmSynthetic
     fun toast(msg: String, vararg formats: String, duration: Int = Toast.LENGTH_SHORT) =
         toast(msg.format(*formats), duration)
 
@@ -326,6 +344,7 @@ object Log {
      * @see runCatching
      * @see i
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.i(it, msg)
@@ -342,6 +361,7 @@ object Log {
      * @see runCatching
      * @see ix
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.ix(it, msg)
@@ -357,6 +377,7 @@ object Log {
      * @see runCatching
      * @see d
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.d(it, msg)
@@ -372,6 +393,7 @@ object Log {
      * @see runCatching
      * @see dx
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.dx(it, msg)
@@ -387,6 +409,7 @@ object Log {
      * @see runCatching
      * @see w
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.w(it, msg)
@@ -402,6 +425,7 @@ object Log {
      * @see runCatching
      * @see wx
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.wx(it, msg)
@@ -417,6 +441,7 @@ object Log {
      * @see runCatching
      * @see e
      */
+    @JvmSynthetic
     inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.e(it, msg)
