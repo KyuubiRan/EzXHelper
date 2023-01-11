@@ -62,6 +62,18 @@ class HookFactory {
         @JvmSynthetic
         fun Constructor<*>.createHook(block: HookFactory.() -> Unit): Unhook = HookFactory(this).also(block).create()
 
+        @JvmSynthetic
+        fun Iterable<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
+
+        @JvmSynthetic
+        fun Array<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
+
+        @JvmSynthetic
+        fun Iterable<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
+
+        @JvmSynthetic
+        fun Array<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
+
         @JvmStatic
         fun createHook(m: Method, block: Consumer<HookFactory>): XC_MethodHook.Unhook =
             HookFactory(m).also { block.accept(it) }.create()
@@ -69,6 +81,22 @@ class HookFactory {
         @JvmStatic
         fun createHook(c: Constructor<*>, block: Consumer<HookFactory>): XC_MethodHook.Unhook =
             HookFactory(c).also { block.accept(it) }.create()
+
+        @JvmStatic
+        fun createHooks(m: Iterable<Method>, block: Consumer<HookFactory>): List<XC_MethodHook.Unhook> =
+            m.map { createHook(it, block) }
+
+        @JvmStatic
+        fun createHooks(m: Array<Method>, block: Consumer<HookFactory>): List<XC_MethodHook.Unhook> =
+            m.map { createHook(it, block) }
+
+        @JvmStatic
+        fun createHooks(c: Iterable<Constructor<*>>, block: Consumer<HookFactory>): List<XC_MethodHook.Unhook> =
+            c.map { createHook(it, block) }
+
+        @JvmStatic
+        fun createHooks(c: Array<Constructor<*>>, block: Consumer<HookFactory>): List<XC_MethodHook.Unhook> =
+            c.map { createHook(it, block) }
     }
 }
 

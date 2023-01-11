@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
+import com.github.kyuubiran.ezxhelper.utils.Log.logeIfThrow
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -15,7 +16,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     @Throws(NoSuchElementException::class)
     fun first(): T = memberSequence.first().also { allowAccess(it) }
 
-    // #region contact
+    // region contact
     fun contact(other: BaseMemberFinder<T, Self>): Self = applyThis {
         memberSequence += other.memberSequence
     }
@@ -52,16 +53,16 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     operator fun plusAssign(other: Iterable<T>) {
         contact(other)
     }
-    // #endregion
+    // endregion
 
     fun filter(filter: T.() -> Boolean): Self = applyThis {
         memberSequence.filter(filter)
     }
 
-    // #region filter by
-    // #endregion
+    // region filter by
+    // endregion
 
-    // #region filter modifiers
+    // region filter modifiers
     fun filterByModifiers(modifiers: Int): Self = applyThis {
         memberSequence.filter { it.modifiers == modifiers }
     }
@@ -89,16 +90,16 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
 
     fun filterPackagePrivate() = filterExcludeModifiers(Modifier.PUBLIC or Modifier.PROTECTED or Modifier.PRIVATE)
     fun filterNonPackagePrivate() = filterExcludeModifiers(Modifier.PUBLIC or Modifier.PROTECTED or Modifier.PRIVATE)
-    // #endregion
+    // endregion
 
-    // #region for-each
+    // region for-each
     fun onEach(action: (T) -> Unit): Self = applyThis { memberSequence.onEach(action) }
     fun onEachIndexed(action: (index: Int, T) -> Unit): Self = applyThis { memberSequence.onEachIndexed(action) }
     fun forEach(action: (T) -> Unit) = memberSequence.forEach(action)
     fun forEachIndexed(action: (index: Int, T) -> Unit) = memberSequence.forEachIndexed(action)
-    // #endregion
+    // endregion
 
-    // #region mapTo
+    // region mapTo
     fun <R> mapToList(transform: (T) -> R): List<R> = memberSequence.map(transform).toList()
     fun <R> mapToMutableList(transform: (T) -> R): List<R> = memberSequence.map(transform).toMutableList()
     fun <R> mapToSet(transform: (T) -> R): Set<R> = memberSequence.map(transform).toSet()
@@ -106,18 +107,18 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     fun <R> mapToHashSet(transform: (T) -> R): HashSet<R> = memberSequence.map(transform).toHashSet()
     fun <R, C> mapToCollection(destination: C, transform: (T) -> R): C where C : MutableCollection<in R> =
         memberSequence.map(transform).toCollection(destination)
-    // #endregion
+    // endregion
 
-    // #region toCollection
+    // region toCollection
     fun toList(): List<T> = memberSequence.onEach { allowAccess(it) }.toList()
     fun toMutableList(): MutableList<T> = memberSequence.onEach { allowAccess(it) }.toMutableList()
     fun toSet(): Set<T> = memberSequence.onEach { allowAccess(it) }.toSet()
     fun toMutableSet(): MutableSet<T> = memberSequence.onEach { allowAccess(it) }.toMutableSet()
     fun toHashSet(): HashSet<T> = memberSequence.onEach { allowAccess(it) }.toHashSet()
     fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.onEach { allowAccess(it) }.toCollection(collection)
-    // #endregion
+    // endregion
 
     protected fun allowAccess(member: Member) {
-        (member as? AccessibleObject)?.run { isAccessible = true }
+        (member as? AccessibleObject)?.runCatching { isAccessible = true }?.logeIfThrow("Cannot set accessible to ${member.name}")
     }
 }

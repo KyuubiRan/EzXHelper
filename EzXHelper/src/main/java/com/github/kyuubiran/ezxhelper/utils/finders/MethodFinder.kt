@@ -1,11 +1,12 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
+import com.github.kyuubiran.ezxhelper.utils.interfaces.IFindSuper
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder<Method, MethodFinder>(seq) {
+class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder<Method, MethodFinder>(seq), IFindSuper<MethodFinder> {
     private var clazz: Class<*>? = null
 
     @Suppress("ClassName")
@@ -37,15 +38,27 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         fun fromIterable(iterable: Iterable<Method>): MethodFinder {
             return MethodFinder(iterable.asSequence())
         }
+
+        @JvmSynthetic
+        fun Class<*>.methodFinder() = fromClass(this)
+
+        @JvmSynthetic
+        fun Array<Method>.methodFinder() = fromArray(this)
+
+        @JvmSynthetic
+        fun Iterable<Method>.methodFinder() = fromIterable(this)
+
+        @JvmSynthetic
+        fun Sequence<Method>.methodFinder() = fromSequence(this)
     }
 
-    fun findSuper(findSuper: (Class<*>.() -> Boolean)? = null) = applyThis {
+    override fun findSuper(untilPredicate: (Class<*>.() -> Boolean)?) = applyThis {
         if (clazz == null || clazz == Any::class.java) return@applyThis
 
         var c = clazz?.superclass ?: return@applyThis
 
         while (c != Any::class.java) {
-            findSuper?.invoke(c)?.let {
+            untilPredicate?.invoke(c)?.let {
                 if (it) return@applyThis
             }
 

@@ -22,6 +22,7 @@ public class JavaExampleHook extends BaseHook {
     @Override
     public void init() {
         var m = MethodFinder.fromClass(Activity.class)
+                .findSuper(null)
                 .filterByName("onCreate")
                 .filter(f -> Arrays.stream(f.getParameterTypes()).allMatch(p -> p.getName().contains("Bundle")))
                 .filterByParamCount(new IntRange(0, 2))

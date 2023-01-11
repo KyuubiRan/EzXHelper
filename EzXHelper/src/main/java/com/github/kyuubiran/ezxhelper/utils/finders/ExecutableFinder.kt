@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package com.github.kyuubiran.ezxhelper.utils.finders
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
 abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMemberFinder<E, Self>(seq) {
-    // #region filter by
+    // region filter by
     fun filterByParamTypes(vararg paramTypes: Class<*>?) = applyThis {
         memberSequence.filter f@{
             val pt = getParameterTypes(it)
@@ -41,21 +41,21 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
         val set = exceptionTypes.toSet()
         memberSequence.filter { getExceptionTypes(it).run { size == set.size && toSet() == set } }
     }
-    // #endregion
+    // endregion
 
-    // #region filter modifiers
+    // region filter modifiers
     fun filterNative() = filterIncludeModifiers(Modifier.NATIVE)
     fun filterNonNative() = filterExcludeModifiers(Modifier.NATIVE)
 
     fun filterVarargs() = filterIncludeModifiers(0x0080)
     fun filterNonVarargs() = filterExcludeModifiers(0x0080)
-    // #endregion
+    // endregion
 
-    // #region overrides
-    // #endregion
+    // region overrides
+    // endregion
 
-    // #region abstract
+    // region abstracts
     protected abstract fun getParameterTypes(member: E): Array<Class<*>>
     protected abstract fun getExceptionTypes(member: E): Array<Class<*>>
-    // #endregion
+    // endregion
 }
