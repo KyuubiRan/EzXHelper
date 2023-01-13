@@ -1,7 +1,9 @@
 # EzXHelper
-[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)    
-一个使Xposed模块开发变的更轻松的kotlin库    
-2.0版本重构中
+
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
+
+一个使Xposed模块开发变的更轻松的工具库      
+2.0版本重构中 尝鲜可使用 `2.0.0-alpha01` 旧版本请看1.x分支
 
 ### 使用本库的项目
 
@@ -21,7 +23,8 @@
 |            [MiuiHome](https://github.com/qqlittleice/MiuiHome)            | 针对 Miui 桌面的自定义扩展                                                                                  |
 |             [TwiFucker](https://github.com/Dr-TSNG/TwiFucker)             | Yet Another Adkiller for Twitter                                                                  |
 
-
 ### 捐赠支持
+
 如果你喜欢这个项目，且想要通过捐赠的方式支持我，可以通过以下渠道：
+
 - [爱发电](https://afdian.net/a/kyuubiran)
