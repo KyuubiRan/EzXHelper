@@ -56,24 +56,18 @@ dokkaHtml.configure {
 }
 
 
-def localPropFile = new File(projectDir, 'mavenpush.properties')
-def localPropFileExists = localPropFile.exists()
-def localProp
+def mavenPushProp = project.rootProject.file('mavenpush.properties')
+def mavenPushPropExists = mavenPushProp.exists()
+def mavenPush
 
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.secretKeyRingFile"] = ''
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
+if (mavenPushPropExists) {
+    mavenPush = new Properties()
+    def bufferedReader = new BufferedReader(new FileReader(mavenPushProp))
+    mavenPush.load(bufferedReader)
 
-if (localPropFileExists) {
-    localProp = new Properties()
-    def bufferedReader = new BufferedReader(new FileReader(localPropFile))
-    localProp.load(bufferedReader)
-
-    localProp.each { name, value ->
-        ext[name] = value
-    }
+    ext["signing.keyId"] = mavenPush['signing.keyId']
+    ext["signing.password"] = mavenPush['signing.password']
+    ext["signing.secretKeyRingFile"] = mavenPush['signing.secretKeyRingFile']
 }
 
 task androidSourcesJar(type: Jar) {
@@ -118,14 +112,14 @@ afterEvaluate {
             }
         }
 
-        if (localPropFileExists) {
+        if (mavenPushPropExists) {
             repositories {
                 maven {
                     name = "EzXHelper"
                     url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                     credentials {
-                        username = ossrhUsername
-                        password = ossrhPassword
+                        username = mavenPush['ossrhUsername']
+                        password = mavenPush['ossrhPassword']
                     }
                 }
             }
@@ -133,7 +127,7 @@ afterEvaluate {
     }
 
     signing {
-        if (localPropFileExists) {
+        if (mavenPushPropExists) {
             sign publishing.publications
         }
     }
