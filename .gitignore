@@ -16,3 +16,4 @@ local.properties
 /.idea/
 /EzXHelper/src/test/
 /EzXHelper/src/androidTest/
+/mavenpush.properties

@@ -6,7 +6,7 @@ plugins {
     id 'signing'
 }
 
-def versionName = "2.0.0-alpha.1"
+def versionName = "2.0.0-alpha01"
 
 android {
     compileSdkVersion 33
@@ -56,7 +56,7 @@ dokkaHtml.configure {
 }
 
 
-def localPropFile = new File(projectDir, 'local.properties')
+def localPropFile = new File(projectDir, 'mavenpush.properties')
 def localPropFileExists = localPropFile.exists()
 def localProp
 
@@ -76,6 +76,11 @@ if (localPropFileExists) {
     }
 }
 
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
 afterEvaluate {
     publishing {
         publications {
@@ -84,11 +89,12 @@ afterEvaluate {
                 artifactId = 'EzXHelper'
                 version = versionName
 
-                from components.release
+                artifact "$buildDir/outputs/aar/${project.name}-release.aar"
+                artifact androidSourcesJar
 
                 pom {
                     name = 'EzXHelper'
-                    description = '一个使Xposed模块开发变的更轻松的kotlin库'
+                    description = 'A library to make Xposed modules development easier.'
                     url = 'https://github.com/KyuubiRan/EzXHelper'
                     licenses {
                         license {
@@ -111,18 +117,16 @@ afterEvaluate {
                 }
             }
         }
-    }
 
-    if (localPropFileExists) {
-        repositories {
-            maven {
-                name = "EzXHelper"
-                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-                credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
+        if (localPropFileExists) {
+            repositories {
+                maven {
+                    name = "EzXHelper"
+                    url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
                 }
             }
         }
@@ -130,7 +134,8 @@ afterEvaluate {
 
     signing {
         if (localPropFileExists) {
-            sign publishing.publications.release
+            sign publishing.publications
         }
     }
 }
+
