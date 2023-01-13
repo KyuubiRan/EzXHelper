@@ -2,98 +2,119 @@
 
 package com.github.kyuubiran.ezxhelper.utils
 
+import com.github.kyuubiran.ezxhelper.utils.interfaces.IOnValueChangedThrow
+import com.github.kyuubiran.ezxhelper.utils.interfaces.IOnValueChangedEvent
+import java.util.concurrent.ConcurrentHashMap
+
 /**
  * 监听一个对象，当值发生变化时调用 onValueChanged 中所有回调
  */
-class Observe<T>(init: T, onValueChanged: ((T) -> Unit)? = null) {
-    private var _value: T = init
+class Observe<T> {
+    private var _value: T
+    val onValueChangedEvent = ValueChangedEvent<T>()
+
+    constructor(init: T, onValueChanged: IOnValueChangedEvent<T>? = null) {
+        _value = init
+        if (onValueChanged != null) this.onValueChangedEvent += onValueChanged
+    }
+
+    constructor(init: T, onValueChanged: ((T) -> Unit)? = null) {
+        _value = init
+        if (onValueChanged != null) this.onValueChangedEvent += onValueChanged
+    }
+
+    constructor(init: T) {
+        _value = init
+    }
+
+    var isUnsafeInvoke
+        set(value) = run { onValueChangedEvent.isUnsafeInvoke = value }
+        get() = onValueChangedEvent.isUnsafeInvoke
+
+    fun setOnThrow(onThrow: IOnValueChangedThrow<T>?) = this.apply {
+        onValueChangedEvent.onThrow = onThrow
+    }
+
+    fun useUnsafeInvoke() = this.apply { isUnsafeInvoke = true }
+
+    fun addListener(listener: IOnValueChangedEvent<T>) = this.apply {
+        onValueChangedEvent += listener
+    }
+
+    fun removeListener(listener: IOnValueChangedEvent<T>) = this.apply {
+        onValueChangedEvent -= listener
+    }
+
+    fun clearListener() = this.apply {
+        onValueChangedEvent.clear()
+    }
+
+    operator fun plusAssign(listener: IOnValueChangedEvent<T>) {
+        addListener(listener)
+    }
+
+    operator fun plusAssign(listener: (T) -> Unit) {
+        addListener(listener)
+    }
+
+    operator fun minusAssign(listener: IOnValueChangedEvent<T>) {
+        removeListener(listener)
+    }
+
+    operator fun minusAssign(listener: (T) -> Unit) {
+        removeListener(listener)
+    }
 
     var value: T
         get() = _value
         set(newValue) = synchronized(this) {
             if (_value == newValue) return@synchronized
             _value = newValue
-            if (onValueChanged.unsafeInvoke)
-                onValueChanged.unsafeInvoke(newValue)
+            if (isUnsafeInvoke)
+                onValueChangedEvent.unsafeInvoke(newValue)
             else
-                onValueChanged.invoke(newValue)
+                onValueChangedEvent.invoke(newValue)
         }
 
-    val onValueChanged = ValueChangedEvent<T>()
-
-    init {
-        if (onValueChanged != null) this.onValueChanged += onValueChanged
-    }
-
     class ValueChangedEvent<T> {
-        private val _listeners = mutableSetOf<(T) -> Unit>()
+        private val _listeners = ConcurrentHashMap.newKeySet<IOnValueChangedEvent<T>>()
 
-        var unsafeInvoke = false
+        internal var isUnsafeInvoke = false
 
-        var onThrow: ((thr: Throwable) -> Unit)? = null
+        internal var onThrow: IOnValueChangedThrow<T>? = null
 
-        fun add(listener: (T) -> Unit) {
+        internal fun add(listener: IOnValueChangedEvent<T>) {
             _listeners.add(listener)
         }
 
-        fun remove(listener: (T) -> Unit) {
+        internal fun remove(listener: IOnValueChangedEvent<T>) {
             _listeners.remove(listener)
         }
 
-        fun addAll(listeners: Collection<(T) -> Unit>) {
-            _listeners.addAll(listeners)
-        }
-
-        fun removeAll(listeners: Collection<(T) -> Unit>) {
-            _listeners.removeAll(listeners.toSet())
-        }
-
-        fun addAll(listeners: Array<(T) -> Unit>) {
-            _listeners.addAll(listeners)
-        }
-
-        fun removeAll(listeners: Array<(T) -> Unit>) {
-            _listeners.removeAll(listeners.toSet())
-        }
-
-        fun clear() {
+        internal fun clear() {
             _listeners.clear()
         }
 
-        operator fun plusAssign(listener: (T) -> Unit) {
+        internal operator fun plusAssign(listener: IOnValueChangedEvent<T>) {
             add(listener)
         }
 
-        operator fun minusAssign(listener: (T) -> Unit) {
+        internal operator fun minusAssign(listener: IOnValueChangedEvent<T>) {
             remove(listener)
         }
 
-        operator fun plusAssign(listeners: Collection<(T) -> Unit>) {
-            addAll(listeners)
+        internal fun unsafeInvoke(value: T) {
+            _listeners.forEach {
+                it.onValueChanged(value)
+            }
         }
 
-        operator fun minusAssign(listeners: Collection<(T) -> Unit>) {
-            removeAll(listeners)
-        }
-
-        operator fun plusAssign(listeners: Array<(T) -> Unit>) {
-            addAll(listeners)
-        }
-
-        operator fun minusAssign(listeners: Array<(T) -> Unit>) {
-            removeAll(listeners)
-        }
-
-        fun unsafeInvoke(value: T) {
-            _listeners.forEach { it(value) }
-        }
-
-        operator fun invoke(value: T) {
+        internal operator fun invoke(value: T) {
             for (listener in _listeners) {
                 try {
-                    listener(value)
+                    listener.onValueChanged(value)
                 } catch (thr: Throwable) {
-                    onThrow?.invoke(thr)
+                    onThrow?.onThrow(thr, value, listener)
                 }
             }
         }
