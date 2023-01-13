@@ -2,7 +2,7 @@ name: Build KDoc
 
 on:
   push:
-    branches: [master]
+    branches: [2.x]
 
 jobs:
   dokka:
