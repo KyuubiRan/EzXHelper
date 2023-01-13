@@ -28,6 +28,9 @@ object EzXHelper {
      */
     lateinit var classLoader: ClassLoader
 
+    val safeClassLoader: ClassLoader
+        get() = if (isClassLoaderInited) classLoader else ClassLoader.getSystemClassLoader()
+
     /**
      * 类加载器是否初始化
      */
