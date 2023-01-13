@@ -1,9 +1,12 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils.finders
+package com.github.kyuubiran.ezxhelper.finders
 
 import java.lang.reflect.Constructor
 
+/**
+ * Helper for finding constructor(s) in the class or collection.
+ */
 class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : ExecutableFinder<Constructor<*>, ConstructorFinder>(seq) {
     @Suppress("ClassName")
     companion object `-Static` {

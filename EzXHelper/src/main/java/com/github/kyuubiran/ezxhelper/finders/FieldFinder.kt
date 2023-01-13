@@ -1,11 +1,14 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils.finders
+package com.github.kyuubiran.ezxhelper.finders
 
-import com.github.kyuubiran.ezxhelper.utils.interfaces.IFindSuper
+import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
+/**
+ * Helper for finding field(s) in the class or collection.
+ */
 class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<Field, FieldFinder>(seq), IFindSuper<FieldFinder> {
     private var clazz: Class<*>? = null
 
@@ -45,12 +48,32 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
     }
 
     // region filter by
+    /**
+     * Filter by field name.
+     * @param name The name of the field.
+     * @return [FieldFinder] this finder.
+     */
     fun filterByName(name: String) = applyThis { memberSequence.filter { it.name == name } }
+
+    /**
+     * Filter by field type.
+     * @param type The type of the field.
+     * @return [FieldFinder] this finder.
+     */
     fun filterByType(type: Class<*>) = applyThis { memberSequence.filter { it.type == type } }
     // endregion
 
     // region filter modifiers
+    /**
+     * Filter if they are static.
+     * @return [FieldFinder] this finder.
+     */
     fun filterStatic() = filterIncludeModifiers(Modifier.STATIC)
+
+    /**
+     * Filter if they are non-static.
+     * @return [FieldFinder] this finder.
+     */
     fun filterNonStatic() = filterExcludeModifiers(Modifier.STATIC)
     // endregion
 

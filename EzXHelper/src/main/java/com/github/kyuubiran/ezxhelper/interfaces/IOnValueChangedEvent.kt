@@ -1,4 +1,4 @@
-package com.github.kyuubiran.ezxhelper.utils.interfaces
+package com.github.kyuubiran.ezxhelper.interfaces
 
 fun interface IOnValueChangedEvent<T> {
     fun onValueChanged(changedValue: T)

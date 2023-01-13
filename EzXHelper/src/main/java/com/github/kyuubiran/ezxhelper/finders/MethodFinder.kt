@@ -1,11 +1,14 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils.finders
+package com.github.kyuubiran.ezxhelper.finders
 
-import com.github.kyuubiran.ezxhelper.utils.interfaces.IFindSuper
+import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
+/**
+ * Helper for finding method(s) in the class or collection.
+ */
 class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder<Method, MethodFinder>(seq), IFindSuper<MethodFinder> {
     private var clazz: Class<*>? = null
 
@@ -70,12 +73,32 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
     }
 
     // #region filter by
+    /**
+     * Filter by method name.
+     * @param name method name
+     * @return [MethodFinder] this finder
+     */
     fun filterByName(name: String) = applyThis { memberSequence.filter { it.name == name } }
+
+    /**
+     * Filter by method return type.
+     * @param returnType method return type
+     * @return [MethodFinder] this finder
+     */
     fun filterByReturnType(returnType: Class<*>) = applyThis { memberSequence.filter { it.returnType == returnType } }
     // #endregion
 
     // #region filter modifiers
+    /**
+     * Filter if they are static.
+     * @return [FieldFinder] this finder.
+     */
     fun filterStatic() = filterIncludeModifiers(Modifier.STATIC)
+
+    /**
+     * Filter if they are non-static.
+     * @return [FieldFinder] this finder.
+     */
     fun filterNonStatic() = filterExcludeModifiers(Modifier.STATIC)
     // #endregion
 

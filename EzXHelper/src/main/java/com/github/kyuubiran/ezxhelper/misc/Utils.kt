@@ -1,6 +1,6 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.misc
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -10,8 +10,7 @@ import kotlin.system.exitProcess
 
 object Utils {
     /**
-     * 取自 哔哩漫游
-     * 查找DexClassLoader
+     * From BiliRoaming
      * @see `https://github.com/yujincheng08/BiliRoaming`
      */
     @JvmStatic
@@ -25,8 +24,8 @@ object Utils {
     }
 
     /**
-     * 取自 哔哩漫游
-     * 获取所有类名
+     * From BiliRoaming
+     * Get the all classes list in the class loader
      * @see `https://github.com/yujincheng08/BiliRoaming`
      */
     @Suppress("UNCHECKED_CAST")
@@ -47,7 +46,8 @@ object Utils {
         }.orEmpty()
 
     /**
-     * 重新启动宿主App
+     * Restart the host application.
+     * @param activity host activity.
      */
     @JvmStatic
     fun restartHostApp(activity: Activity) {

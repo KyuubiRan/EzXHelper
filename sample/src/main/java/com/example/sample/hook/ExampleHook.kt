@@ -3,11 +3,11 @@ package com.example.sample.hook
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import com.github.kyuubiran.ezxhelper.utils.HookFactory.`-Static`.createHook
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.finders.ConstructorFinder
-import com.github.kyuubiran.ezxhelper.utils.finders.FieldFinder
-import com.github.kyuubiran.ezxhelper.utils.finders.MethodFinder
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import java.lang.reflect.Modifier
 
 // Example hook

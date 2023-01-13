@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package com.github.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.misc
 
 import android.content.Context
 import android.os.Handler
@@ -17,7 +17,7 @@ object AndroidUtils {
     }
 
     /**
-     * 将runnable放到主线程执行
+     * Post runnable on main thread.
      */
     fun runOnMainThread(runnable: Runnable) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -28,19 +28,19 @@ object AndroidUtils {
     }
 
     /**
-     * 扩展函数 显示一个Toast
-     * @param msg Toast显示的消息
-     * @param length Toast显示的时长
+     * Show toast
+     * @param msg message
+     * @param length duration [Toast.LENGTH_SHORT] / [Toast.LENGTH_LONG]
      */
     fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT) = runOnMainThread {
         Toast.makeText(this, msg, length).show()
     }
 
     /**
-     * 扩展函数 显示一个Toast
-     * @param msg Toast显示的消息
-     * @param args 格式化的参数
-     * @param length Toast显示的时长
+     * Show toast
+     * @param msg message
+     * @param args format args
+     * @param length duration [Toast.LENGTH_SHORT] / [Toast.LENGTH_LONG]
      */
     fun Context.showToast(msg: String, vararg args: Any?, length: Int = Toast.LENGTH_SHORT) = runOnMainThread {
         Toast.makeText(this, msg.format(args), length).show()

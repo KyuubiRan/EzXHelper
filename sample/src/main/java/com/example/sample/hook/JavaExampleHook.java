@@ -2,9 +2,9 @@ package com.example.sample.hook;
 
 import android.app.Activity;
 
-import com.github.kyuubiran.ezxhelper.utils.HookFactory;
-import com.github.kyuubiran.ezxhelper.utils.Log;
-import com.github.kyuubiran.ezxhelper.utils.finders.MethodFinder;
+import com.github.kyuubiran.ezxhelper.HookFactory;
+import com.github.kyuubiran.ezxhelper.Log;
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public class JavaExampleHook extends BaseHook {
                 .filterByParamCount(new IntRange(0, 2))
                 .first();
 
-        var unhook = HookFactory.createHook(m, hookFactory -> {
+        var unhook = HookFactory.createMethodHook(m, hookFactory -> {
             hookFactory.before(param -> {
                 Log.i("hook before", null);
                 param.setResult(null);

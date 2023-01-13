@@ -1,6 +1,6 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper.misc
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -11,22 +11,14 @@ import com.github.kyuubiran.ezxhelper.EzXHelper
 
 object ViewUtils {
     /**
-     * 扩展函数 将View布局的高度和宽度设置为0
-     */
-    @JvmStatic
-    fun View.setViewZeroSize() {
-        this.layoutParams.height = 0
-        this.layoutParams.width = 0
-    }
-
-    /**
-     * 扩展属性 获取长度范围 用于for循环
+     * Get the indices(IntRange) of the views in the view group.
+     * For for-each.
      */
     inline val ViewGroup.indices: IntRange
         @JvmSynthetic get() = 0 until childCount
 
     /**
-     * 扩展函数 遍历ViewGroup
+     * For-each for ViewGroup
      */
     @JvmSynthetic
     inline fun ViewGroup.forEach(action: (view: View) -> Unit) {
@@ -36,7 +28,7 @@ object ViewUtils {
     }
 
     /**
-     * 扩展函数 带index遍历ViewGroup
+     * For-each with index for ViewGroup
      */
     @JvmSynthetic
     inline fun ViewGroup.forEachIndexed(action: (index: Int, view: View) -> Unit) {
@@ -46,25 +38,22 @@ object ViewUtils {
     }
 
     /**
-     * 扩展函数 判断ViewGroup是否为空
-     * @return 是否为空
+     * Check the view group is  empty.
      */
-    @JvmSynthetic
-    fun ViewGroup.isEmpty(): Boolean = this.childCount == 0
+    val ViewGroup.isEmpty: Boolean
+        get() = this.childCount == 0
 
     /**
-     * 扩展函数 判断ViewGroup是否不为空
-     * @return 是否不为空
+     * Check the view group is not empty.
      */
-    @JvmSynthetic
-    fun ViewGroup.isNotEmpty(): Boolean = this.childCount != 0
+    val ViewGroup.isNotEmpty: Boolean
+        get() = this.childCount != 0
 
     /**
-     * 扩展函数 遍历ViewGroup 根据条件查找View
-     * @param condition 条件
-     * @return 成功时返回符合条件的view 失败时返回null
+     * For-each the view group and find the view by condition.
+     * @param condition condition
+     * @return view or null if not found
      */
-    @JvmSynthetic
     fun ViewGroup.findViewByCondition(condition: (view: View) -> Boolean): View? {
         this.forEach {
             if (condition(it)) return it
@@ -77,11 +66,10 @@ object ViewUtils {
     }
 
     /**
-     * 扩展函数 遍历ViewGroup 根据条件查找所有符合条件的View
-     * @param condition 条件
-     * @return 符合条件的ViewList
+     *  For-each the view group and find the views by condition.
+     * @param condition condition
+     * @return all the views that match the condition, or empty if non-matches
      */
-    @JvmSynthetic
     fun ViewGroup.findAllViewsByCondition(condition: (view: View) -> Boolean): List<View> {
         val list = mutableListOf<View>()
         this.forEach {
@@ -95,20 +83,19 @@ object ViewUtils {
     }
 
     /**
-     * 扩展函数 遍历ViewGroup 根据条件查找View 并将View转换为T?类型
-     * @param condition 条件
-     * @return 成功时返回符合条件的view 失败时返回null
+     * For-each the view group and find the view by condition, and cast to the [T] type.
+     * @param condition condition
+     * @return view or null if not found
      */
     @Suppress("UNCHECKED_CAST")
-    @JvmSynthetic
     fun <T : View> ViewGroup.findViewByConditionAs(condition: (view: View) -> Boolean): T? {
         return this.findViewByCondition(condition) as T?
     }
 
     /**
-     * 通过名字获取R.id中的组件id
-     * @param name 名字
-     * @return id ID 若无法找到则返回0
+     * Find id by name
+     * @param name R.id.[name]
+     * @return id found id or 0 if not found
      */
     @SuppressLint("DiscouragedApi")
     @JvmStatic
@@ -117,18 +104,16 @@ object ViewUtils {
     }
 
     /**
-     * 通过名字查找View
-     * @param name 名字
-     * @return View 若无法找到则返回null
+     * Find view by id name
+     * @param name name
+     * @return view or null if not found
      */
-    @JvmSynthetic
     fun View.findViewByIdName(name: String): View? {
         val id = getIdByName(name, this.context)
         if (id == 0) return null
         return this.findViewById(id)
     }
 
-    @JvmSynthetic
     fun Activity.findViewByIdName(name: String): View? {
         val id = getIdByName(name, this)
         if (id == 0) return null

@@ -6,7 +6,7 @@ plugins {
     id 'signing'
 }
 
-def versionName = "2.0.0"
+def versionName = "2.0.0-alpha.1"
 
 android {
     compileSdkVersion 33
@@ -44,7 +44,6 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly 'de.robv.android.xposed:api:82'
 }
 

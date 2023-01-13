@@ -1,6 +1,14 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.github.kyuubiran.ezxhelper
 
 object ClassUtils {
+    /**
+     * Load the class or null if not found
+     * @param className class name
+     * @param cl class loader
+     * @return class or null
+     */
     @JvmStatic
     fun loadClassOrNull(className: String, cl: ClassLoader? = null): Class<*>? = try {
         Class.forName(className, false, cl ?: EzXHelper.safeClassLoader)
@@ -8,13 +16,26 @@ object ClassUtils {
         null
     }
 
+    /**
+     * Load the class or throw exception if not found
+     * @param className class name
+     * @param cl class loader
+     * @return class or throw [ClassNotFoundException]
+     */
     @JvmStatic
     @Throws(ClassNotFoundException::class)
     fun loadClass(className: String, cl: ClassLoader? = null): Class<*> =
         Class.forName(className, false, cl ?: EzXHelper.safeClassLoader)
 
+    /**
+     * Load the first exists class or throw exception all not found
+     * @param className class name
+     * @param cl class loader
+     * @return class or throw [ClassNotFoundException]
+     */
     @JvmStatic
-    fun loadClassAny(cl: ClassLoader, vararg className: String): Class<*> {
+    @Throws(ClassNotFoundException::class)
+    fun loadFirstClass(cl: ClassLoader, vararg className: String): Class<*> {
         val sb = StringBuilder()
         for (name in className) {
             loadClassOrNull(name, cl)?.let { return it }
@@ -24,17 +45,34 @@ object ClassUtils {
         throw ClassNotFoundException("No such class found in [$sb]")
     }
 
+    /**
+     * Load the first exists class or throw exception all not found
+     * @param className class name
+     * @return class or throw [ClassNotFoundException]
+     */
+    @Throws(ClassNotFoundException::class)
     @JvmStatic
-    fun loadClassAny(vararg className: String): Class<*> = loadClassAny(EzXHelper.safeClassLoader, *className)
+    fun loadFirstClass(vararg className: String): Class<*> = loadFirstClass(EzXHelper.safeClassLoader, *className)
 
+    /**
+     * Load the first exists class or null
+     * @param className class name
+     * @param cl class loader
+     * @return class or null
+     */
     @JvmStatic
-    fun loadClassAnyOrNull(cl: ClassLoader, vararg className: String): Class<*>? {
+    fun loadFirstClassOrNull(cl: ClassLoader, vararg className: String): Class<*>? {
         for (name in className) {
             loadClassOrNull(name, cl)?.let { return it }
         }
         return null
     }
 
+    /**
+     * Load the first exists class or null
+     * @param className class name
+     * @return class or null
+     */
     @JvmStatic
-    fun loadClassAnyOrNull(vararg className: String): Class<*>? = loadClassAnyOrNull(EzXHelper.safeClassLoader, *className)
+    fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(EzXHelper.safeClassLoader, *className)
 }

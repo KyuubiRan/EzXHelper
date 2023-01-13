@@ -1,37 +1,33 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.utils
+package com.github.kyuubiran.ezxhelper
 
 import android.widget.Toast
-import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.EzXHelper.setToastTag
-import com.github.kyuubiran.ezxhelper.utils.AndroidUtils.runOnMainThread
+import com.github.kyuubiran.ezxhelper.misc.AndroidUtils.runOnMainThread
 import de.robv.android.xposed.XposedBridge
 
 open class Logger {
     /**
-     * 日志等级 低于等级的日志不会被打印出来
-     * 可以配合BuildConfig.DEBUG / RELEASE来使用
+     * Log level filter.
+     * Will ignore all logs with level lower than this.
      */
-    var logLevel: Int = VERBOSE
+    var logLevelFilter: Int = VERBOSE
 
-    /**
-     * 日志Tag
-     */
     var logTag: String = "EZXHelper"
 
 
     /**
-     * 是否输出日志到 Xposed
+     * Is print the log to xposed
      */
-    var logXp: Boolean = true
+    var isLogToXposed: Boolean = true
         internal set
 
-    /**
-     * Toast Tag
-     */
     var toastTag: String? = null
 
+    /**
+     * Log level filter definitions
+     */
     companion object LogLevel {
         const val VERBOSE = 0
         const val DEBUG = 1
@@ -41,91 +37,90 @@ open class Logger {
     }
 
     /**
-     * 打印日志 等级: Info
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     open fun i(msg: String, thr: Throwable? = null) {
-        if (logLevel > INFO) return
+        if (logLevelFilter > INFO) return
         android.util.Log.i(logTag, msg, thr)
     }
 
     /**
-     * 打印日志 等级: Debug
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     open fun d(msg: String, thr: Throwable? = null) {
-        if (logLevel > DEBUG) return
+        if (logLevelFilter > DEBUG) return
         android.util.Log.d(logTag, msg, thr)
     }
 
 
     /**
-     * 打印日志 等级: Warn
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     open fun w(msg: String, thr: Throwable? = null) {
-        if (logLevel > WARN) return
+        if (logLevelFilter > WARN) return
         android.util.Log.w(logTag, msg, thr)
     }
 
 
     /**
-     * 打印日志 等级: Error
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     open fun e(msg: String, thr: Throwable? = null) {
-        if (logLevel > ERROR) return
+        if (logLevelFilter > ERROR) return
         android.util.Log.e(logTag, msg, thr)
     }
 
-
     /**
-     * 打印日志到Xposed
-     * @param level 等级
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log to xposed
+     * @param levelFilter log level filter
+     * @param level log level string
+     * @param thr throwable
+     * @param msg message
      */
-    open fun px(levelInt: Int, level: String, msg: String, thr: Throwable?) {
-        if (logLevel > levelInt) return
-        if (logXp) XposedBridge.log("[$level/$logTag] $msg: ${thr?.stackTraceToString()}")
+    open fun px(levelFilter: Int, level: String, msg: String, thr: Throwable?) {
+        if (logLevelFilter > levelFilter) return
+        if (isLogToXposed) XposedBridge.log("[$level/$logTag] $msg: ${thr?.stackTraceToString()}")
     }
 
-
     /**
-     * 打印日志 等级: Info
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     fun i(thr: Throwable, msg: String = "") {
         i(msg, thr)
     }
 
     /**
-     * 打印日志 等级: Debug
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     fun d(thr: Throwable, msg: String = "") {
         d(msg, thr)
     }
 
     /**
-     * 打印日志 等级: Warn
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     fun w(thr: Throwable, msg: String = "") {
         w(msg, thr)
     }
 
     /**
-     * 打印日志 等级: Error
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log
+     * @param thr throwable
+     * @param msg message
      */
     fun e(thr: Throwable, msg: String = "") {
         e(msg, thr)
@@ -133,9 +128,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Info
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun ix(msg: String, thr: Throwable? = null) {
         i(msg, thr)
@@ -144,9 +139,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Info
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun ix(thr: Throwable, msg: String = "") {
         ix(msg, thr)
@@ -154,9 +149,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Warn
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun wx(msg: String, thr: Throwable? = null) {
         w(msg, thr)
@@ -165,9 +160,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Warn
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun wx(thr: Throwable, msg: String = "") {
         wx(msg, thr)
@@ -175,9 +170,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Debug
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun dx(msg: String, thr: Throwable? = null) {
         d(msg, thr)
@@ -186,9 +181,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Debug
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun dx(thr: Throwable, msg: String = "") {
         dx(msg, thr)
@@ -196,9 +191,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Error
-     * @param msg 消息
-     * @param thr 异常
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun ex(msg: String, thr: Throwable? = null) {
         e(msg, thr)
@@ -207,9 +202,9 @@ open class Logger {
 
 
     /**
-     * 打印日志到Xposed 等级: Error
-     * @param thr 异常
-     * @param msg 消息
+     * Print the log to xposed log
+     * @param thr throwable
+     * @param msg message
      */
     fun ex(thr: Throwable, msg: String = "") {
         ex(msg, thr)
@@ -227,7 +222,7 @@ object Log {
         }
 
     /**
-     * 如果显示Toast时上一个Toast还没消失，设置是否取消上一个Toast，并显示本次Toast
+     * Cancel the last toast if it is still showing.
      */
     var cancelLastToast: Boolean = false
 
@@ -314,12 +309,11 @@ object Log {
     }
 
     /**
-     * 显示一个Toast
+     * Show a toast message.
      *
-     * 需要先初始化appContext才能使用
+     * Need set the [EzXHelper.appContext] before use.
      *
-     * 如果不设置TOAST_TAG
-     * 则不显示前缀
+     * If [Logger.toastTag] is not set will not show the prefix.
      * @see setToastTag
      */
     @JvmStatic
@@ -337,130 +331,130 @@ object Log {
         toast(msg.format(*formats), duration)
 
     /**
-     * 扩展函数 配合runCatching使用
-     * 如果抛出异常 则调用 Log.i 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [i] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see i
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logiIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
-        this.exceptionOrNull()?.let {
+    inline fun <R> Result<R>.logiIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
+        exceptionOrNull()?.let {
             currentLogger.i(it, msg)
-            then(it)
+            action(it)
         }
     }
 
 
     /**
-     * 扩展函数 配合runCatching使用
-     * 如果抛出异常 则调用 Log.ix 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [ix] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see ix
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logixIfThrow(msg: String = "", then: ((Throwable) -> Unit) = {}) = this.apply {
-        this.exceptionOrNull()?.let {
+    inline fun <R> Result<R>.logixIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
+        exceptionOrNull()?.let {
             currentLogger.ix(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.d 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [d] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see d
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logdIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logdIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.d(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.dx 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [dx] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see dx
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logdxIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.dx(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.w 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [w] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see w
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logwIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logwIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.w(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.w 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [wx] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see wx
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logwxIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.wx(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.e 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [e] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see e
      */
     @JvmSynthetic
-    inline fun <R> Result<R>.logeIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logeIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.e(it, msg)
-            then(it)
+            action(it)
         }
     }
 
     /**
-     * 扩展函数 配合 runCatching 使用
-     * 如果抛出异常 则调用 Log.ex 记录
-     * @param msg 消息
-     * @param then 发生异常时执行的函数
+     * Use this with [runCatching]
+     * Use [ex] to log if throw [Throwable]
+     * @param msg message
+     * @param action do something with throwable
      * @see runCatching
      * @see ex
      */
-    inline fun <R> Result<R>.logexIfThrow(msg: String = "", then: (Throwable) -> Unit = {}) = this.apply {
+    inline fun <R> Result<R>.logexIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.ex(it, msg)
-            then(it)
+            action(it)
         }
     }
 }

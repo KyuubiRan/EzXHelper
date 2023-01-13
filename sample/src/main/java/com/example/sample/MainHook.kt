@@ -3,8 +3,8 @@ package com.example.sample
 import com.example.sample.hook.BaseHook
 import com.example.sample.hook.ExampleHook
 import com.github.kyuubiran.ezxhelper.EzXHelper
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.Log.logexIfThrow
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
