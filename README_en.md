@@ -1,15 +1,14 @@
 # EzXHelper
 
-[English](https://github.com/KyuubiRan/EzXHelper/blob/2.x/README_en.md)
+Join Telegram group to get
+help: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
 
-加入Telegram群组来获取帮助: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
+A library to make Xposed modules development easier, 2.x version supports Java!    
+2.x is WIP, currently newest version is `2.0.0-alpha02`. Old version please look the `1.x` branch.
 
-一个使Xposed模块开发变的更轻松的工具库，2.x版本已支持Java！      
-2.x版本重构中 尝鲜可使用 `2.0.0-alpha02` 旧版本请看`1.x`分支
+### Projects that use this library
 
-### 使用本库的项目
-
-|                                   项目名称                                    | 项目介绍                                                                                              |
+|                               Project name                                | Project introduction                                                                              |
 |:-------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------|
 |        [Template](https://github.com/KyuubiRan/ezxhepler-template)        | EzXHelper模板                                                                                       |
 |          [QAssistant](https://github.com/KitsunePie/QAssistant)           | 兼具实用与美观于一身的 QQ 小帮手                                                                                |
@@ -25,8 +24,8 @@
 |            [MiuiHome](https://github.com/qqlittleice/MiuiHome)            | 针对 Miui 桌面的自定义扩展                                                                                  |
 |             [TwiFucker](https://github.com/Dr-TSNG/TwiFucker)             | Yet Another Adkiller for Twitter                                                                  |
 
-### 捐赠支持
+### Support for me
 
-如果你喜欢这个项目，且想要通过捐赠的方式支持我，可以通过以下渠道：
+If you like this project, you can buy me a cola via：
 
-- [爱发电](https://afdian.net/a/kyuubiran)
+- [Afadian](https://afdian.net/a/kyuubiran)

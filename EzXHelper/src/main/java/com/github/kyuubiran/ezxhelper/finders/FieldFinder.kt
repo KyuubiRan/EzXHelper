@@ -14,22 +14,27 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
 
     @Suppress("ClassName")
     companion object `-Static` {
+        @JvmStatic
         fun fromClass(clazz: Class<*>): FieldFinder {
             return FieldFinder(clazz.declaredFields.asSequence()).also { it.clazz = clazz }
         }
 
+        @JvmStatic
         fun fromSequence(seq: Sequence<Field>): FieldFinder {
             return FieldFinder(seq)
         }
 
+        @JvmStatic
         fun fromArray(array: Array<Field>): FieldFinder {
             return FieldFinder(array.asSequence())
         }
 
+        @JvmStatic
         fun fromVararg(vararg array: Field): FieldFinder {
             return FieldFinder(array.asSequence())
         }
 
+        @JvmStatic
         fun fromIterable(iterable: Iterable<Field>): FieldFinder {
             return FieldFinder(iterable.asSequence())
         }

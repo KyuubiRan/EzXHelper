@@ -35,7 +35,8 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
         }
     }
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
         private enum class TYPE {
             METHOD, FIELD
         }

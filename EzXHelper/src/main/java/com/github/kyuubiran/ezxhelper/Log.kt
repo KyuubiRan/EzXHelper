@@ -346,7 +346,6 @@ object Log {
         }
     }
 
-
     /**
      * Use this with [runCatching]
      * Use [ix] to log if throw [Throwable]

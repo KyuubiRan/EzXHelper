@@ -14,8 +14,10 @@ object EzXHelper {
     /**
      * Hooked application context.
      */
+    @JvmStatic
     lateinit var appContext: Context
 
+    @JvmStatic
     val isAppContextInited: Boolean
         get() = this::appContext.isInitialized
 
@@ -23,14 +25,17 @@ object EzXHelper {
      * Class loader for doing reflection.
      * Will auto initialized when [initHandleLoadPackage] invoked.
      */
+    @JvmStatic
     lateinit var classLoader: ClassLoader
 
     /**
      * Safe class loader for doing reflection, will use system class loader instead if [classLoader] is not initialized.
      */
+    @JvmStatic
     val safeClassLoader: ClassLoader
         get() = if (isClassLoaderInited) classLoader else ClassLoader.getSystemClassLoader()
 
+    @JvmStatic
     val isClassLoaderInited: Boolean
         get() = this::classLoader.isInitialized
 
@@ -38,8 +43,10 @@ object EzXHelper {
      * Module path.
      * Will auto initialized when [initZygote] invoked.
      */
+    @JvmStatic
     lateinit var modulePath: String
 
+    @JvmStatic
     val isModulePathInited: Boolean
         get() = this::modulePath.isInitialized
 
@@ -47,8 +54,10 @@ object EzXHelper {
      * Module resources.
      * Will auto initialized when [initZygote] invoked.
      */
+    @JvmStatic
     lateinit var moduleRes: Resources
 
+    @JvmStatic
     val isModuleResInited: Boolean
         get() = this::moduleRes.isInitialized
 
@@ -56,8 +65,10 @@ object EzXHelper {
      * Package name of hooked application.
      * Will auto initialized when [initHandleLoadPackage] invoked.
      */
+    @JvmStatic
     lateinit var hostPackageName: String
 
+    @JvmStatic
     val isHostPackageNameInited: Boolean
         get() = this::hostPackageName.isInitialized
 
@@ -66,6 +77,7 @@ object EzXHelper {
      * @see IXposedHookLoadPackage.handleLoadPackage
      * @see XC_LoadPackage.LoadPackageParam
      */
+    @JvmStatic
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         classLoader = lpparam.classLoader
         hostPackageName = lpparam.packageName
@@ -76,6 +88,7 @@ object EzXHelper {
      * If you want to use module resources.
      * @see IXposedHookZygoteInit.initZygote
      */
+    @JvmStatic
     fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
         modulePath = startupParam.modulePath
         moduleRes = XModuleResources.createInstance(modulePath, null)
@@ -88,6 +101,7 @@ object EzXHelper {
      * @param addPath add module resources path to context)
      */
     @Suppress("KDocUnresolvedReference")
+    @JvmStatic
     fun initAppContext(
         context: Context = AndroidAppHelper.currentApplication(),
         addPath: Boolean = false,
@@ -99,6 +113,7 @@ object EzXHelper {
     /**
      * Set current logger tag.
      */
+    @JvmStatic
     fun setLogTag(tag: String) {
         Log.currentLogger.logTag = tag
     }
@@ -108,6 +123,7 @@ object EzXHelper {
      * If not set will not show the prefix.
      * @see Log.toast
      */
+    @JvmStatic
     fun setToastTag(tag: String) {
         Log.currentLogger.toastTag = tag
     }
@@ -143,6 +159,7 @@ object EzXHelper {
      * @see initZygote
      *
      */
+    @JvmStatic
     fun addModuleAssetPath(context: Context) {
         addModuleAssetPath(context.resources)
     }
@@ -150,6 +167,7 @@ object EzXHelper {
     /**
      * @see [addModuleAssetPath]
      */
+    @JvmStatic
     fun addModuleAssetPath(resources: Resources) {
         val m = resources.javaClass.getDeclaredMethod("addAssetPath", String::class.java).also { it.isAccessible = true }
         m.invoke(resources, modulePath)
