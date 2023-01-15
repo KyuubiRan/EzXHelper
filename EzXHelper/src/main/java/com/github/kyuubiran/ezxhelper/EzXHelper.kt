@@ -143,7 +143,7 @@ object EzXHelper {
      *
      *     aaptOptions.additionalParameters '--allow-reserved-package-id', '--package-id', '0x64'
      *
-     * `0x64` is the resource id, you can change it to any value you want.(recommended [0x30 to 0x69])
+     * `0x64` is the resource id, you can change it to any value you want.(recommended [0x30 to 0x6F])
      *
      * 2.Make sure you invoked [initZygote]
      *
