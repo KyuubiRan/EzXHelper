@@ -78,14 +78,14 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      * @param name method name
      * @return [MethodFinder] this finder
      */
-    fun filterByName(name: String) = applyThis { memberSequence.filter { it.name == name } }
+    fun filterByName(name: String) = applyThis { memberSequence = memberSequence.filter { it.name == name } }
 
     /**
      * Filter by method return type.
      * @param returnType method return type
      * @return [MethodFinder] this finder
      */
-    fun filterByReturnType(returnType: Class<*>) = applyThis { memberSequence.filter { it.returnType == returnType } }
+    fun filterByReturnType(returnType: Class<*>) = applyThis { memberSequence = memberSequence.filter { it.returnType == returnType } }
     // #endregion
 
     // #region filter modifiers

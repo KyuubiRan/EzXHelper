@@ -82,7 +82,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * @return [Self] the filtered finder
      */
     fun filter(filter: T.() -> Boolean): Self = applyThis {
-        memberSequence.filter(filter)
+        memberSequence = memberSequence.filter(filter)
     }
 
     // region filter by
@@ -95,7 +95,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * @return [Self] the filtered finder
      */
     fun filterByModifiers(modifiers: Int): Self = applyThis {
-        memberSequence.filter { it.modifiers == modifiers }
+        memberSequence = memberSequence.filter { it.modifiers == modifiers }
     }
 
     /**
@@ -104,7 +104,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * @return [Self] the filtered finder
      */
     fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): Self = applyThis {
-        memberSequence.filter { predicate(it.modifiers) }
+        memberSequence = memberSequence.filter { predicate(it.modifiers) }
     }
 
     /**
@@ -113,7 +113,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * @return [Self] the filtered finder
      */
     fun filterIncludeModifiers(modifiers: Int): Self = applyThis {
-        memberSequence.filter { (it.modifiers and modifiers) != 0 }
+        memberSequence = memberSequence.filter { (it.modifiers and modifiers) != 0 }
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * @return [Self] the filtered finder
      */
     fun filterExcludeModifiers(modifiers: Int): Self = applyThis {
-        memberSequence.filter { (it.modifiers and modifiers) == 0 }
+        memberSequence = memberSequence.filter { (it.modifiers and modifiers) == 0 }
     }
 
     /**
@@ -284,7 +284,7 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
      * Make sequence to the collection.
      * @return [MutableCollection] the collection
      */
-    fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.onEach { allowAccess(it) }.toCollection(collection)
+    fun <C> toCollection(collection: C): C where C : MutableCollection<T> = memberSequence.toCollection(collection)
     // endregion
 
     protected fun allowAccess(member: Member) {
