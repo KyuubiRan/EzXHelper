@@ -6,7 +6,7 @@ plugins {
     id 'signing'
 }
 
-def versionName = "2.0.0-alpha03"
+def versionName = "2.0.0-alpha04"
 
 android {
     compileSdkVersion 33

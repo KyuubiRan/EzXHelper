@@ -2,8 +2,10 @@
 
 package com.github.kyuubiran.ezxhelper
 
+import android.annotation.SuppressLint
 import android.app.AndroidAppHelper
 import android.content.Context
+import android.content.res.AssetManager
 import android.content.res.Resources
 import android.content.res.XModuleResources
 import de.robv.android.xposed.IXposedHookLoadPackage
@@ -164,12 +166,16 @@ object EzXHelper {
         addModuleAssetPath(context.resources)
     }
 
+    private val mAddAddAssertPath by lazy {
+        @Suppress("DiscouragedPrivateApi")
+        AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java).also { it.isAccessible = true }
+    }
+
     /**
      * @see [addModuleAssetPath]
      */
     @JvmStatic
     fun addModuleAssetPath(resources: Resources) {
-        val m = resources.javaClass.getDeclaredMethod("addAssetPath", String::class.java).also { it.isAccessible = true }
-        m.invoke(resources, modulePath)
+        mAddAddAssertPath.invoke(resources.assets, modulePath)
     }
 }
