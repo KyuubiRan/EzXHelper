@@ -33,7 +33,7 @@ object Utils {
     @JvmStatic
     fun ClassLoader.getAllClassesList(delegator: (BaseDexClassLoader) -> BaseDexClassLoader = { loader -> loader }): List<String> =
         findDexClassLoader(delegator)?.let {
-            val f = it.javaClass.getDeclaredField("pathList").also { f -> f.isAccessible = true }
+            val f = BaseDexClassLoader::class.java.getDeclaredField("pathList").also { f -> f.isAccessible = true }
             f.get(it)
         }?.let {
             val f = it.javaClass.getDeclaredField("dexElements").also { f -> f.isAccessible = true }
