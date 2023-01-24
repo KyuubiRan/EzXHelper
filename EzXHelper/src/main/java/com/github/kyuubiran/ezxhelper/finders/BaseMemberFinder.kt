@@ -12,31 +12,64 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     protected inline fun applyThis(block: BaseMemberFinder<T, Self>.() -> Unit) = this.apply(block) as Self
 
     /**
-     * Get the first element or null if not found.
-     * @return [T : Member] the first element or null
+     * Get the first member or null if not found.
+     * @return [T : Member] the first member or null
      */
     fun firstOrNull(): T? = memberSequence.firstOrNull()?.also { allowAccess(it) }
 
     /**
-     * Get the first element or throw an exception if there is no such element.
-     * @return [T : Member] the first element
-     * @throws NoSuchElementException if is empty.
+     * Get the first member or throw an exception if there is no such element.
+     * @return [T : Member] the first member
+     * @throws NoSuchElementException if sequence is empty.
      */
     @Throws(NoSuchElementException::class)
     fun first(): T = memberSequence.first().also { allowAccess(it) }
 
     /**
-     * Get the last element or null if not found.
-     * @return [T : Member] the last element or null
+     * Get the last member or null if not found.
+     * @return [T : Member] the last member or null
      */
     fun lastOrNull(): T? = memberSequence.lastOrNull()?.also { allowAccess(it) }
 
     /**
-     * Get the last element or throw an exception if there is no such element.
-     * @return [T : Member] the last element
-     * @throws NoSuchElementException if is empty.
+     * Get the last member or throw an exception if there is no such element.
+     * @return [T : Member] the last member
+     * @throws NoSuchElementException if sequence is empty.
      */
+    @Throws(NoSuchElementException::class)
     fun last(): T = memberSequence.last().also { allowAccess(it) }
+
+    /**
+     * Get the first member by condition or throw an exception if there is no such element.
+     * @param condition filter condition
+     * @return [T : Member] the first member
+     * @throws NoSuchElementException if sequence is empty.
+     */
+    @Throws(NoSuchElementException::class)
+    fun first(condition: T.() -> Boolean) = memberSequence.first(condition).also { allowAccess(it) }
+
+    /**
+     * Get the last member by condition or throw an exception if there is no such element.
+     * @param condition filter condition
+     * @return [T : Member] the last member
+     * @throws NoSuchElementException if sequence is empty.
+     */
+    @Throws(NoSuchElementException::class)
+    fun last(condition: T.() -> Boolean) = memberSequence.last(condition).also { allowAccess(it) }
+
+    /**
+     * Get the first member by condition or null if not found
+     * @param condition filter condition
+     * @return [T : Member] the first member or null
+     */
+    fun firstOrNull(condition: T.() -> Boolean) = memberSequence.firstOrNull(condition)?.also { allowAccess(it) }
+
+    /**
+     * Get the last member by condition or null if not found
+     * @param condition filter condition
+     * @return [T : Member] the last member or null
+     */
+    fun lastOrNull(condition: T.() -> Boolean) = memberSequence.lastOrNull(condition)?.also { allowAccess(it) }
 
     // region contact
     /**
