@@ -25,6 +25,19 @@ abstract class BaseMemberFinder<T, Self> internal constructor(protected var memb
     @Throws(NoSuchElementException::class)
     fun first(): T = memberSequence.first().also { allowAccess(it) }
 
+    /**
+     * Get the last element or null if not found.
+     * @return [T : Member] the last element or null
+     */
+    fun lastOrNull(): T? = memberSequence.lastOrNull()?.also { allowAccess(it) }
+
+    /**
+     * Get the last element or throw an exception if there is no such element.
+     * @return [T : Member] the last element
+     * @throws NoSuchElementException if is empty.
+     */
+    fun last(): T = memberSequence.last().also { allowAccess(it) }
+
     // region contact
     /**
      * Concatenate with another finder.
