@@ -2,6 +2,8 @@
 
 package com.github.kyuubiran.ezxhelper
 
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isStatic
+
 object ClassUtils {
     /**
      * Load the class or null if not found
@@ -75,4 +77,109 @@ object ClassUtils {
      */
     @JvmStatic
     fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(EzXHelper.safeClassLoader, *className)
+
+    /**
+     * Get the static object
+     * @param clazz class
+     * @param fieldName field name
+     * @return field object or null
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun getStaticObjectOrNull(clazz: Class<*>, fieldName: String): Any? =
+        clazz.declaredFields.firstOrNull { it.isStatic && fieldName == it.name }
+            .let { it ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.") }
+            .get(null)
+
+
+    /**
+     * Get the static object
+     * @param clazz class
+     * @param fieldName field name
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
+     * @return field object or null
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun getStaticObjectOrNullUntilSuperclass(clazz: Class<*>, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
+        var clz: Class<*> = clazz
+        while (clz != Any::class.java) {
+            if (untilSuperClass?.invoke(clz) == true) break
+
+            try {
+                return getStaticObjectOrNull(clz, fieldName)
+            } catch (e: NoSuchFieldException) {
+                clz = clazz.superclass
+            }
+        }
+        throw NoSuchFieldException("No such static field $fieldName in ${clazz.name} and its superclasses.")
+    }
+
+    /**
+     * Get the static object, and trying to cast to the [T] type
+     * @param clazz class
+     * @param fieldName field name
+     * @return [T] field object or null
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getStaticObjectOrNullAs(clazz: Class<*>, fieldName: String): T? =
+        getStaticObjectOrNull(clazz, fieldName) as? T?
+
+    /**
+     * Get the static object, and trying to cast to the [T] type
+     * @param clazz class
+     * @param fieldName field name
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
+     * @return field object or null
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getStaticObjectOrNullUntilSuperclassAs(clazz: Class<*>, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): T? =
+        getStaticObjectOrNullUntilSuperclass(clazz, fieldName, untilSuperClass) as? T?
+
+    /**
+     * Set the static object
+     * @param clazz class
+     * @param fieldName field name
+     * @param value field value
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun setStaticObject(clazz: Class<*>, fieldName: String, value: Any?) =
+        clazz.declaredFields.firstOrNull { it.isStatic && fieldName == it.name }
+            .let { it ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.") }
+            .set(null, value)
+
+    /**
+     * Set the static object
+     * @param clazz class
+     * @param fieldName field name
+     * @param value field value
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
+     * @throws NoSuchFieldException if not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun setStaticObjectUntilSuperclass(clazz: Class<*>, fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) {
+        var clz: Class<*> = clazz
+        while (clz != Any::class.java) {
+            if (untilSuperClass?.invoke(clz) == true) break
+
+            try {
+                setStaticObject(clz, fieldName, value)
+                return
+            } catch (e: NoSuchFieldException) {
+                clz = clazz.superclass
+            }
+        }
+        throw NoSuchFieldException("No such static field $fieldName in ${clazz.name} and its superclasses.")
+    }
 }

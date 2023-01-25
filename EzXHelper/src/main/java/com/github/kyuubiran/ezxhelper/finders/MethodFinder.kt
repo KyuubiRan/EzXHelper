@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -43,15 +44,19 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         }
 
         @JvmSynthetic
+        @KotlinOnly
         fun Class<*>.methodFinder() = fromClass(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Array<Method>.methodFinder() = fromArray(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Iterable<Method>.methodFinder() = fromIterable(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Sequence<Method>.methodFinder() = fromSequence(this)
     }
 
@@ -61,12 +66,10 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         var c = clazz?.superclass ?: return@applyThis
 
         while (c != Any::class.java) {
-            untilPredicate?.invoke(c)?.let {
-                if (it) return@applyThis
-            }
+            if (untilPredicate?.invoke(c) == true) break
 
-            memberSequence += c.declaredMethods.asSequence()
-            memberSequence += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
+            sequence += c.declaredMethods.asSequence()
+            sequence += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
 
             c = c.superclass ?: return@applyThis
         }
@@ -78,14 +81,14 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      * @param name method name
      * @return [MethodFinder] this finder
      */
-    fun filterByName(name: String) = applyThis { memberSequence = memberSequence.filter { it.name == name } }
+    fun filterByName(name: String) = applyThis { sequence = sequence.filter { it.name == name } }
 
     /**
      * Filter by method return type.
      * @param returnType method return type
      * @return [MethodFinder] this finder
      */
-    fun filterByReturnType(returnType: Class<*>) = applyThis { memberSequence = memberSequence.filter { it.returnType == returnType } }
+    fun filterByReturnType(returnType: Class<*>) = applyThis { sequence = sequence.filter { it.returnType == returnType } }
     // #endregion
 
     // #region filter modifiers

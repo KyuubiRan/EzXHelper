@@ -4,6 +4,7 @@ package com.github.kyuubiran.ezxhelper
 
 import android.widget.Toast
 import com.github.kyuubiran.ezxhelper.EzXHelper.setToastTag
+import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.misc.AndroidUtils.runOnMainThread
 import de.robv.android.xposed.XposedBridge
 
@@ -327,6 +328,7 @@ object Log {
     }
 
     @JvmSynthetic
+    @KotlinOnly
     fun toast(msg: String, vararg formats: String, duration: Int = Toast.LENGTH_SHORT) =
         toast(msg.format(*formats), duration)
 
@@ -339,6 +341,7 @@ object Log {
      * @see i
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logiIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         exceptionOrNull()?.let {
             currentLogger.i(it, msg)
@@ -355,6 +358,7 @@ object Log {
      * @see ix
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logixIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         exceptionOrNull()?.let {
             currentLogger.ix(it, msg)
@@ -371,6 +375,7 @@ object Log {
      * @see d
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logdIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.d(it, msg)
@@ -387,6 +392,7 @@ object Log {
      * @see dx
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logdxIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.dx(it, msg)
@@ -403,6 +409,7 @@ object Log {
      * @see w
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logwIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.w(it, msg)
@@ -419,6 +426,7 @@ object Log {
      * @see wx
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logwxIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.wx(it, msg)
@@ -435,6 +443,7 @@ object Log {
      * @see e
      */
     @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logeIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.e(it, msg)
@@ -450,6 +459,8 @@ object Log {
      * @see runCatching
      * @see ex
      */
+    @JvmSynthetic
+    @KotlinOnly
     inline fun <R> Result<R>.logexIfThrow(msg: String = "", action: (Throwable) -> Unit = {}) = this.apply {
         this.exceptionOrNull()?.let {
             currentLogger.ex(it, msg)

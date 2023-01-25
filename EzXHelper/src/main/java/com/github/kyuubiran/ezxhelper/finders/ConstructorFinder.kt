@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import java.lang.reflect.Constructor
 
 /**
@@ -36,15 +37,19 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
         }
 
         @JvmSynthetic
+        @KotlinOnly
         fun Class<*>.constructorFinder() = fromClass(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Array<Constructor<*>>.constructorFinder() = fromArray(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Iterable<Constructor<*>>.constructorFinder() = fromIterable(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Sequence<Constructor<*>>.constructorFinder() = fromSequence(this)
     }
 

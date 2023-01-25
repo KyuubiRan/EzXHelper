@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper
 
+import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.interfaces.IMethodHookCallback
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XC_MethodHook.Unhook
@@ -80,21 +81,27 @@ class HookFactory {
     @Suppress("ClassName")
     companion object `-Static` {
         @JvmName("-createMethodHook")
+        @KotlinOnly
         fun Method.createHook(block: HookFactory.() -> Unit): Unhook = HookFactory(this).also(block).create()
 
         @JvmName("-createConstructorHook")
+        @KotlinOnly
         fun Constructor<*>.createHook(block: HookFactory.() -> Unit): Unhook = HookFactory(this).also(block).create()
 
         @JvmName("-createMethodHooks")
+        @KotlinOnly
         fun Iterable<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
 
         @JvmName("-createMethodHooks")
+        @KotlinOnly
         fun Array<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
 
         @JvmName("-createConstructorHooks")
+        @KotlinOnly
         fun Iterable<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
 
         @JvmName("-createConstructorHooks")
+        @KotlinOnly
         fun Array<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> = map { it.createHook(block) }
 
         @JvmName("createMethodHook")

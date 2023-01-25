@@ -14,7 +14,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      * @return [Self] this finder
      */
     fun filterByParamTypes(vararg paramTypes: Class<*>?) = applyThis {
-        memberSequence = memberSequence.filter f@{
+        sequence = sequence.filter f@{
             val pt = getParameterTypes(it)
             if (pt.size != paramTypes.size) return@f false
 
@@ -33,7 +33,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      * @return [Self] this finder
      */
     fun filterByParamTypes(predicate: (Array<Class<*>>) -> Boolean) = applyThis {
-        memberSequence = memberSequence.filter { predicate(getParameterTypes(it)) }
+        sequence = sequence.filter { predicate(getParameterTypes(it)) }
     }
 
     /**
@@ -42,7 +42,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      * @return [Self] this finder
      */
     fun filterByParamCount(count: Int) = applyThis {
-        memberSequence = memberSequence.filter { getParameterTypes(it).size == count }
+        sequence = sequence.filter { getParameterTypes(it).size == count }
     }
 
     /**
@@ -51,7 +51,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      * @return [Self] this finder
      */
     fun filterByParamCount(predicate: (Int) -> Boolean) = applyThis {
-        memberSequence = memberSequence.filter { predicate(getParameterTypes(it).size) }
+        sequence = sequence.filter { predicate(getParameterTypes(it).size) }
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      * @return [Self] this finder
      */
     fun filterByParamCount(range: IntRange) = applyThis {
-        memberSequence = memberSequence.filter { getParameterTypes(it).size in range }
+        sequence = sequence.filter { getParameterTypes(it).size in range }
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterByExceptionTypes(vararg exceptionTypes: Class<*>) = applyThis {
         val set = exceptionTypes.toSet()
-        memberSequence = memberSequence.filter { getExceptionTypes(it).run { size == set.size && toSet() == set } }
+        sequence = sequence.filter { getExceptionTypes(it).run { size == set.size && toSet() == set } }
     }
     // endregion
 

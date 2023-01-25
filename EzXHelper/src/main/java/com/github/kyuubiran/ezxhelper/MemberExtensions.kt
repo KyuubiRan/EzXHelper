@@ -38,7 +38,6 @@ object MemberExtensions {
     val Class<*>.isNotPublic: Boolean
         @JvmStatic inline get() = !this.isPublic
 
-
     val Member.isProtected: Boolean
         @JvmStatic inline get() = Modifier.isProtected(this.modifiers)
     val Member.isNotProtected: Boolean
@@ -60,6 +59,7 @@ object MemberExtensions {
     val Class<*>.isNotPrivate: Boolean
         @JvmStatic inline get() = !this.isPrivate
 
+    const val PACKAGE_PRIVATE = Modifier.PRIVATE or Modifier.PROTECTED or Modifier.PUBLIC
 
     val Member.isPackagePrivate: Boolean
         @JvmStatic inline get() = this.isNotPublic && this.isNotProtected && this.isNotPrivate
@@ -129,7 +129,6 @@ object MemberExtensions {
 
     // AccessFlag.VARARGS = 0x0080
     const val VARARGS = 0x0080
-
 
     val Method.isVarargs: Boolean
         @JvmStatic inline get() = (this.modifiers and VARARGS) != 0

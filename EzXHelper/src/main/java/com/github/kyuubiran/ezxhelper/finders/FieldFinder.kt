@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -40,15 +41,19 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
         }
 
         @JvmSynthetic
+        @KotlinOnly
         fun Class<*>.fieldFinder() = fromClass(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Array<Field>.fieldFinder() = fromArray(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Iterable<Field>.fieldFinder() = fromIterable(this)
 
         @JvmSynthetic
+        @KotlinOnly
         fun Sequence<Field>.fieldFinder() = fromSequence(this)
     }
 
@@ -89,7 +94,9 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
         var c = clazz?.superclass ?: return@applyThis
 
         while (c != Any::class.java) {
-            memberSequence += c.declaredFields.asSequence()
+            if (untilPredicate?.invoke(c) == true) break
+
+            sequence += c.declaredFields.asSequence()
             c = c.superclass
         }
     }

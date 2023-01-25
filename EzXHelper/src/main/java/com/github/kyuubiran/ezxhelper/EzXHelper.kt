@@ -2,7 +2,6 @@
 
 package com.github.kyuubiran.ezxhelper
 
-import android.annotation.SuppressLint
 import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.res.AssetManager

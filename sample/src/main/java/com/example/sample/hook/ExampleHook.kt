@@ -3,8 +3,10 @@ package com.example.sample.hook
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import com.github.kyuubiran.ezxhelper.ClassHelper.Companion.classHelper
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.ObjectHelper.Companion.objectHelper
 import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
@@ -28,10 +30,16 @@ object ExampleHook : BaseHook() {
             .createHook {
                 before {
                     Log.i("Hooked onCreate before")
+                    it.thisObject.objectHelper().getObjectOrNull("mBase")?.let { }
+                    it.thisObject.objectHelper {
+                        getObjectOrNull("mBase")?.let { }
+                        getObjectOrNullAs<Context>("mBase")?.let { }
+                    }
                 }
 
                 after {
                     Log.i("Hooked onCreate after")
+                    it.thisObject.javaClass.classHelper().getStaticObjectOrNull("RESULT_CANCELED")?.let { }
                 }
             }
         unhook.unhook()
