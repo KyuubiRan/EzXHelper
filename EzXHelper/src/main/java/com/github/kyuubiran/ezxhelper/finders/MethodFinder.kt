@@ -103,6 +103,18 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      * @return [FieldFinder] this finder.
      */
     fun filterNonStatic() = filterExcludeModifiers(Modifier.STATIC)
+
+    /**
+     * Filter if they are final.
+     * @return [FieldFinder] this finder.
+     */
+    fun filterFinal() = filterIncludeModifiers(Modifier.FINAL)
+
+    /**
+     * Filter if they are non-final.
+     * @return [FieldFinder] this finder.
+     */
+    fun filterNonFinal() = filterExcludeModifiers(Modifier.FINAL)
     // #endregion
 
     // #region overrides

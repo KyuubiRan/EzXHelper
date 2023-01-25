@@ -28,6 +28,22 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
     }
 
     /**
+     * Filter the executable if the parameter is empty
+     * @return [Self] this finder
+     */
+    fun filterEmptyParam() = applyThis {
+        sequence = sequence.filter { getParameterTypes(it).isEmpty() }
+    }
+
+    /**
+     * Filter the executable if the parameter is not empty
+     * @return [Self] this finder
+     */
+    fun filterNotEmptyParam() = applyThis {
+        sequence = sequence.filter { getParameterTypes(it).isNotEmpty() }
+    }
+
+    /**
      * Use condition to filter parameter types
      * @param predicate condition
      * @return [Self] this finder
