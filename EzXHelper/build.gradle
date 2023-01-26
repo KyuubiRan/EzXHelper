@@ -11,6 +11,7 @@ def versionName = "2.0.0-RC4"
 android {
     compileSdkVersion = 33
     buildToolsVersion = "33.0.0"
+    namespace = "com.github.kyuubiran"
 
     defaultConfig {
         minSdkVersion 24
@@ -70,8 +71,8 @@ if (mavenPushPropExists) {
     ext["signing.secretKeyRingFile"] = mavenPush['signing.secretKeyRingFile']
 }
 
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
+tasks.register('androidSourcesJar', Jar) {
+    archiveClassifier.set('sources')
     from android.sourceSets.main.java.srcDirs
 }
 

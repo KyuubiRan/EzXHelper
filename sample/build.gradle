@@ -5,6 +5,7 @@ plugins {
 
 android {
     compileSdk = 33
+    namespace = "com.example.sample"
 
     defaultConfig {
         applicationId = "com.example.sample"
@@ -34,7 +35,8 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
-    lintOptions {
+
+    lint {
         checkReleaseBuilds false
     }
 }
