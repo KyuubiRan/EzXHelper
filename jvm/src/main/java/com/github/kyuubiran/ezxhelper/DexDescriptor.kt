@@ -50,7 +50,7 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
         @Throws(NoSuchMethodException::class)
         @JvmStatic
         fun getMethod(sig: String, clzLoader: ClassLoader? = null): Method =
-            DexDescriptor(sig, TYPE.METHOD).getMethod(clzLoader ?: EzXHelper.safeClassLoader)
+            DexDescriptor(sig, TYPE.METHOD).getMethod(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
         /**
          * Get method by signature or null if not found
@@ -60,7 +60,7 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
          */
         @JvmStatic
         fun getMethodOrNull(sig: String, clzLoader: ClassLoader? = null): Method? =
-            DexDescriptor(sig, TYPE.METHOD).getMethodOrNull(clzLoader ?: EzXHelper.safeClassLoader)
+            DexDescriptor(sig, TYPE.METHOD).getMethodOrNull(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
         /**
          * Get field by signature or throw exception
@@ -71,7 +71,7 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
         @Throws(NoSuchFieldException::class)
         @JvmStatic
         fun getField(sig: String, clzLoader: ClassLoader? = null): Field =
-            DexDescriptor(sig, TYPE.FIELD).getField(clzLoader ?: EzXHelper.safeClassLoader)
+            DexDescriptor(sig, TYPE.FIELD).getField(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
         /**
          * Get field by signature or null if not found
@@ -81,7 +81,7 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
          */
         @JvmStatic
         fun getFieldOrNull(sig: String, clzLoader: ClassLoader? = null): Field? =
-            DexDescriptor(sig, TYPE.FIELD).getFieldOrNull(clzLoader ?: EzXHelper.safeClassLoader)
+            DexDescriptor(sig, TYPE.FIELD).getFieldOrNull(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
         private fun getTypeSig(type: Class<*>): String {
             if (type.isPrimitive) {

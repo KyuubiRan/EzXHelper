@@ -30,7 +30,8 @@ class ClassHelper private constructor(private val clz: Class<*>) {
     fun getStaticObjectOrNull(fieldName: String) = ClassUtils.getStaticObjectOrNull(clz, fieldName)
 
     @Throws(NoSuchFieldException::class)
-    fun <T> getStaticObjectOrNullAs(fieldName: String) = ClassUtils.getStaticObjectOrNullAs<T>(clz, fieldName)
+    fun <T> getStaticObjectOrNullAs(fieldName: String) =
+        ClassUtils.getStaticObjectOrNullAs<T>(clz, fieldName)
 
     @Throws(NoSuchFieldException::class)
     fun getStaticObjectOrNullUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
@@ -41,7 +42,8 @@ class ClassHelper private constructor(private val clz: Class<*>) {
         ClassUtils.getStaticObjectOrNullUntilSuperclassAs<T>(clz, fieldName, untilSuperClass)
 
     @Throws(NoSuchFieldException::class)
-    fun setStaticObject(fieldName: String, value: Any?) = ClassUtils.setStaticObject(clz, fieldName, value)
+    fun setStaticObject(fieldName: String, value: Any?) =
+        ClassUtils.setStaticObject(clz, fieldName, value)
 
     @Throws(NoSuchFieldException::class)
     fun setStaticObjectUntilSuperclass(fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) =

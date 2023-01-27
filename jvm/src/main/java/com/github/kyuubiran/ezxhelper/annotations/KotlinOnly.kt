@@ -12,4 +12,4 @@ package com.github.kyuubiran.ezxhelper.annotations
     AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.TYPEALIAS
 )
-internal annotation class KotlinOnly
+annotation class KotlinOnly

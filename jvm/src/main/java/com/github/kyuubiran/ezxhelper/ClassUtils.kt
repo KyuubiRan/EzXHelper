@@ -13,7 +13,7 @@ object ClassUtils {
      */
     @JvmStatic
     fun loadClassOrNull(className: String, cl: ClassLoader? = null): Class<*>? = try {
-        Class.forName(className, false, cl ?: EzXHelper.safeClassLoader)
+        Class.forName(className, false, cl ?: ClassLoaderProvider.safeClassLoader)
     } catch (e: ClassNotFoundException) {
         null
     }
@@ -27,7 +27,7 @@ object ClassUtils {
     @JvmStatic
     @Throws(ClassNotFoundException::class)
     fun loadClass(className: String, cl: ClassLoader? = null): Class<*> =
-        Class.forName(className, false, cl ?: EzXHelper.safeClassLoader)
+        Class.forName(className, false, cl ?: ClassLoaderProvider.safeClassLoader)
 
     /**
      * Load the first exists class or throw exception all not found
@@ -54,7 +54,7 @@ object ClassUtils {
      */
     @Throws(ClassNotFoundException::class)
     @JvmStatic
-    fun loadFirstClass(vararg className: String): Class<*> = loadFirstClass(EzXHelper.safeClassLoader, *className)
+    fun loadFirstClass(vararg className: String): Class<*> = loadFirstClass(ClassLoaderProvider.safeClassLoader, *className)
 
     /**
      * Load the first exists class or null
@@ -76,7 +76,8 @@ object ClassUtils {
      * @return class or null
      */
     @JvmStatic
-    fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(EzXHelper.safeClassLoader, *className)
+    fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(
+        ClassLoaderProvider.safeClassLoader, *className)
 
     /**
      * Get the static object

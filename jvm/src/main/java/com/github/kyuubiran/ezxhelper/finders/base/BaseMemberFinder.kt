@@ -2,13 +2,12 @@
 
 package com.github.kyuubiran.ezxhelper.finders.base
 
-import com.github.kyuubiran.ezxhelper.Log.logeIfThrow
+import com.github.kyuubiran.ezxhelper.LogExtensions.logeIfThrow
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotPackagePrivate
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isPackagePrivate
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
-
 
 abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>) : BaseFinder<T, Self>(memberSequence) where T : Member {
     // region get elem
@@ -139,6 +138,8 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
     // endregion
 
     protected fun allowAccess(member: Member) {
-        (member as? AccessibleObject)?.runCatching { isAccessible = true }?.logeIfThrow("Cannot set accessible to ${member.name}")
+        if (member !is AccessibleObject) return
+        member.runCatching { isAccessible = true }
+            .logeIfThrow("Cannot set accessible to ${member.name}")
     }
 }

@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    api project(":jvm")
     compileOnly 'de.robv.android.xposed:api:82'
 }
 

@@ -16,6 +16,8 @@ dependencyResolutionManagement {
 }
 
 
-include ':EzXHelper'
-include ':sample'
 rootProject.name = "EzXHelper"
+
+include ':EzXHelper'
+include ':jvm'
+include ':sample'

@@ -14,9 +14,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import  com.github.kyuubiran.ezxhelper.finders.MethodFinder
 
 object EzXHelper {
-    @JvmStatic
-    var enableFinderExceptionMessage = false
-
     /**
      * Hooked application context.
      */
@@ -32,18 +29,16 @@ object EzXHelper {
      * Will auto initialized when [initHandleLoadPackage] invoked.
      */
     @JvmStatic
-    lateinit var classLoader: ClassLoader
+    var classLoader: ClassLoader by ClassLoaderProvider::classLoader
 
     /**
      * Safe class loader for doing reflection, will use system class loader instead if [classLoader] is not initialized.
      */
     @JvmStatic
-    val safeClassLoader: ClassLoader
-        get() = if (isClassLoaderInited) classLoader else ClassLoader.getSystemClassLoader()
+    val safeClassLoader: ClassLoader by ClassLoaderProvider::safeClassLoader
 
     @JvmStatic
-    val isClassLoaderInited: Boolean
-        get() = this::classLoader.isInitialized
+    val isClassLoaderInited: Boolean by ClassLoaderProvider::isClassLoaderInited
 
     /**
      * Module path.
@@ -85,7 +80,7 @@ object EzXHelper {
      */
     @JvmStatic
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        classLoader = lpparam.classLoader
+        ClassLoaderProvider.classLoader = lpparam.classLoader
         hostPackageName = lpparam.packageName
     }
 
@@ -121,7 +116,7 @@ object EzXHelper {
      */
     @JvmStatic
     fun enableFinderExceptionMessage() {
-        enableFinderExceptionMessage = true
+        Config.enableFinderExceptionMessage = true
     }
 
     /**
@@ -151,7 +146,7 @@ object EzXHelper {
     /**
      * Set current logger toast tag.
      * If not set will not show the prefix.
-     * @see Log.toast
+     * @see AndroidLogger.toast
      */
     @JvmStatic
     fun setToastTag(tag: String) {

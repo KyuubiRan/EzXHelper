@@ -2,14 +2,14 @@
 
 package com.github.kyuubiran.ezxhelper.finders.base
 
-import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.Config
 import com.github.kyuubiran.ezxhelper.misc.FinderExceptionMessage
 
 abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<T>) {
     // region exception message
 
     protected val exceptMsg: FinderExceptionMessage? =
-        if (EzXHelper.enableFinderExceptionMessage) FinderExceptionMessage() else null
+        if (Config.enableFinderExceptionMessage) FinderExceptionMessage() else null
 
     protected val exceptionMessageEnabled = exceptMsg != null
 
