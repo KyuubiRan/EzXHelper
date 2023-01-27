@@ -1,9 +1,10 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package com.github.kyuubiran.ezxhelper.finders
+package com.github.kyuubiran.ezxhelper.finders.base
 
 import com.github.kyuubiran.ezxhelper.Log.logeIfThrow
-import com.github.kyuubiran.ezxhelper.MemberExtensions
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotPackagePrivate
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isPackagePrivate
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -31,6 +32,7 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterByModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { it.modifiers == modifiers }
+        exceptMessageScope { condition("filterByModifiers(modifiers == $modifiers)") }
     }
 
     /**
@@ -40,6 +42,7 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): Self = applyThis {
         sequence = sequence.filter { predicate(it.modifiers) }
+        exceptMessageScope { condition("filterByModifiers(CustomCondition)") }
     }
 
     /**
@@ -49,6 +52,7 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterIncludeModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { (it.modifiers and modifiers) != 0 }
+        exceptMessageScope { condition("filterIncludeModifiers($modifiers)") }
     }
 
     /**
@@ -58,55 +62,80 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterExcludeModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { (it.modifiers and modifiers) == 0 }
+        exceptMessageScope { condition("filterExcludeModifiers($modifiers)") }
     }
 
     /**
      * Filter if they are public.
      * @return [Self] the filtered finder
      */
-    fun filterPublic() = filterIncludeModifiers(Modifier.PUBLIC)
+    fun filterPublic() = applyThis {
+        sequence = sequence.filter { Modifier.isPublic(it.modifiers) }
+        exceptMessageScope { condition("filterPublic") }
+    }
 
     /**
      * Filter if they are non-public.
      * @return [Self] the filtered finder
      */
-    fun filterNonPublic() = filterExcludeModifiers(Modifier.PUBLIC)
+    fun filterNonPublic() = applyThis {
+        sequence = sequence.filter { !Modifier.isPublic(it.modifiers) }
+        exceptMessageScope { condition("filterNonPublic") }
+    }
 
     /**
      * Filter if they are protected.
      * @return [Self] the filtered finder
      */
-    fun filterProtected() = filterIncludeModifiers(Modifier.PROTECTED)
+    fun filterProtected() = applyThis {
+        sequence = sequence.filter { Modifier.isProtected(it.modifiers) }
+        exceptMessageScope { condition("filterProtected") }
+    }
 
     /**
      * Filter if they are non-protected.
      * @return [Self] the filtered finder
      */
-    fun filterNonProtected() = filterExcludeModifiers(Modifier.PROTECTED)
+    fun filterNonProtected() = applyThis {
+        sequence = sequence.filter { !Modifier.isProtected(it.modifiers) }
+        exceptMessageScope { condition("filterNonProtected") }
+    }
 
     /**
      * Filter if they are private.
      * @return [Self] the filtered finder
      */
-    fun filterPrivate() = filterIncludeModifiers(Modifier.PRIVATE)
+    fun filterPrivate() = applyThis {
+        sequence = sequence.filter { Modifier.isPrivate(it.modifiers) }
+        exceptMessageScope { condition("filterPrivate") }
+    }
 
     /**
      * Filter if they are non-private.
      * @return [Self] the filtered finder
      */
-    fun filterNonPrivate() = filterExcludeModifiers(Modifier.PRIVATE)
+    fun filterNonPrivate() = applyThis {
+        sequence = sequence.filter { !Modifier.isPrivate(it.modifiers) }
+        exceptMessageScope { condition("filterNonPrivate") }
+    }
 
     /**
      * Filter if they are package-private.
      * @return [Self] the filtered finder
      */
-    fun filterPackagePrivate() = filterExcludeModifiers(MemberExtensions.PACKAGE_PRIVATE)
+    fun filterPackagePrivate() = applyThis {
+        sequence = sequence.filter { it.isPackagePrivate }
+        exceptMessageScope { condition("filterPackagePrivate") }
+    }
 
     /**
      * Filter if they are non-package-private.
      * @return [Self] the filtered finder
      */
-    fun filterNonPackagePrivate() = filterIncludeModifiers(MemberExtensions.PACKAGE_PRIVATE)
+    fun filterNonPackagePrivate() = applyThis {
+        sequence = sequence.filter { it.isNotPackagePrivate }
+        exceptMessageScope { condition("filterNonPackagePrivate") }
+    }
     // endregion
 
     protected fun allowAccess(member: Member) {

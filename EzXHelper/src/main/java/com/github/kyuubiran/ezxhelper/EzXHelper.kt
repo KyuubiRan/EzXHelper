@@ -11,7 +11,12 @@ import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
+import  com.github.kyuubiran.ezxhelper.finders.MethodFinder
+
 object EzXHelper {
+    @JvmStatic
+    var enableFinderExceptionMessage = false
+
     /**
      * Hooked application context.
      */
@@ -93,6 +98,30 @@ object EzXHelper {
     fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
         modulePath = startupParam.modulePath
         moduleRes = XModuleResources.createInstance(modulePath, null)
+    }
+
+    /**
+     * Enable the exception message when Finders cannot find the target object.
+     *
+     * Example with [MethodFinder]:
+     *
+     * [NoSuchElementException]: `[MethodFinder]` No such method found in class: com.example.clazz
+     *
+     * Conditions:
+     *
+     *      findSuper([com.example.superclazz1, com.example.superclazz2])
+     *      filterNonStatic
+     *      filter(CustomCondition)
+     *      filterByParamCount(1 <= count <= 5)
+     *
+     * Stacktrace:
+     *
+     *      at com.example.MainHook.hook(MainHook.kt: 10)
+     *      ...
+     */
+    @JvmStatic
+    fun enableFinderExceptionMessage() {
+        enableFinderExceptionMessage = true
     }
 
     /**

@@ -1,8 +1,22 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package com.github.kyuubiran.ezxhelper.finders
+package com.github.kyuubiran.ezxhelper.finders.base
+
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.misc.FinderExceptionMessage
 
 abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<T>) {
+    // region exception message
+
+    protected val exceptMsg: FinderExceptionMessage? =
+        if (EzXHelper.enableFinderExceptionMessage) FinderExceptionMessage() else null
+
+    protected val exceptionMessageEnabled = exceptMsg != null
+
+    protected inline fun exceptMessageScope(block: FinderExceptionMessage.() -> Unit) = exceptMsg?.block()
+
+    // endregion
+
     @Suppress("UNCHECKED_CAST")
     protected inline fun applyThis(block: BaseFinder<T, Self>.() -> Unit) = this.apply(block) as Self
 
@@ -20,7 +34,12 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @throws NoSuchElementException if sequence is empty.
      */
     @Throws(NoSuchElementException::class)
-    open fun first(): T = sequence.first()
+    open fun first(): T = try {
+        sequence.first()
+    } catch (e: NoSuchElementException) {
+        if (!exceptionMessageEnabled) throw e
+        throw NoSuchElementException(exceptMsg?.msg)
+    }
 
     /**
      * Get the last element or null if not found.
@@ -34,7 +53,12 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @throws NoSuchElementException if sequence is empty.
      */
     @Throws(NoSuchElementException::class)
-    open fun last(): T = sequence.last()
+    open fun last(): T = try {
+        sequence.last()
+    } catch (e: NoSuchElementException) {
+        if (!exceptionMessageEnabled) throw e
+        throw NoSuchElementException(exceptMsg?.msg)
+    }
 
     /**
      * Get the first element by condition or throw an exception if there is no such element.
@@ -43,7 +67,12 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @throws NoSuchElementException if sequence is empty.
      */
     @Throws(NoSuchElementException::class)
-    open fun first(condition: T.() -> Boolean) = sequence.first(condition)
+    open fun first(condition: T.() -> Boolean) = try {
+        sequence.first(condition)
+    } catch (e: NoSuchElementException) {
+        if (!exceptionMessageEnabled) throw e
+        throw NoSuchElementException(exceptMsg?.msg)
+    }
 
     /**
      * Get the last element by condition or throw an exception if there is no such element.
@@ -52,7 +81,12 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @throws NoSuchElementException if sequence is empty.
      */
     @Throws(NoSuchElementException::class)
-    open fun last(condition: T.() -> Boolean) = sequence.last(condition)
+    open fun last(condition: T.() -> Boolean) = try {
+        sequence.last(condition)
+    } catch (e: NoSuchElementException) {
+        if (!exceptionMessageEnabled) throw e
+        throw NoSuchElementException(exceptMsg?.msg)
+    }
 
     /**
      * Get the first element by condition or null if not found
@@ -80,6 +114,7 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
     }
 
     // region for-each
+
     /**
      * On-each loop for.
      * @param action the action
@@ -107,9 +142,11 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @return [Self] the finder
      */
     fun forEachIndexed(action: (index: Int, T) -> Unit) = sequence.forEachIndexed(action)
+
     // endregion
 
-    // region mapTo
+    // region map
+
     /**
      * Map to the list.
      * @param transform the transform action
@@ -154,7 +191,7 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
         sequence.map(transform).toCollection(destination)
     // endregion
 
-    // region toCollection
+    // region collection
     /**
      * Make sequence to the list.
      * @return [List] the list
@@ -190,9 +227,11 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @return [MutableCollection] the collection
      */
     fun <C> toCollection(collection: C): C where C : MutableCollection<T> = sequence.toCollection(collection)
+
     // endregion
 
     // region contact
+
     /**
      * Concatenate with another finder.
      */
@@ -241,5 +280,6 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
     operator fun plusAssign(other: Iterable<T>) {
         contact(other)
     }
+
     // endregion
 }

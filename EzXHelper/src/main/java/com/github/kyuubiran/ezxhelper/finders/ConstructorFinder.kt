@@ -3,6 +3,7 @@
 package com.github.kyuubiran.ezxhelper.finders
 
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
+import com.github.kyuubiran.ezxhelper.finders.base.ExecutableFinder
 import java.lang.reflect.Constructor
 
 /**
@@ -13,27 +14,37 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
     companion object `-Static` {
         @JvmStatic
         fun fromClass(clazz: Class<*>): ConstructorFinder {
-            return ConstructorFinder(clazz.declaredConstructors.asSequence())
+            return ConstructorFinder(clazz.declaredConstructors.asSequence()).apply {
+                exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in class: ${clazz.name}") }
+            }
         }
 
         @JvmStatic
         fun fromSequence(seq: Sequence<Constructor<*>>): ConstructorFinder {
-            return ConstructorFinder(seq)
+            return ConstructorFinder(seq).apply {
+                exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in sequence(size=${seq.count()})") }
+            }
         }
 
         @JvmStatic
         fun fromArray(array: Array<Constructor<*>>): ConstructorFinder {
-            return ConstructorFinder(array.asSequence())
+            return ConstructorFinder(array.asSequence()).apply {
+                exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in array(size=${array.count()})") }
+            }
         }
 
         @JvmStatic
         fun fromVararg(vararg array: Constructor<*>): ConstructorFinder {
-            return ConstructorFinder(array.asSequence())
+            return ConstructorFinder(array.asSequence()).apply {
+                exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in array(size=${array.count()})") }
+            }
         }
 
         @JvmStatic
         fun fromIterable(iterable: Iterable<Constructor<*>>): ConstructorFinder {
-            return ConstructorFinder(iterable.asSequence())
+            return ConstructorFinder(iterable.asSequence()).apply {
+                exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in iterable)") }
+            }
         }
 
         @JvmSynthetic
@@ -52,12 +63,6 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
         @KotlinOnly
         fun Sequence<Constructor<*>>.constructorFinder() = fromSequence(this)
     }
-
-    // region filter by
-    // endregion
-
-    // region filter modifiers
-    // endregion
 
     // region overrides
     override fun getParameterTypes(member: Constructor<*>): Array<Class<*>> = member.parameterTypes

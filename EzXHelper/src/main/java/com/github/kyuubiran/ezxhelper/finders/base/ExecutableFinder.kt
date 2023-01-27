@@ -1,6 +1,6 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.github.kyuubiran.ezxhelper.finders
+package com.github.kyuubiran.ezxhelper.finders.base
 
 import com.github.kyuubiran.ezxhelper.MemberExtensions
 import java.lang.reflect.Member
@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier
 
 abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMemberFinder<E, Self>(seq) {
     // region filter by
+
     /**
      * Filter by parameter types, or if null to skip check some parameters
      * @param paramTypes parameter types
@@ -25,6 +26,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
 
             true
         }
+        exceptMessageScope { condition("filterByParamTypes(${paramTypes.map { it?.name ?: "<ignored>" }})") }
     }
 
     /**
@@ -33,6 +35,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterEmptyParam() = applyThis {
         sequence = sequence.filter { getParameterTypes(it).isEmpty() }
+        exceptMessageScope { condition("filterEmptyParam") }
     }
 
     /**
@@ -41,6 +44,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterNotEmptyParam() = applyThis {
         sequence = sequence.filter { getParameterTypes(it).isNotEmpty() }
+        exceptMessageScope { condition("filterNotEmptyParam") }
     }
 
     /**
@@ -50,6 +54,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterByParamTypes(predicate: (Array<Class<*>>) -> Boolean) = applyThis {
         sequence = sequence.filter { predicate(getParameterTypes(it)) }
+        exceptMessageScope { condition("filterByParamTypes(CustomCondition)") }
     }
 
     /**
@@ -59,6 +64,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterByParamCount(count: Int) = applyThis {
         sequence = sequence.filter { getParameterTypes(it).size == count }
+        exceptMessageScope { condition("filterByParamCount(count == $count)") }
     }
 
     /**
@@ -68,6 +74,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterByParamCount(predicate: (Int) -> Boolean) = applyThis {
         sequence = sequence.filter { predicate(getParameterTypes(it).size) }
+        exceptMessageScope { condition("filterByParamCount(CustomCondition)") }
     }
 
     /**
@@ -77,6 +84,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
      */
     fun filterByParamCount(range: IntRange) = applyThis {
         sequence = sequence.filter { getParameterTypes(it).size in range }
+        exceptMessageScope { condition("filterByParamCount(${range.first} <= count <= ${range.last})") }
     }
 
     /**
@@ -87,40 +95,55 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
     fun filterByExceptionTypes(vararg exceptionTypes: Class<*>) = applyThis {
         val set = exceptionTypes.toSet()
         sequence = sequence.filter { getExceptionTypes(it).run { size == set.size && toSet() == set } }
+        exceptMessageScope { condition("filterByExceptionTypes(${set.map { it.name }})") }
     }
+
     // endregion
 
     // region filter modifiers
+
     /**
      * Filter if they are native.
      * @return [Self] this finder
      */
-    fun filterNative() = filterIncludeModifiers(Modifier.NATIVE)
+    fun filterNative() = applyThis {
+        sequence = sequence.filter { Modifier.isNative(it.modifiers) }
+        exceptMessageScope { condition("filterNative") }
+    }
 
     /**
      * Filter if they are non-native.
      * @return [Self] this finder
      */
-    fun filterNonNative() = filterExcludeModifiers(Modifier.NATIVE)
+    fun filterNonNative() = applyThis {
+        sequence = sequence.filter { !Modifier.isNative(it.modifiers) }
+        exceptMessageScope { condition("filterNonNative") }
+    }
 
     /**
      * Filter if they are varargs.
      * @return [Self] this finder
      */
-    fun filterVarargs() = filterIncludeModifiers(MemberExtensions.VARARGS)
+    fun filterVarargs() = applyThis {
+        sequence = sequence.filter { it.modifiers and MemberExtensions.VARARGS != 0 }
+        exceptMessageScope { condition("filterVarargs") }
+    }
 
     /**
      * Filter if they are non-varargs.
      * @return [Self] this finder
      */
-    fun filterNonVarargs() = filterExcludeModifiers(MemberExtensions.VARARGS)
-    // endregion
+    fun filterNonVarargs() = applyThis {
+        sequence = sequence.filter { it.modifiers and MemberExtensions.VARARGS == 0 }
+        exceptMessageScope { condition("filterNonVarargs") }
+    }
 
-    // region overrides
     // endregion
 
     // region abstracts
+
     protected abstract fun getParameterTypes(member: E): Array<Class<*>>
     protected abstract fun getExceptionTypes(member: E): Array<Class<*>>
+
     // endregion
 }
