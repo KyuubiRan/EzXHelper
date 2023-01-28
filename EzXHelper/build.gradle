@@ -49,10 +49,25 @@ dependencies {
     compileOnly 'de.robv.android.xposed:api:82'
 }
 
-dokkaHtml.configure {
+dokkaHtml {
     dokkaSourceSets {
         named("main") {
             noAndroidSdkLink.set(false)
+            sourceRoots.from(file("src"), project(":jvm").file("src"))
+            samples.from(project(":sample").file("src/main/java/com/example/sample"))
+        }
+    }
+
+    doLast {
+        def docTree = fileTree(
+                dir: "${dokkaHtml.outputDirectory.get()}",
+                includes: ["**/*.html"])
+        docTree.each { file ->
+            def text = file.text
+            file.write(text.replace(
+                    '<script src="https://unpkg.com/kotlin-playground@1"></script>',
+                    '<script src="https://unpkg.com/kotlin-playground@1" data-server="https://kpi.ketal.icu"></script>'
+            ))
         }
     }
 }

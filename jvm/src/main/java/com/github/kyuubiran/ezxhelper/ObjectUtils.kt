@@ -9,6 +9,7 @@ object ObjectUtils {
      * @param fieldName field name
      * @return field object or null
      * @throws NoSuchFieldException if the field is not found
+     * @sample com.example.sample.getObjectOrNull
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
