@@ -35,6 +35,8 @@ object ExampleHook : BaseHook() {
                         getObjectOrNull("mBase")?.let { }
                         getObjectOrNullAs<Context>("mBase")?.let { }
                     }
+                    it.thisObject.objectHelper().invokeMethodBestMatch("getBaseContext")?.let { }
+                    String::class.java.classHelper().invokeStaticMethodBestMatch("valueOf", String::class.java, "123")
                 }
 
                 after {

@@ -2,6 +2,9 @@
 
 package com.github.kyuubiran.ezxhelper
 
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder.`-Static`.methodFinder
+import java.lang.IllegalArgumentException
+
 object ObjectUtils {
     /**
      * Get the field object by the name in the object.
@@ -99,8 +102,67 @@ object ObjectUtils {
         throw NoSuchFieldException("No such field $fieldName in ${obj::class.java.name} and its superclasses.")
     }
 
-//    fun invokeMethod(obj: Any, methodName: String, vararg args: Any?): Any? =
-//        obj.javaClass.getDeclaredMethod(methodName, *args.map { it?.javaClass ?: Any::class.java }.toTypedArray())
-//            .also { it.isAccessible = true }
-//            .invoke(obj, *args)
+    /**
+     * Invoke the object method(best match params)
+     * @param obj object
+     * @param methodName method name
+     * @param returnType return type (or null if ignore)
+     * @param params method params
+     * @return method result
+     */
+    @JvmStatic
+    @Throws(NoSuchMethodException::class)
+    fun invokeMethodBestMatch(obj: Any, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
+        val paramTypes = params.map { it?.javaClass }.toTypedArray()
+        val mf = obj::class.java.methodFinder().apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterNonStatic()
+            .filterByName(methodName)
+            .filterByParamTypes(*paramTypes)
+
+        val m = mf.firstOrNull() ?: mf.findSuper()
+            .filterNonStatic()
+            .filterByName(methodName)
+            .filterByParamTypes(*paramTypes)
+            .first()
+
+        return m.invoke(null, *params)
+    }
+
+    /**
+     * Invoke the object method
+     * @param obj object
+     * @param methodName method name
+     * @param returnType return type (or null if ignore)
+     * @param paramTypes method param types
+     * @param params method params
+     * @return method result
+     * @throws NoSuchMethodException if the method is not found
+     * @throws IllegalArgumentException if the paramTypes size != params size
+     */
+    @JvmStatic
+    @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
+    fun invokeMethod(
+        obj: Any,
+        methodName: String,
+        returnType: Class<*>? = null,
+        paramTypes: ParamTypes = paramTypes(),
+        params: Params = params()
+    ): Any? {
+        if (paramTypes.types.size != params.params.size) throw IllegalArgumentException("paramTypes size != params size")
+
+        val mf = obj::class.java.methodFinder()
+            .filterNonStatic()
+            .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterByParamTypes(*paramTypes.types)
+
+        val m = mf.firstOrNull() ?: mf.findSuper()
+            .filterNonStatic()
+            .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterByParamTypes(*paramTypes.types)
+            .first()
+
+        return m.invoke(obj, *params.params)
+    }
 }

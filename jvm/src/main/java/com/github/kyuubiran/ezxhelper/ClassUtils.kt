@@ -3,6 +3,8 @@
 package com.github.kyuubiran.ezxhelper
 
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isStatic
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder.`-Static`.methodFinder
+import java.lang.IllegalArgumentException
 
 object ClassUtils {
     /**
@@ -77,7 +79,8 @@ object ClassUtils {
      */
     @JvmStatic
     fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(
-        ClassLoaderProvider.safeClassLoader, *className)
+        ClassLoaderProvider.safeClassLoader, *className
+    )
 
     /**
      * Get the static object
@@ -182,5 +185,61 @@ object ClassUtils {
             }
         }
         throw NoSuchFieldException("No such static field $fieldName in ${clazz.name} and its superclasses.")
+    }
+
+    /**
+     * Invoke the static method(best match params) in the class
+     * @param clz class
+     * @param methodName method name
+     * @param returnType return type (or null if ignore)
+     * @param params method params
+     * @return method result
+     */
+    @JvmStatic
+    @Throws(NoSuchMethodException::class)
+    fun invokeStaticMethodBestMatch(clz: Class<*>, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
+        val paramTypes = params.map { it?.javaClass }.toTypedArray()
+        val mf = clz.methodFinder().apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterStatic()
+            .filterByName(methodName)
+            .filterByParamTypes(*paramTypes)
+
+        val m = mf.firstOrNull() ?: mf.findSuper()
+            .filterStatic()
+            .filterByName(methodName)
+            .filterByParamTypes(*paramTypes)
+            .first()
+
+        return m.invoke(null, *params)
+    }
+
+    /**
+     * Invoke the static method in the class
+     * @param clz class
+     * @param methodName method name
+     * @param returnType return type (or null if ignore)
+     * @param paramTypes method param types
+     * @param params method params
+     * @return method result
+     * @throws NoSuchMethodException if the method is not found
+     * @throws IllegalArgumentException if the paramTypes size != params size
+     */
+    @JvmStatic
+    @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
+    fun invokeStaticMethod(clz: Class<*>, methodName: String, returnType: Class<*>? = null, paramTypes: ParamTypes, params: Params): Any? {
+        val mf = clz.methodFinder()
+            .filterStatic()
+            .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterByParamTypes(*paramTypes.types)
+
+        val m = mf.firstOrNull() ?: mf.findSuper()
+            .filterStatic()
+            .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .filterByParamTypes(*paramTypes.types)
+            .first()
+
+        return m.invoke(null, *params.params)
     }
 }

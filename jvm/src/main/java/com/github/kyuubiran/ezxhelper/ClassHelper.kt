@@ -3,6 +3,7 @@
 package com.github.kyuubiran.ezxhelper
 
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
+import java.lang.IllegalArgumentException
 
 /**
  * The scoped helper for [Class] to quick do reflect things
@@ -17,13 +18,13 @@ class ClassHelper private constructor(private val clz: Class<*>) {
 
         @JvmSynthetic
         @JvmStatic
-        inline fun Class<*>.objectHelper(block: ClassHelper.() -> Unit) {
+        inline fun Class<*>.classHelper(block: ClassHelper.() -> Unit) {
             classHelper().apply(block)
         }
 
         @JvmSynthetic
         @JvmStatic
-        inline fun <T> Class<*>.objectHelper(block: ClassHelper.() -> T) = classHelper().run(block)
+        inline fun <T> Class<*>.classHelper(block: ClassHelper.() -> T) = classHelper().run(block)
     }
 
     @Throws(NoSuchFieldException::class)
@@ -48,4 +49,12 @@ class ClassHelper private constructor(private val clz: Class<*>) {
     @Throws(NoSuchFieldException::class)
     fun setStaticObjectUntilSuperclass(fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
         ClassUtils.setStaticObjectUntilSuperclass(clz, fieldName, value, untilSuperClass)
+
+    @Throws(NoSuchMethodException::class)
+    fun invokeStaticMethodBestMatch(methodName: String, returnType: Class<*>? = null, vararg params: Any?) =
+        ClassUtils.invokeStaticMethodBestMatch(clz, methodName, returnType, *params)
+
+    @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
+    fun invokeStaticMethod(methodName: String, returnType: Class<*>? = null, paramTypes: ParamTypes = paramTypes(), params: Params = params()) =
+        ClassUtils.invokeStaticMethod(clz, methodName, returnType, paramTypes, params)
 }
