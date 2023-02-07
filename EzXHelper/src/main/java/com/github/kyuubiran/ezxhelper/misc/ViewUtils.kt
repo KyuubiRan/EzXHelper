@@ -93,14 +93,14 @@ object ViewUtils {
     }
 
     /**
-     * Find id by name
-     * @param name R.id.[name]
-     * @return id found id or 0 if not found
+     * Get the id by name
+     * @param name R.[type].[name]
+     * @return id or 0 if not found
      */
     @SuppressLint("DiscouragedApi")
     @JvmStatic
-    fun getIdByName(name: String, ctx: Context = EzXHelper.appContext): Int {
-        return ctx.resources.getIdentifier(name, "id", ctx.packageName)
+    fun getIdByName(name: String, type: String = "id", ctx: Context = EzXHelper.appContext): Int {
+        return ctx.resources.getIdentifier(name, type, ctx.packageName)
     }
 
     /**
@@ -109,13 +109,13 @@ object ViewUtils {
      * @return view or null if not found
      */
     fun View.findViewByIdName(name: String): View? {
-        val id = getIdByName(name, this.context)
+        val id = getIdByName(name, ctx = this.context)
         if (id == 0) return null
         return this.findViewById(id)
     }
 
     fun Activity.findViewByIdName(name: String): View? {
-        val id = getIdByName(name, this)
+        val id = getIdByName(name, ctx = this)
         if (id == 0) return null
         return this.findViewById(id)
     }
