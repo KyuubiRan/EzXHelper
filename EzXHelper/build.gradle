@@ -45,7 +45,6 @@ android {
 }
 
 dependencies {
-    api project(":jvm")
     compileOnly 'de.robv.android.xposed:api:82'
 }
 
@@ -53,7 +52,7 @@ dokkaHtml {
     dokkaSourceSets {
         named("main") {
             noAndroidSdkLink.set(false)
-            sourceRoots.from(file("src"), project(":jvm").file("src"))
+            sourceRoots.from(file("src"))
             samples.from(project(":sample").file("src/main/java/com/example/sample"))
         }
     }
