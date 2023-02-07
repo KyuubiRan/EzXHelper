@@ -120,14 +120,14 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @param action the action
      * @return [Self] the finder
      */
-    fun onEach(action: (T) -> Unit): Self = applyThis { sequence.onEach(action) }
+    fun onEach(action: (T) -> Unit): Self = applyThis { sequence.forEach(action) }
 
     /**
      * On-each loop with index for.
      * @param action the action
      * @return [Self] the finder
      */
-    fun onEachIndexed(action: (index: Int, T) -> Unit): Self = applyThis { sequence.onEachIndexed(action) }
+    fun onEachIndexed(action: (index: Int, T) -> Unit): Self = applyThis { sequence.forEachIndexed(action) }
 
     /**
      * For-each loop for.
