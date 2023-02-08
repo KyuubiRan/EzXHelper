@@ -109,19 +109,22 @@ object ObjectUtils {
      * @param returnType return type (or null if ignore)
      * @param params method params
      * @return method result
+     * @throws NoSuchMethodException if the method is not found
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class)
     fun invokeMethodBestMatch(obj: Any, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
         val paramTypes = params.map { it?.javaClass }.toTypedArray()
-        val mf = obj::class.java.methodFinder().apply { if (returnType != null) filterByReturnType(returnType) }
+        val mf = obj::class.java.methodFinder()
             .filterNonStatic()
             .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
             .filterByParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterNonStatic()
             .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
             .filterByParamTypes(*paramTypes)
             .first()
 

@@ -87,7 +87,7 @@ object ClassUtils {
      * @param clazz class
      * @param fieldName field name
      * @return field object or null
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -103,7 +103,7 @@ object ClassUtils {
      * @param fieldName field name
      * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
      * @return field object or null
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -126,7 +126,7 @@ object ClassUtils {
      * @param clazz class
      * @param fieldName field name
      * @return [T] field object or null
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -140,7 +140,7 @@ object ClassUtils {
      * @param fieldName field name
      * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
      * @return field object or null
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -153,7 +153,7 @@ object ClassUtils {
      * @param clazz class
      * @param fieldName field name
      * @param value field value
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -168,7 +168,7 @@ object ClassUtils {
      * @param fieldName field name
      * @param value field value
      * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
-     * @throws NoSuchFieldException if not found
+     * @throws NoSuchFieldException if the field is not found
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -194,19 +194,22 @@ object ClassUtils {
      * @param returnType return type (or null if ignore)
      * @param params method params
      * @return method result
+     * @throws NoSuchMethodException if the method is not found
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class)
     fun invokeStaticMethodBestMatch(clz: Class<*>, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
         val paramTypes = params.map { it?.javaClass }.toTypedArray()
-        val mf = clz.methodFinder().apply { if (returnType != null) filterByReturnType(returnType) }
+        val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
             .filterByParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterStatic()
             .filterByName(methodName)
+            .apply { if (returnType != null) filterByReturnType(returnType) }
             .filterByParamTypes(*paramTypes)
             .first()
 
