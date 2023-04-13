@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.finders.base.BaseMemberFinder
 import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
@@ -22,6 +23,10 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
                 exceptMessageScope { ctor<FieldFinder>("No such field found in class: ${clazz.name}") }
             }
         }
+
+        @JvmStatic
+        fun fromClass(clazzName: String, classLoader: ClassLoader = EzXHelper.classLoader) =
+            fromClass(Class.forName(clazzName, false, classLoader))
 
         @JvmStatic
         fun fromSequence(seq: Sequence<Field>): FieldFinder {

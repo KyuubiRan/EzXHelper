@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.finders.base.ExecutableFinder
 import java.lang.reflect.Constructor
@@ -25,6 +26,11 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
                 exceptMessageScope { ctor<ConstructorFinder>("No such constructor found in sequence(size=${seq.count()})") }
             }
         }
+
+        @JvmStatic
+        fun fromClass(clazzName: String, classLoader: ClassLoader = EzXHelper.classLoader) =
+            fromClass(Class.forName(clazzName, false, classLoader))
+
 
         @JvmStatic
         fun fromArray(array: Array<Constructor<*>>): ConstructorFinder {

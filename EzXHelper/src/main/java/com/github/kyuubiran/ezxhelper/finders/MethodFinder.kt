@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders
 
+import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.finders.base.ExecutableFinder
 import com.github.kyuubiran.ezxhelper.interfaces.IFindSuper
@@ -26,6 +27,10 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
                 exceptMessageScope { ctor<MethodFinder>("No such method found in class: ${clazz.name}") }
             }
         }
+
+        @JvmStatic
+        fun fromClass(clazzName: String, classLoader: ClassLoader = EzXHelper.classLoader) =
+            fromClass(Class.forName(clazzName, false, classLoader))
 
         @JvmStatic
         fun fromSequence(seq: Sequence<Method>): MethodFinder {
