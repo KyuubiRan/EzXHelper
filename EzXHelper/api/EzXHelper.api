@@ -109,14 +109,15 @@ public final class com/github/kyuubiran/ezxhelper/DexDescriptor$-Static {
 
 public final class com/github/kyuubiran/ezxhelper/EzXHelper {
 	public static final field INSTANCE Lcom/github/kyuubiran/ezxhelper/EzXHelper;
-	public static field appContext Landroid/content/Context;
 	public static field hostPackageName Ljava/lang/String;
 	public static field modulePath Ljava/lang/String;
 	public static field moduleRes Landroid/content/res/Resources;
 	public static final fun addModuleAssetPath (Landroid/content/Context;)V
 	public static final fun addModuleAssetPath (Landroid/content/res/Resources;)V
 	public static final fun enableFinderExceptionMessage ()V
+	public static final fun getAddAssetsPath ()Z
 	public static final fun getAppContext ()Landroid/content/Context;
+	public static final fun getAppContextNullable ()Landroid/content/Context;
 	public static final fun getClassLoader ()Ljava/lang/ClassLoader;
 	public static final fun getHostPackageName ()Ljava/lang/String;
 	public static final fun getModulePath ()Ljava/lang/String;
@@ -126,12 +127,11 @@ public final class com/github/kyuubiran/ezxhelper/EzXHelper {
 	public static synthetic fun initAppContext$default (Landroid/content/Context;ZILjava/lang/Object;)V
 	public static final fun initHandleLoadPackage (Lde/robv/android/xposed/callbacks/XC_LoadPackage$LoadPackageParam;)V
 	public static final fun initZygote (Lde/robv/android/xposed/IXposedHookZygoteInit$StartupParam;)V
-	public static final fun isAppContextInited ()Z
 	public static final fun isClassLoaderInited ()Z
 	public static final fun isHostPackageNameInited ()Z
 	public static final fun isModulePathInited ()Z
 	public static final fun isModuleResInited ()Z
-	public static final fun setAppContext (Landroid/content/Context;)V
+	public static final fun setAddAssetsPath (Z)V
 	public static final fun setClassLoader (Ljava/lang/ClassLoader;)V
 	public static final fun setHostPackageName (Ljava/lang/String;)V
 	public static final fun setLogTag (Ljava/lang/String;)V
@@ -428,6 +428,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/ConstructorFinder : co
 	public synthetic fun <init> (Lkotlin/sequences/Sequence;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static final fun fromArray ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public static final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
+	public static final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public static final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
@@ -442,6 +443,8 @@ public final class com/github/kyuubiran/ezxhelper/finders/ConstructorFinder$-Sta
 	public final synthetic fun constructorFinder ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public final fun fromArray ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
+	public final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
+	public static synthetic fun fromClass$default (Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder$-Static;Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public final fun fromVararg ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
@@ -460,6 +463,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder : com/gith
 	public synthetic fun findSuper (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun fromArray ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
+	public static final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
@@ -472,6 +476,8 @@ public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder$-Static {
 	public final synthetic fun fieldFinder ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public final fun fromArray ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
+	public final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
+	public static synthetic fun fromClass$default (Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder$-Static;Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public final fun fromVararg ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
@@ -490,6 +496,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder : com/git
 	public synthetic fun findSuper (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun fromArray ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public static final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
+	public static final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public static final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
@@ -500,6 +507,8 @@ public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder : com/git
 public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder$-Static {
 	public final fun fromArray ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun fromClass (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
+	public final fun fromClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
+	public static synthetic fun fromClass$default (Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder$-Static;Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun fromVararg ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
