@@ -7,22 +7,58 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.content.res.XModuleResources
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
-import  com.github.kyuubiran.ezxhelper.finders.MethodFinder
-
 object EzXHelper {
     /**
-     * Hooked application context.
+     * Add module assets path to [appContext] for using module resources directly.
+     * @see [addModuleAssetPath]
      */
     @JvmStatic
-    lateinit var appContext: Context
+    var addAssetsPath = false
 
+    private var _appContext: Context? = null
+
+    /**
+     * Hooked application context.
+     * Notice: May cause NullPointerException if the [AndroidAppHelper.currentApplication] return null
+     * Because of you used the appContext too early.
+     */
     @JvmStatic
-    val isAppContextInited: Boolean
-        get() = this::appContext.isInitialized
+    val appContext: Context
+        get() {
+            if (_appContext == null) {
+                _appContext = AndroidAppHelper.currentApplication()
+
+                if (addAssetsPath) {
+                    addModuleAssetPath(_appContext!!.resources)
+                }
+            }
+
+            return _appContext!!
+        }
+
+    /**
+     * Nullable version of [appContext].
+     */
+    @JvmStatic
+    val appContextNullable: Context?
+        get() {
+            if (_appContext == null) {
+                _appContext = AndroidAppHelper.currentApplication()
+                if (_appContext == null)
+                    return null
+
+                if (addAssetsPath) {
+                    addModuleAssetPath(_appContext!!.resources)
+                }
+            }
+
+            return _appContext
+        }
 
     /**
      * Class loader for doing reflection.
@@ -128,11 +164,16 @@ object EzXHelper {
     @Suppress("KDocUnresolvedReference")
     @JvmStatic
     fun initAppContext(
-        context: Context = AndroidAppHelper.currentApplication(),
+        context: Context? = AndroidAppHelper.currentApplication(),
         addPath: Boolean = false,
     ) {
-        appContext = context
-        if (addPath) addModuleAssetPath(appContext)
+        addAssetsPath = addPath
+        if (context == null) {
+            Log.w("Cannot initialize application context, context is null.")
+            return
+        }
+        _appContext = context
+        if (addPath) addModuleAssetPath(_appContext!!)
     }
 
     /**
