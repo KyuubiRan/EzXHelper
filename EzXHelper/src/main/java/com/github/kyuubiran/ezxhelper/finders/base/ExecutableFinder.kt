@@ -20,13 +20,36 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
             if (pt.size != paramTypes.size) return@f false
 
             for (i in pt.indices) {
-                if (paramTypes[i] == null) continue
-                if (pt[i] != paramTypes[i]) return@f false
+                val clz1 = pt[i]
+                val clz2 = paramTypes[i] ?: continue
+                if (clz1 != clz2) return@f false
             }
 
             true
         }
         exceptMessageScope { condition("filterByParamTypes(${paramTypes.map { it?.name ?: "<ignored>" }})") }
+    }
+
+    /**
+     * Filter by parameter types or subclass of types, or if null to skip check some parameters
+     * @param paramTypes parameter types
+     * @return [Self] this finder
+     */
+    fun filterByAssignableParamTypes(vararg paramTypes: Class<*>?) = applyThis {
+        sequence = sequence.filter f@{
+            val pt = getParameterTypes(it)
+            if (pt.size != paramTypes.size) return@f false
+
+            for (i in pt.indices) {
+                val clz1 = pt[i]
+                val clz2 = paramTypes[i] ?: continue
+                if (clz1.isAssignableFrom(clz2)) continue
+                if (clz1 != clz2) return@f false
+            }
+
+            true
+        }
+        exceptMessageScope { condition("filterByAssignableParamTypes(${paramTypes.map { it?.name ?: "<ignored>" }})") }
     }
 
     /**

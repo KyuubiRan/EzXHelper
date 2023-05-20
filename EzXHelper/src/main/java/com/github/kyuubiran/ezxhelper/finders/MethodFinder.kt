@@ -99,6 +99,16 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         exceptMessageScope { condition("filterByReturnType($returnType)") }
     }
 
+    /**
+     * Filter by method assignable return type.
+     * @param returnType method return type
+     * @return [MethodFinder] this finder
+     */
+    fun filterByAssignableReturnType(returnType: Class<*>) = applyThis {
+        sequence = sequence.filter { it.returnType.isAssignableFrom(returnType) }
+        exceptMessageScope { condition("filterByAssignableReturnType($returnType)") }
+    }
+
     // endregion
 
     // region filter modifiers
