@@ -5,7 +5,7 @@
 加入Telegram群组来获取帮助: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
 
 一个使Xposed模块开发变的更轻松的工具库，2.x版本已支持Java！      
-2.x版本已经发布！最新版为`2.0.1` 旧版本请看`1.x`分支
+2.x版本已经发布！最新版为`2.0.2` 旧版本请看`1.x`分支
 
 ### 使用本库的项目
 

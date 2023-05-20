@@ -486,6 +486,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder$-Static {
 public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder : com/github/kyuubiran/ezxhelper/finders/base/ExecutableFinder, com/github/kyuubiran/ezxhelper/interfaces/IFindSuper {
 	public static final field -Static Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder$-Static;
 	public synthetic fun <init> (Lkotlin/sequences/Sequence;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun filterByAssignableReturnType (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterByName (Ljava/lang/String;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterByReturnType (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterFinal ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
@@ -600,6 +601,7 @@ public abstract class com/github/kyuubiran/ezxhelper/finders/base/BaseMemberFind
 
 public abstract class com/github/kyuubiran/ezxhelper/finders/base/ExecutableFinder : com/github/kyuubiran/ezxhelper/finders/base/BaseMemberFinder {
 	public fun <init> (Lkotlin/sequences/Sequence;)V
+	public final fun filterByAssignableParamTypes ([Ljava/lang/Class;)Ljava/lang/Object;
 	public final fun filterByExceptionTypes ([Ljava/lang/Class;)Ljava/lang/Object;
 	public final fun filterByParamCount (I)Ljava/lang/Object;
 	public final fun filterByParamCount (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
