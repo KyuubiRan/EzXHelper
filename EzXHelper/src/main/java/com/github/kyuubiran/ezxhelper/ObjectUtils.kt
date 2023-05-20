@@ -128,7 +128,7 @@ object ObjectUtils {
             .filterByParamTypes(*paramTypes)
             .first()
 
-        return m.invoke(null, *params)
+        return m.invoke(obj, *params)
     }
 
     /**
