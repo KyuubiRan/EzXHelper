@@ -118,14 +118,14 @@ object ObjectUtils {
         val mf = obj::class.java.methodFinder()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
-            .filterByParamTypes(*paramTypes)
+            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .filterByAssignableParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
-            .filterByParamTypes(*paramTypes)
+            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .filterByAssignableParamTypes(*paramTypes)
             .first()
 
         return m.invoke(obj, *params)

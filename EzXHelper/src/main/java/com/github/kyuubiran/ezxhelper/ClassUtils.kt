@@ -203,14 +203,14 @@ object ClassUtils {
         val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
-            .filterByParamTypes(*paramTypes)
+            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .filterByAssignableParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
-            .filterByParamTypes(*paramTypes)
+            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .filterByAssignableParamTypes(*paramTypes)
             .first()
 
         return m.invoke(null, *params)
