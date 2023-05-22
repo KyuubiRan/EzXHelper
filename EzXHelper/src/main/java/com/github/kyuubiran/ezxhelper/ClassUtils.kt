@@ -93,7 +93,9 @@ object ClassUtils {
     @Throws(NoSuchFieldException::class)
     fun getStaticObjectOrNull(clazz: Class<*>, fieldName: String): Any? =
         clazz.declaredFields.firstOrNull { it.isStatic && fieldName == it.name }
-            .let { it ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.") }
+            .let {
+                it?.also { f -> f.isAccessible = true } ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.")
+            }
             .get(null)
 
 
