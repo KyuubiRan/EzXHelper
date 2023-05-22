@@ -161,7 +161,9 @@ object ClassUtils {
     @Throws(NoSuchFieldException::class)
     fun setStaticObject(clazz: Class<*>, fieldName: String, value: Any?) =
         clazz.declaredFields.firstOrNull { it.isStatic && fieldName == it.name }
-            .let { it ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.") }
+            .let {
+                it?.also { f -> f.isAccessible = true } ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.")
+            }
             .set(null, value)
 
     /**
