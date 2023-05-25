@@ -43,7 +43,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
             for (i in pt.indices) {
                 val clz1 = pt[i]
                 val clz2 = paramTypes[i] ?: continue
-                if (clz1.isAssignableFrom(clz2)) continue
+                if (clz2.isAssignableFrom(clz1) || clz1.isAssignableFrom(clz2)) continue
                 if (clz1 != clz2) return@f false
             }
 

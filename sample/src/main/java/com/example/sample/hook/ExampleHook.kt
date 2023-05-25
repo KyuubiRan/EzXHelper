@@ -41,7 +41,7 @@ object ExampleHook : BaseHook() {
 
                 after {
                     Log.i("Hooked onCreate after")
-                    it.thisObject.javaClass.classHelper().getStaticObjectOrNull("RESULT_CANCELED")?.let { }
+                    it.thisObject::class.java.classHelper().getStaticObjectOrNull("RESULT_CANCELED")?.let { }
                 }
             }
         unhook.unhook()

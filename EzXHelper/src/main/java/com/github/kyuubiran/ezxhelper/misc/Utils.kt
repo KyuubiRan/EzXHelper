@@ -36,12 +36,12 @@ object Utils {
             val f = BaseDexClassLoader::class.java.getDeclaredField("pathList").also { f -> f.isAccessible = true }
             f.get(it)
         }?.let {
-            val f = it.javaClass.getDeclaredField("dexElements").also { f -> f.isAccessible = true }
+            val f = it::class.java.getDeclaredField("dexElements").also { f -> f.isAccessible = true }
             f.get(it) as Array<Any>?
         }?.flatMap {
-            val f = it.javaClass.getDeclaredField("dexFile").also { f -> f.isAccessible = true }
+            val f = it::class.java.getDeclaredField("dexFile").also { f -> f.isAccessible = true }
             val df = f.get(it) ?: return@flatMap emptyList<String>()
-            val m = df.javaClass.getDeclaredMethod("entries").also { m -> m.isAccessible = true }
+            val m = df::class.java.getDeclaredMethod("entries").also { m -> m.isAccessible = true }
             (m.invoke(df) as Enumeration<String>?)?.toList().orEmpty()
         }.orEmpty()
 

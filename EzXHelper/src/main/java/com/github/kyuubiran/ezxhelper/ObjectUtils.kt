@@ -16,7 +16,7 @@ object ObjectUtils {
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNull(obj: Any, fieldName: String): Any? = obj.javaClass.getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
+    fun getObjectOrNull(obj: Any, fieldName: String): Any? = obj::class.java.getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
 
     /**
      * Get the field object by the name in the object.
@@ -29,7 +29,7 @@ object ObjectUtils {
     @JvmStatic
     @Throws(NoSuchFieldException::class)
     fun getObjectOrNullUntilSuperclass(obj: Any, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
-        var clazz: Class<*> = obj.javaClass
+        var clazz: Class<*> = obj::class.java
         while (clazz != Any::class.java) {
             if (untilSuperClass?.invoke(clazz) == true) break
 
@@ -77,7 +77,7 @@ object ObjectUtils {
     @JvmStatic
     @Throws(NoSuchFieldException::class)
     fun setObject(obj: Any, fieldName: String, value: Any?) =
-        obj.javaClass.getDeclaredField(fieldName).also { it.isAccessible = true }.set(obj, value)
+        obj::class.java.getDeclaredField(fieldName).also { it.isAccessible = true }.set(obj, value)
 
     /**
      * Set the field object by the name in the object.
@@ -89,7 +89,7 @@ object ObjectUtils {
     @JvmStatic
     @Throws(NoSuchFieldException::class)
     fun setObjectUntilSuperclass(obj: Any, fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) {
-        var clazz: Class<*> = obj.javaClass
+        var clazz: Class<*> = obj::class.java
         while (clazz != Any::class.java) {
             if (untilSuperClass?.invoke(clazz) == true) break
 
@@ -114,7 +114,7 @@ object ObjectUtils {
     @JvmStatic
     @Throws(NoSuchMethodException::class)
     fun invokeMethodBestMatch(obj: Any, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
-        val paramTypes = params.map { it?.javaClass }.toTypedArray()
+        val paramTypes = params.map { it?.let { it::class.java } }.toTypedArray()
         val mf = obj::class.java.methodFinder()
             .filterNonStatic()
             .filterByName(methodName)
@@ -126,7 +126,8 @@ object ObjectUtils {
             .filterByName(methodName)
             .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
             .filterByAssignableParamTypes(*paramTypes)
-            .first()
+            .firstOrNull()
+        ?: throw NoSuchMethodException("No best match method $methodName in ${obj::class.java.name} and its superclasses.")
 
         return m.invoke(obj, *params)
     }

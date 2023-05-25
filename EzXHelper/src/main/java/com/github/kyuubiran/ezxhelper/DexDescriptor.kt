@@ -146,7 +146,7 @@ class DexDescriptor private constructor(sig: String, type: TYPE) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return if (other == null || javaClass != other.javaClass) false else toString() == other.toString()
+        return if (other == null || javaClass != other::class.java) false else toString() == other.toString()
     }
 
     override fun hashCode(): Int {

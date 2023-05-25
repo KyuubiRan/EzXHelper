@@ -105,7 +105,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      * @return [MethodFinder] this finder
      */
     fun filterByAssignableReturnType(returnType: Class<*>) = applyThis {
-        sequence = sequence.filter { it.returnType.isAssignableFrom(returnType) }
+        sequence = sequence.filter { it.returnType.isAssignableFrom(returnType) || returnType.isAssignableFrom(it.returnType) }
         exceptMessageScope { condition("filterByAssignableReturnType($returnType)") }
     }
 

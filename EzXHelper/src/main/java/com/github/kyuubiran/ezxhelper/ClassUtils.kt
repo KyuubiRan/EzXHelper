@@ -203,7 +203,7 @@ object ClassUtils {
     @JvmStatic
     @Throws(NoSuchMethodException::class)
     fun invokeStaticMethodBestMatch(clz: Class<*>, methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? {
-        val paramTypes = params.map { it?.javaClass }.toTypedArray()
+        val paramTypes = params.map { it?.let { it::class.java } }.toTypedArray()
         val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
@@ -215,7 +215,8 @@ object ClassUtils {
             .filterByName(methodName)
             .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
             .filterByAssignableParamTypes(*paramTypes)
-            .first()
+            .firstOrNull()
+        ?: throw NoSuchMethodException("No best match method $methodName in ${clz.name} and its superclasses.")
 
         return m.invoke(null, *params)
     }
