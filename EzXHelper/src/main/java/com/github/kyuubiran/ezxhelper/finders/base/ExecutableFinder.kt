@@ -2,6 +2,7 @@
 
 package com.github.kyuubiran.ezxhelper.finders.base
 
+import com.github.kyuubiran.ezxhelper.ClassUtils.isPrimitiveTypeMatch
 import com.github.kyuubiran.ezxhelper.MemberExtensions
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -44,6 +45,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
                 val clz1 = pt[i]
                 val clz2 = paramTypes[i] ?: continue
                 if (clz2.isAssignableFrom(clz1) || clz1.isAssignableFrom(clz2)) continue
+                if (isPrimitiveTypeMatch(clz1, clz2)) continue
                 if (clz1 != clz2) return@f false
             }
 

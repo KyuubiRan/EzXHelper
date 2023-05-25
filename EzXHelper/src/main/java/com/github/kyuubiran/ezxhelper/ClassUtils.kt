@@ -250,4 +250,36 @@ object ClassUtils {
 
         return m.invoke(null, *params.params)
     }
+
+    /**
+     * Check if two classes are equal or match the same primitive type
+     * @param clz1 class1
+     * @param clz2 class2
+     * @return `true` if two classes are equal or match the same primitive type, else `false`
+     */
+    @JvmStatic
+    fun isPrimitiveTypeMatch(clz1: Class<*>, clz2: Class<*>): Boolean {
+        return toPrimitiveType(clz1) == toPrimitiveType(clz2)
+    }
+
+    /**
+     * Cast class to primitive type if possible
+     * @param clz class
+     * @return primitive type class if possible or itself
+     */
+    @JvmStatic
+    fun toPrimitiveType(clz: Class<*>): Class<out Any> {
+        if (clz.isPrimitive) return clz
+        return when (clz) {
+            java.lang.Boolean::class.java -> Boolean::class.javaPrimitiveType!!
+            java.lang.Byte::class.java -> Byte::class.javaPrimitiveType!!
+            java.lang.Short::class.java -> Short::class.javaPrimitiveType!!
+            java.lang.Integer::class.java -> Int::class.javaPrimitiveType!!
+            java.lang.Long::class.java -> Long::class.javaPrimitiveType!!
+            java.lang.Float::class.java -> Float::class.javaPrimitiveType!!
+            java.lang.Double::class.java -> Double::class.javaPrimitiveType!!
+            java.lang.Character::class.java -> Char::class.javaPrimitiveType!!
+            else -> clz
+        }
+    }
 }
