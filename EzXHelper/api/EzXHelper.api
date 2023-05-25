@@ -29,9 +29,11 @@ public final class com/github/kyuubiran/ezxhelper/ClassHelper {
 	public static synthetic fun invokeStaticMethod-FNSvj5E$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun invokeStaticMethodBestMatch (Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun invokeStaticMethodBestMatch$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun isPrimitiveTypeMatch (Ljava/lang/Class;)Z
 	public final fun setStaticObject (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun setStaticObjectUntilSuperclass (Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setStaticObjectUntilSuperclass$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun toPrimitiveType ()Ljava/lang/Class;
 }
 
 public final class com/github/kyuubiran/ezxhelper/ClassHelper$Companion {
@@ -61,6 +63,7 @@ public final class com/github/kyuubiran/ezxhelper/ClassUtils {
 	public static synthetic fun invokeStaticMethod-zdxdtcc$default (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun invokeStaticMethodBestMatch (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun invokeStaticMethodBestMatch$default (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun isPrimitiveTypeMatch (Ljava/lang/Class;Ljava/lang/Class;)Z
 	public static final fun loadClass (Ljava/lang/String;Ljava/lang/ClassLoader;)Ljava/lang/Class;
 	public static synthetic fun loadClass$default (Ljava/lang/String;Ljava/lang/ClassLoader;ILjava/lang/Object;)Ljava/lang/Class;
 	public static final fun loadClassOrNull (Ljava/lang/String;Ljava/lang/ClassLoader;)Ljava/lang/Class;
@@ -72,6 +75,7 @@ public final class com/github/kyuubiran/ezxhelper/ClassUtils {
 	public static final fun setStaticObject (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V
 	public static final fun setStaticObjectUntilSuperclass (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setStaticObjectUntilSuperclass$default (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun toPrimitiveType (Ljava/lang/Class;)Ljava/lang/Class;
 }
 
 public final class com/github/kyuubiran/ezxhelper/Config {

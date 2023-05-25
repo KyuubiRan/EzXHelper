@@ -57,4 +57,19 @@ class ClassHelper private constructor(private val clz: Class<*>) {
     @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
     fun invokeStaticMethod(methodName: String, returnType: Class<*>? = null, paramTypes: ParamTypes = paramTypes(), params: Params = params()) =
         ClassUtils.invokeStaticMethod(clz, methodName, returnType, paramTypes, params)
+
+    /**
+     * Check if two classes are equal or match the same primitive type
+     * @param clazz class to compare with
+     * @return `true` if two classes are equal or match the same primitive type, else `false`
+     */
+    fun isPrimitiveTypeMatch(clazz: Class<*>) =
+        ClassUtils.isPrimitiveTypeMatch(clz, clazz)
+
+    /**
+     * Cast class to primitive type if possible
+     * @return primitive type class if possible or itself
+     */
+    fun toPrimitiveType() =
+        ClassUtils.toPrimitiveType(clz)
 }
