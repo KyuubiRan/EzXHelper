@@ -4,7 +4,7 @@ Join Telegram group to get
 help: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
 
 A library to make Xposed modules development easier, 2.x version supports Java!    
-2.x is released now! The latest version is `2.0.4`. Old version please look the `1.x` branch.
+2.x is released now! The latest version is `2.0.5`. Old version please look the `1.x` branch.
 
 ### Projects that use this library
 
