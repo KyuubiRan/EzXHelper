@@ -377,6 +377,8 @@ public final class com/github/kyuubiran/ezxhelper/ObjectHelper$Companion {
 public final class com/github/kyuubiran/ezxhelper/ObjectUtils {
 	public static final field INSTANCE Lcom/github/kyuubiran/ezxhelper/ObjectUtils;
 	public static final fun getObjectOrNull (Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
+	public static final fun getObjectOrNull (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;
+	public static synthetic fun getObjectOrNull$default (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getObjectOrNullAs (Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
 	public static final fun getObjectOrNullUntilSuperclass (Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static synthetic fun getObjectOrNullUntilSuperclass$default (Ljava/lang/Object;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;
@@ -387,6 +389,8 @@ public final class com/github/kyuubiran/ezxhelper/ObjectUtils {
 	public static final fun invokeMethodBestMatch (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun invokeMethodBestMatch$default (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun setObject (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V
+	public static final fun setObject (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Class;)V
+	public static synthetic fun setObject$default (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Class;ILjava/lang/Object;)V
 	public static final fun setObjectUntilSuperclass (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setObjectUntilSuperclass$default (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }

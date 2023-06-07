@@ -22,6 +22,20 @@ object ObjectUtils {
      * Get the field object by the name in the object.
      * @param obj object
      * @param fieldName field name
+     * @param clazz class where the field is declared (optional, defaults to the class of 'obj')
+     * @return field object or null
+     * @throws NoSuchFieldException if the field is not found
+     * @sample com.example.sample.getObjectOrNull
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun getObjectOrNull(obj: Any, fieldName: String, clazz: Class<*>? = null): Any? =
+        (clazz ?: obj::class.java).getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
+
+    /**
+     * Get the field object by the name in the object.
+     * @param obj object
+     * @param fieldName field name
      * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses.
      * @return field object or null
      * @throws NoSuchFieldException if the field is not found
@@ -34,7 +48,7 @@ object ObjectUtils {
             if (untilSuperClass?.invoke(clazz) == true) break
 
             try {
-                return getObjectOrNull(obj, fieldName)
+                return getObjectOrNull(obj, fieldName, clazz)
             } catch (e: NoSuchFieldException) {
                 clazz = clazz.superclass
             }
@@ -83,6 +97,18 @@ object ObjectUtils {
      * Set the field object by the name in the object.
      * @param obj object
      * @param fieldName field name
+     * @param clazz class where the field is declared (optional, defaults to the class of 'obj')
+     * @throws NoSuchFieldException if the field is not found
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun setObject(obj: Any, fieldName: String, value: Any?, clazz: Class<*>? = null) =
+        (clazz ?: obj::class.java).getDeclaredField(fieldName).also { it.isAccessible = true }.set(obj, value)
+
+    /**
+     * Set the field object by the name in the object.
+     * @param obj object
+     * @param fieldName field name
      * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses.
      * @throws NoSuchFieldException if the field is not found
      */
@@ -94,7 +120,7 @@ object ObjectUtils {
             if (untilSuperClass?.invoke(clazz) == true) break
 
             try {
-                return setObject(obj, fieldName, value)
+                return setObject(obj, fieldName, value, clazz)
             } catch (e: NoSuchFieldException) {
                 clazz = clazz.superclass
             }
