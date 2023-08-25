@@ -3,9 +3,10 @@
 package com.github.kyuubiran.ezxhelper.finders.base
 
 import com.github.kyuubiran.ezxhelper.Config
+import com.github.kyuubiran.ezxhelper.interfaces.INamed
 import com.github.kyuubiran.ezxhelper.misc.FinderExceptionMessage
 
-abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<T>) {
+abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<T>) : INamed {
     // region exception message
 
     protected val exceptMsg: FinderExceptionMessage? =

@@ -1,15 +1,18 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package com.github.kyuubiran.ezxhelper.misc
+
+import com.github.kyuubiran.ezxhelper.interfaces.INamed
 
 class FinderExceptionMessage {
     val exceptionMessageBuilder = StringBuilder()
     val msg: String
         get() = exceptionMessageBuilder.append("Stacktrace:").toString()
 
-    inline fun <reified Self> ctor(msg: String) {
+    fun <NamedFinder : INamed> ctor(finder: NamedFinder, msg: String) {
         exceptionMessageBuilder.apply {
-            append("[${Self::class.java.simpleName}] ")
+            // fix r8 cause name lost
+            append("[${finder.name}] ")
             append(msg)
             append("\nConditions:\n")
         }

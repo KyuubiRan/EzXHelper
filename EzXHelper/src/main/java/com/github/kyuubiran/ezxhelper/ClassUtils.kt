@@ -3,6 +3,7 @@
 package com.github.kyuubiran.ezxhelper
 
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isStatic
+import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder.`-Static`.constructorFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder.`-Static`.methodFinder
 import java.lang.IllegalArgumentException
 
@@ -216,7 +217,7 @@ object ClassUtils {
             .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
             .filterByAssignableParamTypes(*paramTypes)
             .firstOrNull()
-        ?: throw NoSuchMethodException("No best match method $methodName in ${clz.name} and its superclasses.")
+        ?: throw NoSuchMethodException("No such best match method $methodName in ${clz.name} and its superclasses.")
 
         return m.invoke(null, *params)
     }
@@ -281,5 +282,37 @@ object ClassUtils {
             java.lang.Character::class.java -> Char::class.javaPrimitiveType!!
             else -> clz
         }
+    }
+
+    /**
+     * Create a new instance of the class
+     * @param clz class
+     * @param paramTypes constructor param types
+     * @param params constructor params
+     * @return new instance
+     * @throws NoSuchMethodException if the constructor is not found
+     */
+    @Throws(NoSuchMethodException::class)
+    fun newInstance(clz: Class<*>, paramTypes: ParamTypes = paramTypes(), params: Params = params()): Any {
+        val cf = clz.constructorFinder().filterByParamTypes(*paramTypes.types)
+
+        val c = cf.firstOrNull() ?: throw NoSuchMethodException("No such constructor found in ${clz.name}.")
+        return c.newInstance(*params.params)
+    }
+
+    /**
+     * Create a new instance of the class
+     * @param clz class
+     * @param params constructor params
+     * @return new instance
+     * @throws NoSuchMethodException if the constructor is not found
+     */
+    @Throws(NoSuchMethodException::class)
+    fun newInstanceBestMatch(clz: Class<*>, vararg params: Any?): Any {
+        val paramTypes = params.map { it?.let { it::class.java } }.toTypedArray()
+        val cf = clz.constructorFinder().filterByAssignableParamTypes(*paramTypes)
+
+        val c = cf.firstOrNull() ?: throw NoSuchMethodException("No such best match constructor found in ${clz.name}.")
+        return c.newInstance(*params)
     }
 }

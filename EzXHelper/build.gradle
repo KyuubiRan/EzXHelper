@@ -6,11 +6,11 @@ plugins {
     id 'signing'
 }
 
-def versionName = "2.0.6"
+def versionName = "2.0.7"
 
 android {
     compileSdkVersion = 33
-    buildToolsVersion = "33.0.0"
+    buildToolsVersion = "33.0.1"
     namespace = "com.github.kyuubiran"
 
     defaultConfig {

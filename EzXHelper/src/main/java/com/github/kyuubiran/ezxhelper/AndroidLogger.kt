@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.github.kyuubiran.ezxhelper
 
 import android.widget.Toast

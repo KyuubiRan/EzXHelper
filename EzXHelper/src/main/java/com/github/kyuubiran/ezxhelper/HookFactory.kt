@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package com.github.kyuubiran.ezxhelper
 
@@ -52,7 +52,7 @@ class HookFactory {
     }
 
     /**
-     * Interrupt the method, make method return null, just a wrapper of [before].
+     * Interrupt the method, make method return null, just a wrapper of [before] and same as [returnConstant]`(null)`
      *
      * **WARNING: MAY CAUSE EXCEPTION IF METHOD RETURNS NON-NULL TYPE**
      */

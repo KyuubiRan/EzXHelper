@@ -14,13 +14,15 @@ import java.lang.reflect.Modifier
  */
 class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<Field, FieldFinder>(seq), IFindSuper<FieldFinder> {
     private var clazz: Class<*>? = null
+    override val name: String
+        get() = "FieldFinder"
 
     @Suppress("ClassName")
     companion object `-Static` {
         @JvmStatic
         fun fromClass(clazz: Class<*>): FieldFinder {
             return FieldFinder(clazz.declaredFields.asSequence()).also { it.clazz = clazz }.apply {
-                exceptMessageScope { ctor<FieldFinder>("No such field found in class: ${clazz.name}") }
+                exceptMessageScope { ctor(this@apply, "No such field found in class: ${clazz.name}") }
             }
         }
 
@@ -31,28 +33,28 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
         @JvmStatic
         fun fromSequence(seq: Sequence<Field>): FieldFinder {
             return FieldFinder(seq).apply {
-                exceptMessageScope { ctor<FieldFinder>("No such field found in sequence(size=${seq.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such field found in sequence(size=${seq.count()})") }
             }
         }
 
         @JvmStatic
         fun fromArray(array: Array<Field>): FieldFinder {
             return FieldFinder(array.asSequence()).apply {
-                exceptMessageScope { ctor<FieldFinder>("No such field found in array(size=${array.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such field found in array(size=${array.count()})") }
             }
         }
 
         @JvmStatic
         fun fromVararg(vararg array: Field): FieldFinder {
             return FieldFinder(array.asSequence()).apply {
-                exceptMessageScope { ctor<FieldFinder>("No such field found in vararg(size=${array.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such field found in vararg(size=${array.count()})") }
             }
         }
 
         @JvmStatic
         fun fromIterable(iterable: Iterable<Field>): FieldFinder {
             return FieldFinder(iterable.asSequence()).apply {
-                exceptMessageScope { ctor<FieldFinder>("No such field found in iterable(size=${iterable.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such field found in iterable(size=${iterable.count()})") }
             }
         }
 
@@ -156,7 +158,7 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
         }
 
         if (ml != null) {
-            exceptMessageScope { condition("findSuper($ml)") }
+            exceptMessageScope { condition("findSuper(CustomCondition)") }
         }
     }
 

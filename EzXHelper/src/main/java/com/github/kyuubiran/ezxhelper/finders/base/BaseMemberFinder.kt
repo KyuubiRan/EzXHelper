@@ -5,6 +5,7 @@ package com.github.kyuubiran.ezxhelper.finders.base
 import com.github.kyuubiran.ezxhelper.LogExtensions.logeIfThrow
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotPackagePrivate
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isPackagePrivate
+import com.github.kyuubiran.ezxhelper.misc.Utils
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -31,7 +32,11 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterByModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { it.modifiers == modifiers }
-        exceptMessageScope { condition("filterByModifiers(modifiers == $modifiers)") }
+        exceptMessageScope {
+            condition(
+                "filterByModifiers(modifiers == ${String.format("0x%08X", modifiers)} == [${Utils.getMemberModifiersString(modifiers)}])"
+            )
+        }
     }
 
     /**
@@ -51,7 +56,11 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterIncludeModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { (it.modifiers and modifiers) != 0 }
-        exceptMessageScope { condition("filterIncludeModifiers($modifiers)") }
+        exceptMessageScope {
+            condition(
+                "filterIncludeModifiers(${String.format("0x%08X", modifiers)} == [${Utils.getMemberModifiersString(modifiers)}])"
+            )
+        }
     }
 
     /**
@@ -61,7 +70,7 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
      */
     fun filterExcludeModifiers(modifiers: Int): Self = applyThis {
         sequence = sequence.filter { (it.modifiers and modifiers) == 0 }
-        exceptMessageScope { condition("filterExcludeModifiers($modifiers)") }
+        exceptMessageScope { condition("filterExcludeModifiers(${String.format("0x%08X", modifiers)} == [${Utils.getMemberModifiersString(modifiers)}])") }
     }
 
     /**

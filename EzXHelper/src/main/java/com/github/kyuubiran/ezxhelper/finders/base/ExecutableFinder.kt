@@ -28,7 +28,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
 
             true
         }
-        exceptMessageScope { condition("filterByParamTypes(${paramTypes.map { it?.name ?: "<ignored>" }})") }
+        exceptMessageScope { condition("filterByParamTypes(${paramTypes.joinToString { it?.name ?: "<ignored>" }})") }
     }
 
     /**
@@ -51,7 +51,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
 
             true
         }
-        exceptMessageScope { condition("filterByAssignableParamTypes(${paramTypes.map { it?.name ?: "<ignored>" }})") }
+        exceptMessageScope { condition("filterByAssignableParamTypes(${paramTypes.joinToString { it?.name ?: "<ignored>" }})") }
     }
 
     /**
@@ -120,7 +120,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
     fun filterByExceptionTypes(vararg exceptionTypes: Class<*>) = applyThis {
         val set = exceptionTypes.toSet()
         sequence = sequence.filter { getExceptionTypes(it).run { size == set.size && toSet() == set } }
-        exceptMessageScope { condition("filterByExceptionTypes(${set.map { it.name }})") }
+        exceptMessageScope { condition("filterByExceptionTypes(${set.joinToString { it.name }})") }
     }
 
     // endregion

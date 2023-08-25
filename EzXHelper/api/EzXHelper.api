@@ -30,6 +30,9 @@ public final class com/github/kyuubiran/ezxhelper/ClassHelper {
 	public final fun invokeStaticMethodBestMatch (Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun invokeStaticMethodBestMatch$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun isPrimitiveTypeMatch (Ljava/lang/Class;)Z
+	public final fun newInstance-9Ha6kD0 ([Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun newInstance-9Ha6kD0$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun newInstanceBestMatch ([Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun setStaticObject (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun setStaticObjectUntilSuperclass (Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setStaticObjectUntilSuperclass$default (Lcom/github/kyuubiran/ezxhelper/ClassHelper;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
@@ -72,6 +75,9 @@ public final class com/github/kyuubiran/ezxhelper/ClassUtils {
 	public static final fun loadFirstClass ([Ljava/lang/String;)Ljava/lang/Class;
 	public static final fun loadFirstClassOrNull (Ljava/lang/ClassLoader;[Ljava/lang/String;)Ljava/lang/Class;
 	public static final fun loadFirstClassOrNull ([Ljava/lang/String;)Ljava/lang/Class;
+	public final fun newInstance-VVUCtX8 (Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun newInstance-VVUCtX8$default (Lcom/github/kyuubiran/ezxhelper/ClassUtils;Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun newInstanceBestMatch (Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun setStaticObject (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V
 	public static final fun setStaticObjectUntilSuperclass (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setStaticObjectUntilSuperclass$default (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
@@ -441,6 +447,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/ConstructorFinder : co
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Constructor;)Lcom/github/kyuubiran/ezxhelper/finders/ConstructorFinder;
 	public synthetic fun getExceptionTypes (Ljava/lang/reflect/Member;)[Ljava/lang/Class;
+	public fun getName ()Ljava/lang/String;
 	public synthetic fun getParameterTypes (Ljava/lang/reflect/Member;)[Ljava/lang/Class;
 }
 
@@ -475,6 +482,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder : com/gith
 	public static final fun fromIterable (Ljava/lang/Iterable;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Field;)Lcom/github/kyuubiran/ezxhelper/finders/FieldFinder;
+	public fun getName ()Ljava/lang/String;
 }
 
 public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder$-Static {
@@ -510,6 +518,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder : com/git
 	public static final fun fromSequence (Lkotlin/sequences/Sequence;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public static final fun fromVararg ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public synthetic fun getExceptionTypes (Ljava/lang/reflect/Member;)[Ljava/lang/Class;
+	public fun getName ()Ljava/lang/String;
 	public synthetic fun getParameterTypes (Ljava/lang/reflect/Member;)[Ljava/lang/Class;
 }
 
@@ -527,7 +536,7 @@ public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder$-Static {
 	public final synthetic fun methodFinder ([Ljava/lang/reflect/Method;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 }
 
-public abstract class com/github/kyuubiran/ezxhelper/finders/base/BaseFinder {
+public abstract class com/github/kyuubiran/ezxhelper/finders/base/BaseFinder : com/github/kyuubiran/ezxhelper/interfaces/INamed {
 	public fun <init> (Lkotlin/sequences/Sequence;)V
 	protected final fun applyThis (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun contact (Lcom/github/kyuubiran/ezxhelper/finders/base/BaseFinder;)Ljava/lang/Object;
@@ -638,6 +647,10 @@ public abstract interface class com/github/kyuubiran/ezxhelper/interfaces/IMetho
 	public abstract fun onMethodHooked (Lde/robv/android/xposed/XC_MethodHook$MethodHookParam;)V
 }
 
+public abstract interface class com/github/kyuubiran/ezxhelper/interfaces/INamed {
+	public abstract fun getName ()Ljava/lang/String;
+}
+
 public abstract interface class com/github/kyuubiran/ezxhelper/interfaces/IOnValueChangedEvent {
 	public abstract fun onValueChanged (Ljava/lang/Object;)V
 }
@@ -662,6 +675,7 @@ public final class com/github/kyuubiran/ezxhelper/misc/FinderExceptionMessage {
 	public final fun append (Ljava/lang/String;Z)V
 	public static synthetic fun append$default (Lcom/github/kyuubiran/ezxhelper/misc/FinderExceptionMessage;Ljava/lang/String;ZILjava/lang/Object;)V
 	public final fun condition (Ljava/lang/String;)V
+	public final fun ctor (Lcom/github/kyuubiran/ezxhelper/interfaces/INamed;Ljava/lang/String;)V
 	public final fun getExceptionMessageBuilder ()Ljava/lang/StringBuilder;
 	public final fun getMsg ()Ljava/lang/String;
 }
@@ -695,6 +709,9 @@ public final class com/github/kyuubiran/ezxhelper/misc/Utils {
 	public static synthetic fun findDexClassLoader$default (Ljava/lang/ClassLoader;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ldalvik/system/BaseDexClassLoader;
 	public static final fun getAllClassesList (Ljava/lang/ClassLoader;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static synthetic fun getAllClassesList$default (Ljava/lang/ClassLoader;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/List;
+	public final fun getMEMBER_MODIFIER_STRING_MAP ()Ljava/util/Map;
+	public final fun getMemberModifiersString (IZ)Ljava/lang/String;
+	public static synthetic fun getMemberModifiersString$default (Lcom/github/kyuubiran/ezxhelper/misc/Utils;IZILjava/lang/Object;)Ljava/lang/String;
 	public static final fun restartHostApp (Landroid/app/Activity;)V
 }
 

@@ -72,4 +72,12 @@ class ClassHelper private constructor(private val clz: Class<*>) {
      */
     fun toPrimitiveType() =
         ClassUtils.toPrimitiveType(clz)
+
+    @Throws(NoSuchMethodException::class)
+    fun newInstanceBestMatch(vararg params: Any?) =
+        ClassUtils.newInstanceBestMatch(clz, *params)
+
+    @Throws(NoSuchMethodException::class)
+    fun newInstance(paramTypes: ParamTypes = paramTypes(), params: Params = params()) =
+        ClassUtils.newInstance(clz, paramTypes, params)
 }

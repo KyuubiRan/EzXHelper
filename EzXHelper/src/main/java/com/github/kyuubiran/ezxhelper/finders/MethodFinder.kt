@@ -15,6 +15,9 @@ import java.lang.reflect.Modifier
 class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder<Method, MethodFinder>(seq), IFindSuper<MethodFinder> {
     private var clazz: Class<*>? = null
 
+    override val name: String
+        get() = "MethodFinder"
+
     @Suppress("ClassName")
     companion object `-Static` {
         @JvmStatic
@@ -24,7 +27,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
             seq += clazz.interfaces.flatMap { c -> c.declaredMethods.asSequence() }
             return MethodFinder(seq).apply {
                 this.clazz = clazz
-                exceptMessageScope { ctor<MethodFinder>("No such method found in class: ${clazz.name}") }
+                exceptMessageScope { ctor(this@apply, "No such method found in class: ${clazz.name}") }
             }
         }
 
@@ -35,28 +38,28 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         @JvmStatic
         fun fromSequence(seq: Sequence<Method>): MethodFinder {
             return MethodFinder(seq).apply {
-                exceptMessageScope { ctor<MethodFinder>("No such method found in sequence(size=${seq.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such method found in sequence(size=${seq.count()})") }
             }
         }
 
         @JvmStatic
         fun fromArray(array: Array<Method>): MethodFinder {
             return MethodFinder(array.asSequence()).apply {
-                exceptMessageScope { ctor<MethodFinder>("No such method found in array(size=${array.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such method found in array(size=${array.count()})") }
             }
         }
 
         @JvmStatic
         fun fromVararg(vararg array: Method): MethodFinder {
             return MethodFinder(array.asSequence()).apply {
-                exceptMessageScope { ctor<MethodFinder>("No such method found in vararg(size=${array.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such method found in vararg(size=${array.count()})") }
             }
         }
 
         @JvmStatic
         fun fromIterable(iterable: Iterable<Method>): MethodFinder {
             return MethodFinder(iterable.asSequence()).apply {
-                exceptMessageScope { ctor<MethodFinder>("No such method found in iterable(size=${iterable.count()})") }
+                exceptMessageScope { ctor(this@apply, "No such method found in iterable(size=${iterable.count()})") }
             }
         }
 
@@ -96,7 +99,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      */
     fun filterByReturnType(returnType: Class<*>) = applyThis {
         sequence = sequence.filter { it.returnType == returnType }
-        exceptMessageScope { condition("filterByReturnType($returnType)") }
+        exceptMessageScope { condition("filterByReturnType(${returnType.name})") }
     }
 
     /**
@@ -106,7 +109,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
      */
     fun filterByAssignableReturnType(returnType: Class<*>) = applyThis {
         sequence = sequence.filter { it.returnType.isAssignableFrom(returnType) || returnType.isAssignableFrom(it.returnType) }
-        exceptMessageScope { condition("filterByAssignableReturnType($returnType)") }
+        exceptMessageScope { condition("filterByAssignableReturnType(${returnType.name})") }
     }
 
     // endregion
@@ -175,7 +178,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         }
 
         if (ml != null) {
-            exceptMessageScope { condition("findSuper($ml)") }
+            exceptMessageScope { condition("findSuper(CustomCondition)") }
         }
     }
 
