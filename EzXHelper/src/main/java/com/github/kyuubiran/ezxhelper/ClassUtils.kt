@@ -293,6 +293,7 @@ object ClassUtils {
      * @throws NoSuchMethodException if the constructor is not found
      */
     @Throws(NoSuchMethodException::class)
+    @JvmStatic
     fun newInstance(clz: Class<*>, paramTypes: ParamTypes = paramTypes(), params: Params = params()): Any {
         val cf = clz.constructorFinder().filterByParamTypes(*paramTypes.types)
 
@@ -308,6 +309,7 @@ object ClassUtils {
      * @throws NoSuchMethodException if the constructor is not found
      */
     @Throws(NoSuchMethodException::class)
+    @JvmStatic
     fun newInstanceBestMatch(clz: Class<*>, vararg params: Any?): Any {
         val paramTypes = params.map { it?.let { it::class.java } }.toTypedArray()
         val cf = clz.constructorFinder().filterByAssignableParamTypes(*paramTypes)
