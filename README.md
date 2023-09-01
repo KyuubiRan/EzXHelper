@@ -24,6 +24,7 @@
 | [WooBox For ColorOS](https://github.com/Simplicity-Team/WooBoxForColorOS) | 一个基于 ColorOS12(Android 12) 适配的自定义工具                                                   |
 |              [Miui XXL](https://github.com/YuKongA/Miui_XXL)              | Miui XXL 是一个基于 Miui14 的大杂烩模块                                                           |
 |             [TwiFucker](https://github.com/Dr-TSNG/TwiFucker)             | Yet Another Adkiller for Twitter                                                                  |
+|              [PureNGA](https://github.com/Dr-TSNG/TwiFucker)              | PureNGA 是一个去除NGA论坛APP广告的开源模块                                                        |
 
 ### 捐赠支持
 
