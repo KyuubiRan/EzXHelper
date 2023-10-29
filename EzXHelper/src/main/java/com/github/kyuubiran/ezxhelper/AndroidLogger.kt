@@ -39,7 +39,16 @@ object AndroidLogger : Logger() {
 
     override fun px(levelFilter: Int, level: String, msg: String, thr: Throwable?) {
         if (logLevelFilter > levelFilter) return
-        if (isLogToXposed) XposedBridge.log("[$level/$logTag] $msg: ${thr?.stackTraceToString()}")
+        if (!isLogToXposed) return
+        val logMessage = buildString {
+            append("[$level/$logTag] ")
+            append(msg)
+            if (thr != null) {
+                append(": ")
+                append(thr.stackTraceToString())
+            }
+        }
+        XposedBridge.log(logMessage)
     }
 
     /**
