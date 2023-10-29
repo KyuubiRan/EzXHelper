@@ -75,9 +75,9 @@ public final class com/github/kyuubiran/ezxhelper/ClassUtils {
 	public static final fun loadFirstClass ([Ljava/lang/String;)Ljava/lang/Class;
 	public static final fun loadFirstClassOrNull (Ljava/lang/ClassLoader;[Ljava/lang/String;)Ljava/lang/Class;
 	public static final fun loadFirstClassOrNull ([Ljava/lang/String;)Ljava/lang/Class;
-	public final fun newInstance-VVUCtX8 (Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun newInstance-VVUCtX8$default (Lcom/github/kyuubiran/ezxhelper/ClassUtils;Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
-	public final fun newInstanceBestMatch (Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun newInstance-VVUCtX8 (Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun newInstance-VVUCtX8$default (Ljava/lang/Class;[Ljava/lang/Class;[Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun newInstanceBestMatch (Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun setStaticObject (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V
 	public static final fun setStaticObjectUntilSuperclass (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun setStaticObjectUntilSuperclass$default (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
