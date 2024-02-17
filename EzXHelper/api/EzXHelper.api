@@ -574,7 +574,11 @@ public abstract class com/github/kyuubiran/ezxhelper/finders/base/BaseFinder : c
 	public final fun plusAssign (Ljava/lang/Iterable;)V
 	public final fun plusAssign (Lkotlin/sequences/Sequence;)V
 	public final fun plusAssign ([Ljava/lang/Object;)V
+	public final fun requireSingle ()Ljava/lang/Object;
+	public final fun requireSingleOrNull ()Ljava/lang/Object;
 	protected final fun setSequence (Lkotlin/sequences/Sequence;)V
+	public final fun single ()Ljava/lang/Object;
+	public final fun singleOrNull ()Ljava/lang/Object;
 	public final fun toCollection (Ljava/util/Collection;)Ljava/util/Collection;
 	public final fun toHashSet ()Ljava/util/HashSet;
 	public final fun toList ()Ljava/util/List;

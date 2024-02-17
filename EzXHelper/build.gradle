@@ -6,16 +6,16 @@ plugins {
     id 'signing'
 }
 
-def versionName = "2.0.8"
+def versionName = "2.0.9"
 
 android {
-    compileSdkVersion = 33
-    buildToolsVersion = "33.0.1"
+    compileSdkVersion = 34
+    buildToolsVersion = "34.0.0"
     namespace = "com.github.kyuubiran"
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         consumerProguardFiles "consumer-rules.pro"
     }

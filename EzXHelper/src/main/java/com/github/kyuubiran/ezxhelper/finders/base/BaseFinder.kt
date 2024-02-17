@@ -6,7 +6,7 @@ import com.github.kyuubiran.ezxhelper.Config
 import com.github.kyuubiran.ezxhelper.interfaces.INamed
 import com.github.kyuubiran.ezxhelper.misc.FinderExceptionMessage
 
-abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<T>) : INamed {
+abstract class BaseFinder<T, Self>(protected var sequence: Sequence<T>) : INamed {
     // region exception message
 
     protected val exceptMsg: FinderExceptionMessage? =
@@ -14,12 +14,14 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
 
     protected val exceptionMessageEnabled = exceptMsg != null
 
-    protected inline fun exceptMessageScope(block: FinderExceptionMessage.() -> Unit) = exceptMsg?.block()
+    protected inline fun exceptMessageScope(block: FinderExceptionMessage.() -> Unit) =
+        exceptMsg?.block()
 
     // endregion
 
     @Suppress("UNCHECKED_CAST")
-    protected inline fun applyThis(block: BaseFinder<T, Self>.() -> Unit) = this.apply(block) as Self
+    protected inline fun applyThis(block: BaseFinder<T, Self>.() -> Unit) =
+        this.apply(block) as Self
 
     // region get elem
 
@@ -103,6 +105,34 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      */
     open fun lastOrNull(condition: T.() -> Boolean) = sequence.lastOrNull(condition)
 
+    /**
+     * Check sequence only has one element.
+     */
+    @Throws(IllegalArgumentException::class, NoSuchElementException::class)
+    fun requireSingle() = applyThis {
+        sequence.single()
+    }
+
+    /**
+     * Check sequence only has one element or null if not found.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun requireSingleOrNull(): Self? {
+        val o = sequence.singleOrNull()
+        return if (o == null) null else this as Self
+    }
+
+    /**
+     * Get the single element or throw an exception if there is no such element.
+     */
+    @Throws(IllegalArgumentException::class, NoSuchElementException::class)
+    fun single() = sequence.single()
+
+    /**
+     * Get the single element or null if not found.
+     */
+    fun singleOrNull() = sequence.singleOrNull()
+
     // endregion
 
     /**
@@ -128,7 +158,8 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @param action the action
      * @return [Self] the finder
      */
-    fun onEachIndexed(action: (index: Int, T) -> Unit): Self = applyThis { sequence.forEachIndexed(action) }
+    fun onEachIndexed(action: (index: Int, T) -> Unit): Self =
+        applyThis { sequence.forEachIndexed(action) }
 
     /**
      * For-each loop for.
@@ -174,7 +205,8 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @param transform the transform action
      * @return [MutableSet] the mutable set
      */
-    fun <R> mapToMutableSet(transform: (T) -> R): MutableSet<R> = sequence.map(transform).toMutableSet()
+    fun <R> mapToMutableSet(transform: (T) -> R): MutableSet<R> =
+        sequence.map(transform).toMutableSet()
 
     /**
      * Map to the hashset.
@@ -188,7 +220,10 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * @param transform the transform action
      * @return [MutableCollection] the collection
      */
-    fun <R, C> mapToCollection(destination: C, transform: (T) -> R): C where C : MutableCollection<in R> =
+    fun <R, C> mapToCollection(
+        destination: C,
+        transform: (T) -> R
+    ): C where C : MutableCollection<in R> =
         sequence.map(transform).toCollection(destination)
     // endregion
 
@@ -227,7 +262,8 @@ abstract class BaseFinder<T, Self> constructor(protected var sequence: Sequence<
      * Make sequence to the collection.
      * @return [MutableCollection] the collection
      */
-    fun <C> toCollection(collection: C): C where C : MutableCollection<T> = sequence.toCollection(collection)
+    fun <C> toCollection(collection: C): C where C : MutableCollection<T> =
+        sequence.toCollection(collection)
 
     // endregion
 
