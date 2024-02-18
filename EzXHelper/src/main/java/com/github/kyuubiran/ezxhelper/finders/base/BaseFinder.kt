@@ -123,15 +123,20 @@ abstract class BaseFinder<T, Self>(protected var sequence: Sequence<T>) : INamed
     }
 
     /**
-     * Get the single element or throw an exception if there is no such element.
+     * Get the single element or throw an exception if there is no such element or more than one element.
      */
     @Throws(IllegalArgumentException::class, NoSuchElementException::class)
     fun single() = sequence.single()
+
+    @Throws(IllegalArgumentException::class, NoSuchElementException::class)
+    fun single(condition: T.() -> Boolean) = sequence.single(condition)
 
     /**
      * Get the single element or null if not found.
      */
     fun singleOrNull() = sequence.singleOrNull()
+
+    fun singleOrNull(condition: T.() -> Boolean) = sequence.singleOrNull(condition)
 
     // endregion
 
