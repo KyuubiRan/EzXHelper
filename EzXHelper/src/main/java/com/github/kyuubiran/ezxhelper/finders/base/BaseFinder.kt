@@ -113,12 +113,23 @@ abstract class BaseFinder<T, Self>(protected var sequence: Sequence<T>) : INamed
         sequence.single()
     }
 
+    @Throws(IllegalArgumentException::class, NoSuchElementException::class)
+    fun requireSingle(condition: T.() -> Boolean) = applyThis {
+        sequence.single(condition)
+    }
+
     /**
      * Check sequence only has one element or null if not found.
      */
     @Suppress("UNCHECKED_CAST")
     fun requireSingleOrNull(): Self? {
         val o = sequence.singleOrNull()
+        return if (o == null) null else this as Self
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun requireSingleOrNull(condition: T.() -> Boolean): Self? {
+        val o = sequence.singleOrNull(condition)
         return if (o == null) null else this as Self
     }
 
