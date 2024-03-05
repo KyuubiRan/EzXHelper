@@ -156,9 +156,21 @@ public final class com/github/kyuubiran/ezxhelper/HookFactory {
 	public synthetic fun <init> (Ljava/lang/reflect/Method;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun after (Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)V
 	public final fun before (Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)V
+	public static final fun createConstructorAfterHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public static final fun createConstructorAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createConstructorAfterHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createConstructorBeforeHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public static final fun createConstructorBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createConstructorBeforeHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public static final fun createConstructorHook (Ljava/lang/reflect/Constructor;Ljava/util/function/Consumer;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public static final fun createConstructorHooks (Ljava/lang/Iterable;Ljava/util/function/Consumer;)Ljava/util/List;
 	public static final fun createConstructorHooks ([Ljava/lang/reflect/Constructor;Ljava/util/function/Consumer;)Ljava/util/List;
+	public static final fun createMethodAfterHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public static final fun createMethodAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createMethodAfterHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createMethodBeforeHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public static final fun createMethodBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public static final fun createMethodBeforeHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public static final fun createMethodHook (Ljava/lang/reflect/Method;Ljava/util/function/Consumer;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public static final fun createMethodHooks (Ljava/lang/Iterable;Ljava/util/function/Consumer;)Ljava/util/List;
 	public static final fun createMethodHooks ([Ljava/lang/reflect/Method;Ljava/util/function/Consumer;)Ljava/util/List;
@@ -168,15 +180,39 @@ public final class com/github/kyuubiran/ezxhelper/HookFactory {
 }
 
 public final class com/github/kyuubiran/ezxhelper/HookFactory$-Static {
+	public final fun -createConstructorAfterHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun -createConstructorAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createConstructorAfterHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createConstructorBeforeHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun -createConstructorBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createConstructorBeforeHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public final fun -createConstructorHook (Ljava/lang/reflect/Constructor;Lkotlin/jvm/functions/Function1;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public final fun -createConstructorHooks (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public final fun -createConstructorHooks ([Ljava/lang/reflect/Constructor;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public final fun -createMethodAfterHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun -createMethodAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createMethodAfterHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createMethodBeforeHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun -createMethodBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun -createMethodBeforeHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public final fun -createMethodHook (Ljava/lang/reflect/Method;Lkotlin/jvm/functions/Function1;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public final fun -createMethodHooks (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public final fun -createMethodHooks ([Ljava/lang/reflect/Method;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public final fun createConstructorAfterHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun createConstructorAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createConstructorAfterHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createConstructorBeforeHook (Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun createConstructorBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createConstructorBeforeHooks ([Ljava/lang/reflect/Constructor;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public final fun createConstructorHook (Ljava/lang/reflect/Constructor;Ljava/util/function/Consumer;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public final fun createConstructorHooks (Ljava/lang/Iterable;Ljava/util/function/Consumer;)Ljava/util/List;
 	public final fun createConstructorHooks ([Ljava/lang/reflect/Constructor;Ljava/util/function/Consumer;)Ljava/util/List;
+	public final fun createMethodAfterHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun createMethodAfterHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createMethodAfterHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createMethodBeforeHook (Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
+	public final fun createMethodBeforeHooks (Ljava/lang/Iterable;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
+	public final fun createMethodBeforeHooks ([Ljava/lang/reflect/Method;Lcom/github/kyuubiran/ezxhelper/interfaces/IMethodHookCallback;)Ljava/util/List;
 	public final fun createMethodHook (Ljava/lang/reflect/Method;Ljava/util/function/Consumer;)Lde/robv/android/xposed/XC_MethodHook$Unhook;
 	public final fun createMethodHooks (Ljava/lang/Iterable;Ljava/util/function/Consumer;)Ljava/util/List;
 	public final fun createMethodHooks ([Ljava/lang/reflect/Method;Ljava/util/function/Consumer;)Ljava/util/List;
@@ -575,10 +611,14 @@ public abstract class com/github/kyuubiran/ezxhelper/finders/base/BaseFinder : c
 	public final fun plusAssign (Lkotlin/sequences/Sequence;)V
 	public final fun plusAssign ([Ljava/lang/Object;)V
 	public final fun requireSingle ()Ljava/lang/Object;
+	public final fun requireSingle (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun requireSingleOrNull ()Ljava/lang/Object;
+	public final fun requireSingleOrNull (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	protected final fun setSequence (Lkotlin/sequences/Sequence;)V
 	public final fun single ()Ljava/lang/Object;
+	public final fun single (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun singleOrNull ()Ljava/lang/Object;
+	public final fun singleOrNull (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun toCollection (Ljava/util/Collection;)Ljava/util/Collection;
 	public final fun toHashSet ()Ljava/util/HashSet;
 	public final fun toList ()Ljava/util/List;
