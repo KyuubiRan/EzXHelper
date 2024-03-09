@@ -538,10 +538,12 @@ public final class com/github/kyuubiran/ezxhelper/finders/FieldFinder$-Static {
 public final class com/github/kyuubiran/ezxhelper/finders/MethodFinder : com/github/kyuubiran/ezxhelper/finders/base/ExecutableFinder, com/github/kyuubiran/ezxhelper/interfaces/IFindSuper {
 	public static final field -Static Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder$-Static;
 	public synthetic fun <init> (Lkotlin/sequences/Sequence;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun filterAbstract ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterByAssignableReturnType (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterByName (Ljava/lang/String;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterByReturnType (Ljava/lang/Class;)Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterFinal ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
+	public final fun filterNonAbstract ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterNonFinal ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterNonStatic ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;
 	public final fun filterStatic ()Lcom/github/kyuubiran/ezxhelper/finders/MethodFinder;

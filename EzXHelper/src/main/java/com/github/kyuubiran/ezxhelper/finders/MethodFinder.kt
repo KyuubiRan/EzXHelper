@@ -115,10 +115,27 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
     // endregion
 
     // region filter modifiers
+    /**
+     * Filter if they are abstract.
+     * @return [MethodFinder] this finder.
+     */
+    fun filterAbstract() = applyThis {
+        filter { Modifier.isAbstract(this.modifiers) }
+        exceptMessageScope { condition("filterAbstract") }
+    }
+
+    /**
+     * Filter if they are non-abstract.
+     * @return [MethodFinder] this finder.
+     */
+    fun filterNonAbstract() = applyThis {
+        filter { !Modifier.isAbstract(this.modifiers) }
+        exceptMessageScope { condition("filterNonAbstract") }
+    }
 
     /**
      * Filter if they are static.
-     * @return [FieldFinder] this finder.
+     * @return [MethodFinder] this finder.
      */
     fun filterStatic() = applyThis {
         sequence = sequence.filter { Modifier.isStatic(it.modifiers) }
@@ -127,7 +144,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
 
     /**
      * Filter if they are non-static.
-     * @return [FieldFinder] this finder.
+     * @return [MethodFinder] this finder.
      */
     fun filterNonStatic() = applyThis {
         sequence = sequence.filter { !Modifier.isStatic(it.modifiers) }
@@ -136,7 +153,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
 
     /**
      * Filter if they are final.
-     * @return [FieldFinder] this finder.
+     * @return [MethodFinder] this finder.
      */
     fun filterFinal() = applyThis {
         sequence = sequence.filter { Modifier.isFinal(it.modifiers) }
@@ -145,7 +162,7 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
 
     /**
      * Filter if they are non-final.
-     * @return [FieldFinder] this finder.
+     * @return [MethodFinder] this finder.
      */
     fun filterNonFinal() = applyThis {
         sequence = sequence.filter { !Modifier.isFinal(it.modifiers) }
