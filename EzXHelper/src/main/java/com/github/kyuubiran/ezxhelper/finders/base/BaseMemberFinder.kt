@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier
 
 abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>) : BaseFinder<T, Self>(memberSequence) where T : Member {
     // region get elem
-
     final override fun first(): T = super.first().also { allowAccess(it) }
     final override fun firstOrNull(): T? = super.firstOrNull()?.also { allowAccess(it) }
     final override fun last(): T = super.last().also { allowAccess(it) }
@@ -21,7 +20,10 @@ abstract class BaseMemberFinder<T, Self> constructor(memberSequence: Sequence<T>
     final override fun firstOrNull(condition: T.() -> Boolean): T? = super.firstOrNull(condition)?.also { allowAccess(it) }
     final override fun last(condition: T.() -> Boolean): T = super.last(condition).also { allowAccess(it) }
     final override fun lastOrNull(condition: T.() -> Boolean): T? = super.lastOrNull(condition)?.also { allowAccess(it) }
-
+    final override fun single(): T = super.single().also { allowAccess(it) }
+    final override fun singleOrNull(): T? = super.singleOrNull()?.also { allowAccess(it) }
+    final override fun single(condition: T.() -> Boolean): T = super.single(condition).also { allowAccess(it) }
+    final override fun singleOrNull(condition: T.() -> Boolean): T? = super.singleOrNull(condition)?.also { allowAccess(it) }
     // endregion
 
     // region filter modifiers

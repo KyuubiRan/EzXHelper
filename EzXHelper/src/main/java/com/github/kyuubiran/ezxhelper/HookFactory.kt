@@ -5,6 +5,7 @@ package com.github.kyuubiran.ezxhelper
 import com.github.kyuubiran.ezxhelper.annotations.KotlinOnly
 import com.github.kyuubiran.ezxhelper.interfaces.IMethodHookCallback
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XC_MethodHook.PRIORITY_DEFAULT
 import de.robv.android.xposed.XC_MethodHook.Unhook
 import de.robv.android.xposed.XposedBridge
 import java.lang.reflect.Constructor
@@ -68,233 +69,340 @@ class HookFactory {
         beforeHook = IMethodHookCallback { param -> param.result = constant }
     }
 
-    private fun create(): Unhook = XposedBridge.hookMethod(target, object : XC_MethodHook() {
-        override fun beforeHookedMethod(param: MethodHookParam) {
-            beforeHook?.onMethodHooked(param)
-        }
+    private fun create(priority: Int = PRIORITY_DEFAULT): Unhook =
+        XposedBridge.hookMethod(target, object : XC_MethodHook(priority) {
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                beforeHook?.onMethodHooked(param)
+            }
 
-        override fun afterHookedMethod(param: MethodHookParam) {
-            afterHook?.onMethodHooked(param)
-        }
-    })
+            override fun afterHookedMethod(param: MethodHookParam) {
+                afterHook?.onMethodHooked(param)
+            }
+        })
 
     @Suppress("ClassName")
     companion object `-Static` {
         @JvmName("-createMethodHook")
         @KotlinOnly
-        fun Method.createHook(block: HookFactory.() -> Unit): Unhook =
-            HookFactory(this).also(block).create()
+        fun Method.createHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): Unhook =
+            HookFactory(this).also(block).create(priority)
 
         @JvmName("-createMethodBeforeHook")
         @KotlinOnly
-        fun Method.createBeforeHook(block: IMethodHookCallback): Unhook =
-            HookFactory(this).apply { beforeHook = block }.create()
+        fun Method.createBeforeHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): Unhook =
+            HookFactory(this).apply { beforeHook = block }.create(priority)
 
         @JvmName("-createMethodAfterHook")
         @KotlinOnly
-        fun Method.createAfterHook(block: IMethodHookCallback): Unhook =
-            HookFactory(this).apply { afterHook = block }.create()
+        fun Method.createAfterHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): Unhook =
+            HookFactory(this).apply { afterHook = block }.create(priority)
 
         @JvmName("-createConstructorHook")
         @KotlinOnly
-        fun Constructor<*>.createHook(block: HookFactory.() -> Unit): Unhook =
-            HookFactory(this).also(block).create()
+        fun Constructor<*>.createHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): Unhook =
+            HookFactory(this).also(block).create(priority)
 
         @JvmName("-createConstructorBeforeHook")
         @KotlinOnly
-        fun Constructor<*>.createBeforeHook(block: IMethodHookCallback): Unhook =
-            HookFactory(this).apply { beforeHook = block }.create()
+        fun Constructor<*>.createBeforeHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): Unhook =
+            HookFactory(this).apply { beforeHook = block }.create(priority)
 
         @JvmName("-createConstructorAfterHook")
         @KotlinOnly
-        fun Constructor<*>.createAfterHook(block: IMethodHookCallback): Unhook =
-            HookFactory(this).apply { afterHook = block }.create()
+        fun Constructor<*>.createAfterHook(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): Unhook =
+            HookFactory(this).apply { afterHook = block }.create(priority)
 
         @JvmName("-createMethodHooks")
         @KotlinOnly
-        fun Iterable<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> =
-            map { it.createHook(block) }
+        fun Iterable<Method>.createHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): List<Unhook> =
+            map { it.createHook(priority, block) }
 
         @JvmName("-createMethodBeforeHooks")
         @KotlinOnly
-        fun Iterable<Method>.createBeforeHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createBeforeHook(block) }
+        fun Iterable<Method>.createBeforeHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createBeforeHook(priority, block) }
 
         @JvmName("-createMethodAfterHooks")
         @KotlinOnly
-        fun Iterable<Method>.createAfterHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createAfterHook(block) }
+        fun Iterable<Method>.createAfterHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createAfterHook(priority, block) }
 
         @JvmName("-createMethodHooks")
         @KotlinOnly
-        fun Array<Method>.createHooks(block: HookFactory.() -> Unit): List<Unhook> =
-            map { it.createHook(block) }
+        fun Array<Method>.createHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): List<Unhook> =
+            map { it.createHook(priority, block) }
 
         @JvmName("-createMethodBeforeHooks")
         @KotlinOnly
-        fun Array<Method>.createBeforeHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createBeforeHook(block) }
+        fun Array<Method>.createBeforeHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createBeforeHook(priority, block) }
 
         @JvmName("-createMethodAfterHooks")
         @KotlinOnly
-        fun Array<Method>.createAfterHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createAfterHook(block) }
+        fun Array<Method>.createAfterHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createAfterHook(priority, block) }
 
         @JvmName("-createConstructorHooks")
         @KotlinOnly
-        fun Iterable<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> =
-            map { it.createHook(block) }
+        fun Iterable<Constructor<*>>.createHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): List<Unhook> =
+            map { it.createHook(priority, block) }
 
         @JvmName("-createConstructorBeforeHooks")
         @KotlinOnly
-        fun Iterable<Constructor<*>>.createBeforeHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createBeforeHook(block) }
+        fun Iterable<Constructor<*>>.createBeforeHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createBeforeHook(priority, block) }
 
         @JvmName("-createConstructorAfterHooks")
         @KotlinOnly
-        fun Iterable<Constructor<*>>.createAfterHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createAfterHook(block) }
+        fun Iterable<Constructor<*>>.createAfterHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createAfterHook(priority, block) }
 
         @JvmName("-createConstructorHooks")
         @KotlinOnly
-        fun Array<Constructor<*>>.createHooks(block: HookFactory.() -> Unit): List<Unhook> =
-            map { it.createHook(block) }
+        fun Array<Constructor<*>>.createHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: HookFactory.() -> Unit
+        ): List<Unhook> =
+            map { it.createHook(priority, block) }
 
         @JvmName("-createConstructorBeforeHooks")
         @KotlinOnly
-        fun Array<Constructor<*>>.createBeforeHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createBeforeHook(block) }
+        fun Array<Constructor<*>>.createBeforeHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createBeforeHook(priority, block) }
 
         @JvmName("-createConstructorAfterHooks")
         @KotlinOnly
-        fun Array<Constructor<*>>.createAfterHooks(block: IMethodHookCallback): List<Unhook> =
-            map { it.createAfterHook(block) }
+        fun Array<Constructor<*>>.createAfterHooks(
+            priority: Int = PRIORITY_DEFAULT,
+            block: IMethodHookCallback
+        ): List<Unhook> =
+            map { it.createAfterHook(priority, block) }
 
         @JvmName("createMethodHook")
         @JvmStatic
-        fun createHook(m: Method, block: Consumer<HookFactory>): XC_MethodHook.Unhook =
-            HookFactory(m).also { block.accept(it) }.create()
+        @JvmOverloads
+        fun createHook(
+            priority: Int = PRIORITY_DEFAULT,
+            method: Method,
+            block: Consumer<HookFactory>
+        ): XC_MethodHook.Unhook =
+            HookFactory(method).also { block.accept(it) }.create(priority)
 
         @JvmName("createMethodBeforeHook")
         @JvmStatic
-        fun createBeforeHook(m: Method, block: IMethodHookCallback): XC_MethodHook.Unhook =
-            HookFactory(m).apply { beforeHook = block }.create()
+        @JvmOverloads
+        fun createBeforeHook(
+            priority: Int = PRIORITY_DEFAULT,
+            method: Method, block: IMethodHookCallback
+        ): XC_MethodHook.Unhook =
+            HookFactory(method).apply { beforeHook = block }.create(priority)
 
         @JvmName("createMethodAfterHook")
         @JvmStatic
-        fun createAfterHook(m: Method, block: IMethodHookCallback): XC_MethodHook.Unhook =
-            HookFactory(m).apply { afterHook = block }.create()
+        @JvmOverloads
+        fun createAfterHook(
+            priority: Int = PRIORITY_DEFAULT,
+            method: Method,
+            block: IMethodHookCallback
+        ): XC_MethodHook.Unhook =
+            HookFactory(method).apply { afterHook = block }.create(priority)
 
         @JvmName("createConstructorHook")
         @JvmStatic
-        fun createHook(c: Constructor<*>, block: Consumer<HookFactory>): XC_MethodHook.Unhook =
-            HookFactory(c).also { block.accept(it) }.create()
+        @JvmOverloads
+        fun createHook(
+            priority: Int = PRIORITY_DEFAULT,
+            ctor: Constructor<*>,
+            block: Consumer<HookFactory>
+        ): XC_MethodHook.Unhook =
+            HookFactory(ctor).also { block.accept(it) }.create(priority)
 
         @JvmName("createConstructorBeforeHook")
         @JvmStatic
-        fun createBeforeHook(c: Constructor<*>, block: IMethodHookCallback): XC_MethodHook.Unhook =
-            HookFactory(c).apply { beforeHook = block }.create()
+        @JvmOverloads
+        fun createBeforeHook(
+            priority: Int = PRIORITY_DEFAULT,
+            ctor: Constructor<*>, block: IMethodHookCallback
+        ): XC_MethodHook.Unhook =
+            HookFactory(ctor).apply { beforeHook = block }.create(priority)
 
         @JvmName("createConstructorAfterHook")
         @JvmStatic
-        fun createAfterHook(c: Constructor<*>, block: IMethodHookCallback): XC_MethodHook.Unhook =
-            HookFactory(c).apply { afterHook = block }.create()
+        @JvmOverloads
+        fun createAfterHook(
+            priority: Int = PRIORITY_DEFAULT,
+            ctor: Constructor<*>,
+            block: IMethodHookCallback
+        ): XC_MethodHook.Unhook =
+            HookFactory(ctor).apply { afterHook = block }.create(priority)
 
         @JvmName("createMethodHooks")
         @JvmStatic
+        @JvmOverloads
         fun createHooks(
-            m: Iterable<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Iterable<Method>,
             block: Consumer<HookFactory>
         ): List<XC_MethodHook.Unhook> =
-            m.map { createHook(it, block) }
+            methods.map { createHook(priority, it, block) }
 
         @JvmName("createMethodBeforeHooks")
         @JvmStatic
+        @JvmOverloads
         fun createBeforeHooks(
-            m: Iterable<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Iterable<Method>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            m.map { createBeforeHook(it, block) }
+            methods.map { createBeforeHook(priority, it, block) }
 
         @JvmName("createMethodAfterHooks")
         @JvmStatic
+        @JvmOverloads
         fun createAfterHooks(
-            m: Iterable<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Iterable<Method>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            m.map { createAfterHook(it, block) }
+            methods.map { createAfterHook(priority, it, block) }
 
         @JvmName("createMethodHooks")
         @JvmStatic
+        @JvmOverloads
         fun createHooks(
-            m: Array<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Array<Method>,
             block: Consumer<HookFactory>
         ): List<XC_MethodHook.Unhook> =
-            m.map { createHook(it, block) }
+            methods.map { createHook(priority, it, block) }
 
         @JvmName("createMethodBeforeHooks")
         @JvmStatic
+        @JvmOverloads
         fun createBeforeHooks(
-            m: Array<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Array<Method>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            m.map { createBeforeHook(it, block) }
+            methods.map { createBeforeHook(priority, it, block) }
 
         @JvmName("createMethodAfterHooks")
         @JvmStatic
+        @JvmOverloads
         fun createAfterHooks(
-            m: Array<Method>,
+            priority: Int = PRIORITY_DEFAULT,
+            methods: Array<Method>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            m.map { createAfterHook(it, block) }
+            methods.map { createAfterHook(priority, it, block) }
 
         @JvmName("createConstructorHooks")
         @JvmStatic
+        @JvmOverloads
         fun createHooks(
-            c: Iterable<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Iterable<Constructor<*>>,
             block: Consumer<HookFactory>
         ): List<XC_MethodHook.Unhook> =
-            c.map { createHook(it, block) }
+            ctors.map { createHook(priority, it, block) }
 
         @JvmName("createConstructorBeforeHooks")
         @JvmStatic
+        @JvmOverloads
         fun createBeforeHooks(
-            c: Iterable<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Iterable<Constructor<*>>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            c.map { createBeforeHook(it, block) }
+            ctors.map { createBeforeHook(priority, it, block) }
 
         @JvmName("createConstructorAfterHooks")
         @JvmStatic
+        @JvmOverloads
         fun createAfterHooks(
-            c: Iterable<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Iterable<Constructor<*>>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            c.map { createAfterHook(it, block) }
+            ctors.map { createAfterHook(priority, it, block) }
 
         @JvmName("createConstructorHooks")
         @JvmStatic
+        @JvmOverloads
         fun createHooks(
-            c: Array<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Array<Constructor<*>>,
             block: Consumer<HookFactory>
         ): List<XC_MethodHook.Unhook> =
-            c.map { createHook(it, block) }
+            ctors.map { createHook(priority, it, block) }
 
         @JvmName("createConstructorBeforeHooks")
         @JvmStatic
+        @JvmOverloads
         fun createBeforeHooks(
-            c: Array<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Array<Constructor<*>>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            c.map { createBeforeHook(it, block) }
+            ctors.map { createBeforeHook(priority, it, block) }
 
         @JvmName("createConstructorAfterHooks")
         @JvmStatic
+        @JvmOverloads
         fun createAfterHooks(
-            c: Array<Constructor<*>>,
+            priority: Int = PRIORITY_DEFAULT,
+            ctors: Array<Constructor<*>>,
             block: IMethodHookCallback
         ): List<XC_MethodHook.Unhook> =
-            c.map { createAfterHook(it, block) }
+            ctors.map { createAfterHook(priority, it, block) }
     }
 }
 
