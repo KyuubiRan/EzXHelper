@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">EzXHelper</string>
+    <string name="xposed_desc">EzHelper sample app</string>
+</resources>
