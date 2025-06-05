@@ -1,11 +1,12 @@
 # EzXHelper
 
-[English](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README_en.md)
+[English](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README_en.md)  
 
-加入Telegram群组来获取帮助: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
+一个使Xposed模块开发变的更轻松的工具库。  
+3.x版本已经将反射部分拆分为单独的库，可以支持在JVM上运行。  
 
-一个使Xposed模块开发变的更轻松的工具库。
-3.x版本已经将反射部分拆分为单独的库，可以支持在JVM上运行。
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) 群组来获取帮助
+
 
 ### 使用本库的项目
 
@@ -33,5 +34,5 @@
 
 ### 友情链接
 
-不喜欢EzXHelper的写法？来试试[KavaRef](https://github.com/HighCapable/KavaRef)吧！
-[DexKit](https://github.com/LuckyPray/DexKit) 一个使用 C++ 实现的 dex 高性能运行时解析库，用于查找被混淆的类、方法或者属性。
+不喜欢EzXHelper的写法？来试试 [KavaRef](https://github.com/HighCapable/KavaRef) 吧！  
+[DexKit](https://github.com/LuckyPray/DexKit) 一个使用 C++ 实现的 dex 高性能运行时解析库，用于查找被混淆的类、方法或者属性。  
