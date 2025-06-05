@@ -1,10 +1,10 @@
 # EzXHelper
 
-Join Telegram group to get
-help: [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper)
+A library to make Xposed modules development easier.     
+Version 3.x has split the reflection part into a separate library, which can support running on JVM.  
 
-A library to make Xposed modules development easier.    
-Version 3.x has split the reflection part into a separate library, which can support running on JVM.
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) group to get helps.  
+
 
 ### Projects that use this library
 
