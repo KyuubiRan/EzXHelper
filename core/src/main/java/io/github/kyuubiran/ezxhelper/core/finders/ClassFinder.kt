@@ -13,7 +13,8 @@ class ClassFinder private constructor(seq: Sequence<Class<*>>) : BaseFinder<Clas
     override val name: String
         get() = "ClassFinder"
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
 
         @JvmStatic
         fun fromArray(array: Array<Class<*>>) = ClassFinder(array.asSequence())

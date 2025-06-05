@@ -10,7 +10,8 @@ import io.github.kyuubiran.ezxhelper.core.utils.ObjectUtils
  */
 class ObjectHelper(private val target: Any) {
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
 
         @JvmSynthetic
         fun Any.objectHelper() = ObjectHelper(this)

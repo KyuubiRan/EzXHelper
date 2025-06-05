@@ -73,7 +73,9 @@ class HookFactory {
             }
         })
 
-    companion object {
+
+    @Suppress("ClassName")
+    companion object `-Static` {
 
         @JvmName("-createMethodHook")
         @JvmSynthetic

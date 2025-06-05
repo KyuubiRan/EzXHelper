@@ -3,7 +3,7 @@ package io.github.kyuubiran.ezxhelper.sample.hooks
 import android.app.Application
 import android.util.Log
 import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder
-import io.github.kyuubiran.ezxhelper.xposed.dsl.HookFactory.Companion.createHook
+import io.github.kyuubiran.ezxhelper.xposed.dsl.HookFactory.`-Static`.createHook
 
 object ExampleKotlinHook : BaseHook() {
 
@@ -14,7 +14,6 @@ object ExampleKotlinHook : BaseHook() {
         val onCreate = mf.filterByName("onCreate")
             .filterEmptyParam()
             .first()
-
 
         onCreate.createHook {
             before {

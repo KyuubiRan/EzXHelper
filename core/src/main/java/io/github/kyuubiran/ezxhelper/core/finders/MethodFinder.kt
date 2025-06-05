@@ -19,7 +19,8 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
     override val name: String
         get() = "MethodFinder"
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
 
         @JvmStatic
         fun fromClass(clazz: Class<*>): MethodFinder {

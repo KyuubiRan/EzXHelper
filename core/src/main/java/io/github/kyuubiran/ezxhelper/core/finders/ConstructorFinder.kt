@@ -15,7 +15,8 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
     override val name: String
         get() = "ConstructorFinder"
 
-    companion object {
+    @Suppress("ClassName")
+    companion object `-Static` {
 
         @JvmStatic
         fun fromClass(clazz: Class<*>): ConstructorFinder {

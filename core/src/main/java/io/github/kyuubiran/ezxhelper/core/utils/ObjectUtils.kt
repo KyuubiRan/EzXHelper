@@ -2,7 +2,7 @@
 
 package io.github.kyuubiran.ezxhelper.core.utils
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder.Companion.methodFinder
+import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder.`-Static`.methodFinder
 import io.github.kyuubiran.ezxhelper.core.miscs.ParamTypes
 import io.github.kyuubiran.ezxhelper.core.miscs.Params
 import io.github.kyuubiran.ezxhelper.core.miscs.paramTypes
