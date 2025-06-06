@@ -12,6 +12,7 @@ Version 3.x has split the reflection part into a separate library, which can sup
 
 ### Quick start
 
+`build.gradle`
 ```groovy
 dependencies {
     def ezxhelperVersion = '<version>'
@@ -20,12 +21,32 @@ dependencies {
 }
 ```
 
+`build.gradle.kts`
 ```kotlin
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
 }
+```
+
+`Xposed`
+```kotlin
+override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
+    // ...
+    EzXposed.initHandleLoadPackage(lpparam)
+}
+// Optional
+override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
+    EzXposed.initZygote(startupParam)
+}
+```
+
+`reflection-only`
+```kotlin
+// Optional
+// Call this before use reflection utils, or it will use ClassLoader.getSystemClassLoader() by default.
+EzXReflection.init(yourClassLoader)
 ```
 
 ### Projects that use this library

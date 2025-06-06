@@ -10,8 +10,9 @@
 
 [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) 群组来获取帮助
 
-### 快速引入
+### 快速开始
 
+`build.gradle`
 ```groovy
 dependencies {
     def ezxhelperVersion = '<version>'
@@ -20,12 +21,32 @@ dependencies {
 }
 ```
 
+`build.gradle.kts`
 ```kotlin
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
 }
+```
+
+`Xposed`
+```kotlin
+override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
+    // ...
+    EzXposed.initHandleLoadPackage(lpparam)
+}
+// 可选
+override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
+    EzXposed.initZygote(startupParam)
+}
+```
+
+`reflection-only`
+```kotlin
+// 可选
+// 在使用本库之前，调用此函数设置默认的 ClassLoader，否则它会默认使用 ClassLoader.getSystemClassLoader() 来作为反射的 ClassLoader。
+EzXReflection.init(yourClassLoader)
 ```
 
 ### 使用本库的项目
