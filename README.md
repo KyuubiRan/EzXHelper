@@ -2,11 +2,31 @@
 
 [English](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README_en.md)  
 
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/core)
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/xposed-api-82)
+
 一个使Xposed模块开发变的更轻松的工具库。  
-3.x版本已经将反射部分拆分为单独的库，可以支持在JVM上运行。  
+3.x版本已经将反射部分拆分为单独的库，可以支持在JVM上运行。
 
 [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) 群组来获取帮助
 
+### 快速引入
+
+```groovy
+dependencies {
+    def ezxhelperVersion = '<version>'
+    implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
+    implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+}
+```
+
+```kotlin
+dependencies {
+    val ezxhelperVersion = "<version>"
+    implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
+    implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+}
+```
 
 ### 使用本库的项目
 

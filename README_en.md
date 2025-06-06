@@ -1,10 +1,32 @@
 # EzXHelper
 
+[中文](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README.md)
+
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/core)
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/xposed-api-82)
+
 A library to make Xposed modules development easier.     
-Version 3.x has split the reflection part into a separate library, which can support running on JVM.  
+Version 3.x has split the reflection part into a separate library, which can support running on JVM.
 
-[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) group to get helps.  
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) group to get helps.
 
+### Quick start
+
+```groovy
+dependencies {
+    def ezxhelperVersion = '<version>'
+    implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
+    implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+}
+```
+
+```kotlin
+dependencies {
+    val ezxhelperVersion = "<version>"
+    implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
+    implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+}
+```
 
 ### Projects that use this library
 
