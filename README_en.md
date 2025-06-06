@@ -30,7 +30,7 @@ dependencies {
 }
 ```
 
-`Xposed-api-82`
+`xposed-api-82`
 ```kotlin
 override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
     // ...
