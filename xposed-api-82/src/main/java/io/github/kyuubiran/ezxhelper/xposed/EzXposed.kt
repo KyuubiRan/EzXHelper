@@ -13,11 +13,6 @@ import io.github.kyuubiran.ezxhelper.core.EzXReflection
 
 object EzXposed {
 
-    /**
-     * Built-in log tag
-     */
-    var builtinLogTag: String = "EzXHelper"
-
     private var _appContext: Context? = null
 
     /**
@@ -31,7 +26,7 @@ object EzXposed {
             if (_appContext == null) {
                 _appContext = AndroidAppHelper.currentApplication()
                 if (_appContext == null) {
-                    Log.e(builtinLogTag, "Cannot get application context, did application call Application.onCreate?")
+                    throw NullPointerException("Cannot get application context, did application call Application.onCreate?")
                 }
             }
 
@@ -82,7 +77,7 @@ object EzXposed {
         injectResources: Boolean = false,
     ) {
         if (context == null) {
-            Log.w(builtinLogTag, "Cannot initialize application context, context is null.")
+            throw NullPointerException("Cannot initialize application context, context is null.")
             return
         }
         _appContext = context
