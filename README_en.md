@@ -3,7 +3,6 @@
 [中文](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README.md)
 
 ![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/core)
-![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/xposed-api-82)
 
 A library to make Xposed modules development easier.     
 Version 3.x has split the reflection part into a separate library, which can support running on JVM.
