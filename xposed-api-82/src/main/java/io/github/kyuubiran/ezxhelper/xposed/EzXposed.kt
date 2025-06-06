@@ -69,6 +69,7 @@ object EzXposed {
      * Recommended invoke this after [Application.onCreate].
      * @param context context
      * @param injectResources add module resources path to context)
+     * @throws NullPointerException if context is null.
      */
     @Suppress("KDocUnresolvedReference")
     @JvmStatic
