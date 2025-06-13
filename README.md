@@ -44,7 +44,8 @@ override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
 `reflection-only`
 ```kotlin
 // 可选
-// 在使用本库之前，调用此函数设置默认的 ClassLoader，否则它会默认使用 ClassLoader.getSystemClassLoader() 来作为反射的 ClassLoader。
+// 在使用本库之前，调用此函数设置默认的 ClassLoader
+// 否则它会默认使用 ClassLoader.getSystemClassLoader() 来作为反射的 ClassLoader。
 EzXReflection.init(yourClassLoader)
 ```
 

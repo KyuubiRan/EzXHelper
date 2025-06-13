@@ -44,7 +44,8 @@ override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
 `reflection-only`
 ```kotlin
 // Optional
-// Call this before use reflection utils, or it will use ClassLoader.getSystemClassLoader() by default.
+// Invoke this before use reflection utils
+// or it will use ClassLoader.getSystemClassLoader() by default.
 EzXReflection.init(yourClassLoader)
 ```
 
