@@ -16,7 +16,10 @@
 dependencies {
     def ezxhelperVersion = '<version>'
     implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
+    // Xposed api 82
     implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+    // 如果你需要使用Android相关的工具类扩展 可以引入
+    implementation "io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion"
 }
 ```
 
@@ -25,7 +28,10 @@ dependencies {
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
+    // Xposed api 82
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+    // 如果你需要使用Android相关的工具类扩展 可以引入
+    implementation("io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion")
 }
 ```
 

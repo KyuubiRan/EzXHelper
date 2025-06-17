@@ -16,7 +16,10 @@ Version 3.x has split the reflection part into a separate library, which can sup
 dependencies {
     def ezxhelperVersion = '<version>'
     implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
+    // Xposed api 82
     implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+    // If you need to use Android related utility extensions, you can include it
+    implementation "io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion"
 }
 ```
 
@@ -25,7 +28,10 @@ dependencies {
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
+    // Xposed api 82
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+    // If you need to use Android related utility extensions, you can include it
+    implementation("io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion")
 }
 ```
 
