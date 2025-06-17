@@ -24,3 +24,4 @@ rootProject.name = "EzXHelper"
 include(":sample-app")
 include(":core")
 include(":xposed-api-82")
+include(":android-utils")
