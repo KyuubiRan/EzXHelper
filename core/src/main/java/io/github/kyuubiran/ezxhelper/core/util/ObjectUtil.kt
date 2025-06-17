@@ -89,15 +89,19 @@ object ObjectUtil {
     @Throws(NoSuchFieldException::class)
     fun getObjectUntilSuperclass(obj: Any, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
         var clazz: Class<*>? = obj::class.java
+        var shouldBreak = false
         while (clazz != Any::class.java) {
             if (clazz == null) break
-            if (untilSuperClass?.invoke(clazz) == true) break
+            if (shouldBreak) break
+            if (untilSuperClass?.invoke(clazz) == true) shouldBreak = true
 
             try {
                 return getObject(obj, fieldName, clazz)
             } catch (e: NoSuchFieldException) {
                 clazz = clazz.superclass
             }
+
+
         }
         throw NoSuchFieldException("No such field $fieldName in ${obj::class.java.name} and its superclasses.")
     }

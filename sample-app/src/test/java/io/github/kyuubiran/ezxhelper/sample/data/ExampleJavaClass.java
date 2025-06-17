@@ -3,7 +3,7 @@ package io.github.kyuubiran.ezxhelper.sample.data;
 public class ExampleJavaClass {
     private static int staticField = 42;
 
-    private String type;
+    protected String type;
 
     public String getType() {
         return type;

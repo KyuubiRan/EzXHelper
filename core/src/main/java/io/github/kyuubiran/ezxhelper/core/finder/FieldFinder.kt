@@ -146,11 +146,12 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
         if (c == null || c == Any::class.java) return@makeNewFinder seq
 
         while (c != null && c != Any::class.java) {
+            seq += c.declaredFields.asSequence()
+            c = c.superclass
+
             if (untilPredicate != null) {
                 if (untilPredicate(c)) break
             }
-            seq += c.declaredFields.asSequence()
-            c = c.superclass
         }
 
         seq

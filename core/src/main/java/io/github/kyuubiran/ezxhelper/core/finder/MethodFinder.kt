@@ -189,14 +189,14 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
         var c: Class<*>? = clazz?.superclass ?: return@makeNewFinder seq
 
         while (c != null) {
-            if (untilPredicate != null) {
-                if (untilPredicate(c)) break
-            }
-
             seq += c.declaredMethods.asSequence()
             seq += c.interfaces.flatMap { i -> i.declaredMethods.asSequence() }
 
             c = c.superclass
+
+            if (untilPredicate != null) {
+                if (untilPredicate(c)) break
+            }
         }
 
         seq
