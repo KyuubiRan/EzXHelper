@@ -40,6 +40,7 @@ dependencies {
     compileOnly(libs.xposed.api)
     implementation(project(":core"))
     implementation(project(":xposed-api-82"))
+    implementation(project(":android-utils"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
