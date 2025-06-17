@@ -14,7 +14,7 @@ object ClassUtil {
     /**
      * Load the class or null if not found
      *
-     * 尝试加载类，如果找不到则返回 null
+     * 尝试加载类，没有找到则返回 null
      *
      * @param className class name | 类名
      * @param cl class loader | 类加载器
@@ -30,7 +30,7 @@ object ClassUtil {
     /**
      * Load the class or throw exception if not found
      *
-     * 尝试加载类，如果找不到则抛出 [ClassNotFoundException]
+     * 尝试加载类，没有找到则抛出 [ClassNotFoundException]
      *
      * @param className class name | 类名
      * @param cl class loader | 类加载器
@@ -70,8 +70,8 @@ object ClassUtil {
      * @param className class name | 类名
      * @return class or throw [ClassNotFoundException] | 失败时抛出 [ClassNotFoundException]
      */
-    @Throws(ClassNotFoundException::class)
     @JvmStatic
+    @Throws(ClassNotFoundException::class)
     fun loadFirstClass(vararg className: String): Class<*> = loadFirstClass(ClassLoaderProvider.safeClassLoader, *className)
 
     /**
@@ -110,7 +110,7 @@ object ClassUtil {
      * @param clazz class | 类
      * @param fieldName field name | 字段名
      * @return field object | 字段对象
-     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
+     * @throws NoSuchFieldException if the field is not found | 没有找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -147,7 +147,7 @@ object ClassUtil {
      * @param fieldName field name | 字段名
      * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses | 直到父类(true = 中断, false = 继续), 或者为 null 如果在所有父类中查找
      * @return field object | 字段对象
-     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
+     * @throws NoSuchFieldException if the field is not found | 没有找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -167,6 +167,27 @@ object ClassUtil {
     }
 
     /**
+     * Get the static object until the specified superclass, or null if [NoSuchFieldException] caused
+     *
+     * 获取静态字段对象，直到指定的父类，如果未找到字段则返回 null
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses | 直到父类(true = 中断, false = 继续), 或者为 null 如果在所有父类中查找
+     * @return field object | 没有找到字段则返回 null
+     */
+    @JvmStatic
+    fun getStaticObjectOrNullUntilSuperclass(
+        clazz: Class<*>,
+        fieldName: String,
+        untilSuperClass: (Class<*>.() -> Boolean)? = null
+    ): Any? = try {
+        getStaticObjectUntilSuperclass(clazz, fieldName, untilSuperClass)
+    } catch (e: Exception) {
+        null
+    }
+
+    /**
      * Set the static object
      *
      * 设置静态字段对象
@@ -174,7 +195,7 @@ object ClassUtil {
      * @param clazz class | 类
      * @param fieldName field name | 字段名
      * @param value field value | 字段值
-     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
+     * @throws NoSuchFieldException if the field is not found | 没有找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -194,7 +215,7 @@ object ClassUtil {
      * @param fieldName field name | 字段名
      * @param value field value | 字段值
      * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses | 直到父类(true = 中断, false = 继续), 或者为 null 如果在所有父类中查找
-     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
+     * @throws NoSuchFieldException if the field is not found | 没有找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -224,7 +245,7 @@ object ClassUtil {
      * @param returnType return type (or null if ignore) | 返回类型(或 null 如果忽略)
      * @param params method params | 方法参数
      * @return method result | 方法返回值
-     * @throws NoSuchMethodException if the method is not found | 如果找不到方法则抛出 [NoSuchMethodException]
+     * @throws NoSuchMethodException if the method is not found | 没有找到方法则抛出 [NoSuchMethodException]
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class)
@@ -258,7 +279,7 @@ object ClassUtil {
      * @param paramTypes method param types | 方法参数类型
      * @param params method params | 方法参数
      * @return method result | 方法返回值
-     * @throws NoSuchMethodException if the method is not found | 如果找不到方法则抛出 [NoSuchMethodException]
+     * @throws NoSuchMethodException if the method is not found | 没有找到方法则抛出 [NoSuchMethodException]
      * @throws IllegalArgumentException if the paramTypes size != params size | 如果 paramTypes 的大小与 params 的大小不匹配则抛出 [IllegalArgumentException]
      */
     @JvmStatic
@@ -329,10 +350,10 @@ object ClassUtil {
      * @param paramTypes constructor param types | 构造器参数类型
      * @param params constructor params | 构造器参数
      * @return new instance | 新实例
-     * @throws NoSuchMethodException if the constructor is not found | 如果找不到构造器则抛出 [NoSuchMethodException]
+     * @throws NoSuchMethodException if the constructor is not found | 没有找到构造器则抛出 [NoSuchMethodException]
      */
-    @Throws(NoSuchMethodException::class)
     @JvmStatic
+    @Throws(NoSuchMethodException::class)
     fun newInstance(clz: Class<*>, paramTypes: ParamTypes = paramTypes(), params: Params = params()): Any {
         val cf = clz.constructorFinder().filterByParamTypes(*paramTypes.types)
 
@@ -348,10 +369,10 @@ object ClassUtil {
      * @param clz class | 类
      * @param params constructor params | 构造器参数
      * @return new instance | 新实例
-     * @throws NoSuchMethodException if the constructor is not found | 如果找不到构造器则抛出 [NoSuchMethodException]
+     * @throws NoSuchMethodException if the constructor is not found | 没有找到构造器则抛出 [NoSuchMethodException]
      */
-    @Throws(NoSuchMethodException::class)
     @JvmStatic
+    @Throws(NoSuchMethodException::class)
     fun newInstanceBestMatch(clz: Class<*>, vararg params: Any?): Any {
         val paramTypes = params.map { it?.let { it::class.java } }.toTypedArray()
         val cf = clz.constructorFinder().filterByAssignableParamTypes(*paramTypes)

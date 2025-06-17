@@ -18,18 +18,18 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the first element or null if not found.
      *
-     * 获取第一个元素，如果未找到则返回 null
+     * 获取第一个元素，没有找到则返回 null
      *
-     * @return [T] the first element or null | 未找到则返回 null
+     * @return [T] the first element or null | 没有找到则返回 null
      */
     open fun firstOrNull(): T? = sequence.firstOrNull()
 
     /**
      * Get the first element or throw an exception if there is no such element.
      *
-     * 获取第一个元素，如果未找到则抛出异常
+     * 获取第一个元素，没有找到则抛出异常
      *
-     * @return [T] the first element | 未找到则抛出异常
+     * @return [T] the first element | 没有找到则抛出异常
      * @throws NoSuchElementException if sequence is empty. | 如果序列为空则抛出 [NoSuchElementException] 异常
      */
     @Throws(NoSuchElementException::class)
@@ -42,18 +42,18 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the last element or null if not found.
      *
-     * 获取最后一个元素，如果未找到则返回 null
+     * 获取最后一个元素，没有找到则返回 null
      *
-     * @return [T] the last element or null | 未找到则返回 null
+     * @return [T] the last element or null | 没有找到则返回 null
      */
     open fun lastOrNull(): T? = sequence.lastOrNull()
 
     /**
      * Get the last element or throw an exception if there is no such element.
      *
-     * 获取最后一个元素，如果未找到则抛出异常
+     * 获取最后一个元素，没有找到则抛出异常
      *
-     * @return [T] the last element | 未找到则抛出异常
+     * @return [T] the last element | 没有找到则抛出异常
      * @throws NoSuchElementException if sequence is empty. | 如果序列为空则抛出 [NoSuchElementException] 异常
      */
     @Throws(NoSuchElementException::class)
@@ -66,7 +66,7 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the first element by condition or throw an exception if there is no such element.
      *
-     * 获取第一个元素，如果未找到则抛出异常
+     * 获取第一个元素，没有找到则抛出异常
      *
      * @param condition filter condition | 过滤条件
      * @return [T] the first element | 第一个元素
@@ -82,7 +82,7 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the last element by condition or throw an exception if there is no such element.
      *
-     * 获取最后一个元素，如果未找到则抛出异常
+     * 获取最后一个元素，没有找到则抛出异常
      *
      * @param condition filter condition | 过滤条件
      * @return [T] the last element | 最后一个元素
@@ -98,20 +98,20 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the first element by condition or null if not found
      *
-     * 获取第一个元素，如果未找到则返回 null
+     * 获取第一个元素，没有找到则返回 null
      *
      * @param condition filter condition | 过滤条件
-     * @return [T] the first element or null | 未找到则返回 null
+     * @return [T] the first element or null | 没有找到则返回 null
      */
     open fun firstOrNull(condition: T.() -> Boolean) = sequence.firstOrNull(condition)
 
     /**
      * Get the last element by condition or null if not found
      *
-     * 获取最后一个元素，如果未找到则返回 null
+     * 获取最后一个元素，没有找到则返回 null
      *
      * @param condition filter condition | 过滤条件
-     * @return [T] the last element or null | 未找到则返回 null
+     * @return [T] the last element or null | 没有找到则返回 null
      */
     open fun lastOrNull(condition: T.() -> Boolean) = sequence.lastOrNull(condition)
 
@@ -155,19 +155,19 @@ abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INam
     /**
      * Get the single element or null if not found.
      *
-     * 获取单个元素，如果未找到则返回 null
+     * 获取单个元素，没有找到则返回 null
      *
-     * @return [T] the single element or null | 未找到则返回 null
+     * @return [T] the single element or null | 没有找到则返回 null
      */
     open fun singleOrNull() = sequence.singleOrNull()
 
     /**
      * Get the single element by condition or null if not found.
      *
-     * 获取单个元素，如果未找到则返回 null
+     * 获取单个元素，没有找到则返回 null
      *
      * @param condition filter condition | 过滤条件
-     * @return [T] the single element or null | 未找到则返回 null
+     * @return [T] the single element or null | 没有找到则返回 null
      */
     open fun singleOrNull(condition: T.() -> Boolean) = sequence.singleOrNull(condition)
 

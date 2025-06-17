@@ -32,8 +32,18 @@ class ObjectHelper(private val target: Any) {
     fun getObject(fieldName: String): Any? = ObjectUtil.getObject(target, fieldName)
 
     @Throws(NoSuchFieldException::class)
+    fun getObject(fieldName: String, clazz: Class<*>? = null): Any? = ObjectUtil.getObject(target, fieldName, clazz)
+
+    fun getObjectOrNull(fieldName: String): Any? = ObjectUtil.getObjectOrNull(target, fieldName)
+
+    fun getObjectOrNull(fieldName: String, clazz: Class<*>? = null): Any? = ObjectUtil.getObjectOrNull(target, fieldName, clazz)
+
+    @Throws(NoSuchFieldException::class)
     fun getObjectUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? =
         ObjectUtil.getObjectUntilSuperclass(target, fieldName, untilSuperClass)
+
+    fun getObjectOrNullUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? =
+        ObjectUtil.getObjectOrNullUntilSuperclass(target, fieldName, untilSuperClass)
 
     @Throws(NoSuchFieldException::class)
     fun setObject(fieldName: String, value: Any?) = ObjectUtil.setObject(target, fieldName, value)

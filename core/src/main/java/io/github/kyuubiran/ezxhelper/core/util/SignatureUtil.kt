@@ -102,7 +102,7 @@ object SignatureUtil {
     /**
      * Get method by signature or throw exception
      *
-     * 通过签名获取方法，如果未找到则抛出异常
+     * 通过签名获取方法，没有找到则抛出异常
      *
      * e.g.: [String.toString] `Ljava/lang/String;->toString()Ljava/lang/String;`
      *
@@ -110,21 +110,21 @@ object SignatureUtil {
      * @param clzLoader class loader | 类加载器
      * @return method or throw [NoSuchMethodException]
      */
-    @Throws(NoSuchMethodException::class)
     @JvmStatic
+    @Throws(NoSuchMethodException::class)
     fun getMethod(signature: String, clzLoader: ClassLoader? = null): Method =
         SignatureDescriptor(signature, MemberType.Method).getMethod(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
     /**
      * Get method by signature or null if not found
      *
-     * 通过签名获取方法，如果未找到则返回 null
+     * 通过签名获取方法，没有找到则返回 null
      *
      * e.g.: [String.toString] `Ljava/lang/String;->toString()Ljava/lang/String;`
      *
      * @param signature signature | 签名
      * @param clzLoader class loader | 类加载器
-     * @return method or null | 未找到则返回 null
+     * @return method or null | 没有找到则返回 null
      */
     @JvmStatic
     fun getMethodOrNull(signature: String, clzLoader: ClassLoader? = null): Method? =
@@ -133,29 +133,29 @@ object SignatureUtil {
     /**
      * Get field by signature or throw exception
      *
-     * 通过签名获取字段，如果未找到则抛出异常
+     * 通过签名获取字段，没有找到则抛出异常
      *
      * e.g.: [Integer.MAX_VALUE] `Ljava/lang/Integer;->MAX_VALUE:I`
      *
      * @param signature signature | 签名
      * @param clzLoader class loader | 类加载器
-     * @return method or throw [NoSuchFieldException] | 未找到则抛出 [NoSuchFieldException]
+     * @return method or throw [NoSuchFieldException] | 没有找到则抛出 [NoSuchFieldException]
      */
-    @Throws(NoSuchFieldException::class)
     @JvmStatic
+    @Throws(NoSuchFieldException::class)
     fun getField(signature: String, clzLoader: ClassLoader? = null): Field =
         SignatureDescriptor(signature, MemberType.Field).getField(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
     /**
      * Get field by signature or null if not found
      *
-     * 通过签名获取字段，如果未找到则返回 null
+     * 通过签名获取字段，没有找到则返回 null
      *
      * e.g.: [Integer.MAX_VALUE] `Ljava/lang/Integer;->MAX_VALUE:I`
      *
      * @param signature signature | 签名
      * @param clzLoader class loader | 类加载器
-     * @return field or null | 未找到则返回 null
+     * @return field or null | 没有找到则返回 null
      */
     @JvmStatic
     fun getFieldOrNull(signature: String, clzLoader: ClassLoader? = null): Field? =

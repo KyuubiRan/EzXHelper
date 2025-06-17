@@ -41,6 +41,40 @@ object ObjectUtil {
         (clazz ?: obj::class.java).getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
 
     /**
+     * Get the field object by the name in the object, or null if [NoSuchFieldException] caused
+     *
+     * 获取对象中指定名称的字段对象，如果未找到字段则返回 null
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @return field object | 如果未找到字段则返回 null
+     */
+    @JvmStatic
+    fun getObjectOrNull(obj: Any, fieldName: String): Any? = try {
+        getObject(obj, fieldName)
+    } catch (e: Exception) {
+        null
+    }
+
+    /**
+     * Get the field object by the name in the object
+     *
+     * 获取对象中指定名称的字段对象
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param clazz class where the field is declared (optional, defaults to the class of 'obj') | 字段声明所在的类（可选，默认为 'obj' 的类）
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则返回 null
+     */
+    @JvmStatic
+    fun getObjectOrNull(obj: Any, fieldName: String, clazz: Class<*>? = null): Any? = try {
+        getObject(obj, fieldName, clazz)
+    } catch (e: Exception) {
+        null
+    }
+
+    /**
      * Get the field object by the name until the specified superclass
      *
      * 获取对象中指定名称的字段对象，直到指定的父类
@@ -66,6 +100,27 @@ object ObjectUtil {
             }
         }
         throw NoSuchFieldException("No such field $fieldName in ${obj::class.java.name} and its superclasses.")
+    }
+
+    /**
+     * Get the field object by the name until the specified superclass, or null if [NoSuchFieldException] caused
+     *
+     * 获取对象中指定名称的字段对象，直到指定的父类，如果未找到字段则返回 null
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses | 直到父类（true = 中断，false = 继续），null = 在所有父类中查找
+     * @return field object | 如果未找到字段则返回 null
+     */
+    @JvmStatic
+    fun getObjectOrNullUntilSuperclass(
+        obj: Any,
+        fieldName: String,
+        untilSuperClass: (Class<*>.() -> Boolean)? = null
+    ): Any? = try {
+        getObjectUntilSuperclass(obj, fieldName, untilSuperClass)
+    } catch (e: Exception) {
+        null
     }
 
     /**

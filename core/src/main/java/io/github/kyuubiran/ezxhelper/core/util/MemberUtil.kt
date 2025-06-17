@@ -30,6 +30,7 @@ object MemberUtil {
      * @param showBits Whether to show the bitwise representation of the modifiers | 是否显示修饰符的位表示
      * @return A string representation of the member modifiers | 成员修饰符的字符串表示
      */
+    @JvmStatic
     fun getMemberModifiersString(modifiers: Int, showBits: Boolean = false): String = buildString {
         if (modifiers == 0) {
             append("None")

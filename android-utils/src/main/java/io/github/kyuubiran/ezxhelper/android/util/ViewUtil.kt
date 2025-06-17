@@ -64,7 +64,7 @@ object ViewUtil {
      * 遍历 ViewGroup 中的每个 View，并根据条件查找视图
      *
      * @param condition condition | 条件
-     * @return view or null if not found | 未找到则返回 null
+     * @return view or null if not found | 没有找到则返回 null
      */
     fun ViewGroup.findViewByCondition(condition: (view: View) -> Boolean): View? {
         this.forEach {
@@ -103,7 +103,7 @@ object ViewUtil {
      * 遍历 ViewGroup 中的每个 View，并根据条件查找视图，并转换为 [T] 类型
      *
      * @param condition condition | 条件
-     * @return view or null if not found | 未找到则返回 null
+     * @return view or null if not found | 没有找到则返回 null
      */
     @Suppress("UNCHECKED_CAST")
     fun <T : View> ViewGroup.findViewByConditionAs(condition: (view: View) -> Boolean): T? {
@@ -116,7 +116,7 @@ object ViewUtil {
      * 获取 id 通过资源名称
      *
      * @param name R.[type].[name]
-     * @return id or 0 if not found | 未找到则返回 0
+     * @return id or 0 if not found | 没有找到则返回 0
      */
     @SuppressLint("DiscouragedApi")
     fun getResourceIdByName(name: String, type: String = "id", ctx: Context): Int {
@@ -129,7 +129,7 @@ object ViewUtil {
      * 在 View 中通过资源名称查找视图
      *
      * @param name name | 资源名称
-     * @return view or null if not found | 未找到则返回 null
+     * @return view or null if not found | 没有找到则返回 null
      */
     fun View.findViewByIdName(name: String): View? {
         val id = getResourceIdByName(name, ctx = this.context)

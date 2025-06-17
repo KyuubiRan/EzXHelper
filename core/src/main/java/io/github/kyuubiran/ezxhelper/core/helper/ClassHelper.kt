@@ -51,6 +51,9 @@ class ClassHelper(private val clazz: Class<*>) {
     fun getStaticObjectUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
         ClassUtil.getStaticObjectUntilSuperclass(clazz, fieldName, untilSuperClass)
 
+    fun getStaticObjectOrNullUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
+        ClassUtil.getStaticObjectOrNullUntilSuperclass(clazz, fieldName, untilSuperClass)
+
     @Throws(NoSuchFieldException::class)
     fun setStaticObject(fieldName: String, value: Any?) =
         ClassUtil.setStaticObject(clazz, fieldName, value)
