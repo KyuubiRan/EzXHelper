@@ -1,12 +1,12 @@
-package io.github.kyuubiran.ezxhelper.core.utils
+package io.github.kyuubiran.ezxhelper.core.util
 
 import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isPrivate
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isStatic
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isPrivate
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isStatic
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-object SignatureUtils {
+object SignatureUtil {
     private enum class MemberType {
         Field, Method
     }

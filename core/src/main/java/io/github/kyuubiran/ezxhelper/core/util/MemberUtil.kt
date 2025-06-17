@@ -1,9 +1,9 @@
-package io.github.kyuubiran.ezxhelper.core.utils
+package io.github.kyuubiran.ezxhelper.core.util
 
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension
 import java.lang.reflect.Modifier
 
-object MemberUtils {
+object MemberUtil {
 
     val MEMBER_MODIFIER_STRING_MAP = mapOf(
         Modifier.PRIVATE to "Private",
@@ -18,7 +18,7 @@ object MemberUtils {
         Modifier.INTERFACE to "Interface",
         Modifier.ABSTRACT to "Abstract",
         Modifier.STRICT to "Strict",
-        MemberExtensions.VARARGS to "Varargs"
+        MemberExtension.VARARGS to "Varargs"
     )
 
     /**

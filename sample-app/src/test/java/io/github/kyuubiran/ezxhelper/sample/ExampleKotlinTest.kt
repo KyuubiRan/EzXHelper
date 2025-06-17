@@ -1,6 +1,6 @@
 package io.github.kyuubiran.ezxhelper.sample
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder
+import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder
 import org.junit.Test
 
 /**

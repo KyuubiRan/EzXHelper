@@ -1,9 +1,9 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package io.github.kyuubiran.ezxhelper.core.finders.base
+package io.github.kyuubiran.ezxhelper.core.finder.base
 
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isNotPackagePrivate
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isPackagePrivate
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isNotPackagePrivate
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isPackagePrivate
 import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier

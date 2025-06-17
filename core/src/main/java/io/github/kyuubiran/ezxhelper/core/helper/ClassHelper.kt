@@ -1,18 +1,18 @@
-package io.github.kyuubiran.ezxhelper.core.helpers
+package io.github.kyuubiran.ezxhelper.core.helper
 
-import io.github.kyuubiran.ezxhelper.core.miscs.ParamTypes
-import io.github.kyuubiran.ezxhelper.core.miscs.Params
-import io.github.kyuubiran.ezxhelper.core.miscs.paramTypes
-import io.github.kyuubiran.ezxhelper.core.miscs.params
-import io.github.kyuubiran.ezxhelper.core.utils.ClassUtils
+import io.github.kyuubiran.ezxhelper.core.misc.ParamTypes
+import io.github.kyuubiran.ezxhelper.core.misc.Params
+import io.github.kyuubiran.ezxhelper.core.misc.paramTypes
+import io.github.kyuubiran.ezxhelper.core.misc.params
+import io.github.kyuubiran.ezxhelper.core.util.ClassUtil
 import kotlin.reflect.KClass
 
 /**
- * Wrapper for [ClassUtils]
+ * Wrapper for [ClassUtil]
  *
- * [ClassUtils] 的包装类
+ * [ClassUtil] 的包装类
  *
- * @see ClassUtils
+ * @see ClassUtil
  */
 class ClassHelper(private val clazz: Class<*>) {
 
@@ -43,37 +43,37 @@ class ClassHelper(private val clazz: Class<*>) {
     }
 
     @Throws(NoSuchFieldException::class)
-    fun getStaticObject(fieldName: String) = ClassUtils.getStaticObject(clazz, fieldName)
+    fun getStaticObject(fieldName: String) = ClassUtil.getStaticObject(clazz, fieldName)
 
-    fun getStaticObjectOrNull(fieldName: String) = ClassUtils.getStaticObjectOrNull(clazz, fieldName)
+    fun getStaticObjectOrNull(fieldName: String) = ClassUtil.getStaticObjectOrNull(clazz, fieldName)
 
     @Throws(NoSuchFieldException::class)
     fun getStaticObjectUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
-        ClassUtils.getStaticObjectUntilSuperclass(clazz, fieldName, untilSuperClass)
+        ClassUtil.getStaticObjectUntilSuperclass(clazz, fieldName, untilSuperClass)
 
     @Throws(NoSuchFieldException::class)
     fun setStaticObject(fieldName: String, value: Any?) =
-        ClassUtils.setStaticObject(clazz, fieldName, value)
+        ClassUtil.setStaticObject(clazz, fieldName, value)
 
     @Throws(NoSuchFieldException::class)
     fun setStaticObjectUntilSuperclass(fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
-        ClassUtils.setStaticObjectUntilSuperclass(clazz, fieldName, value, untilSuperClass)
+        ClassUtil.setStaticObjectUntilSuperclass(clazz, fieldName, value, untilSuperClass)
 
     @Throws(NoSuchMethodException::class)
     fun invokeStaticMethodBestMatch(methodName: String, returnType: Class<*>? = null, vararg params: Any?) =
-        ClassUtils.invokeStaticMethodBestMatch(clazz, methodName, returnType, *params)
+        ClassUtil.invokeStaticMethodBestMatch(clazz, methodName, returnType, *params)
 
     @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
     fun invokeStaticMethod(methodName: String, returnType: Class<*>? = null, paramTypes: ParamTypes = paramTypes(), params: Params = params()) =
-        ClassUtils.invokeStaticMethod(clazz, methodName, returnType, paramTypes, params)
+        ClassUtil.invokeStaticMethod(clazz, methodName, returnType, paramTypes, params)
 
-    fun isPrimitiveTypeMatch(clazz: Class<*>) = ClassUtils.isPrimitiveTypeMatch(clazz, clazz)
+    fun isPrimitiveTypeMatch(clazz: Class<*>) = ClassUtil.isPrimitiveTypeMatch(clazz, clazz)
 
-    fun toPrimitiveType() = ClassUtils.toPrimitiveType(clazz)
-
-    @Throws(NoSuchMethodException::class)
-    fun newInstanceBestMatch(vararg params: Any?) = ClassUtils.newInstanceBestMatch(clazz, *params)
+    fun toPrimitiveType() = ClassUtil.toPrimitiveType(clazz)
 
     @Throws(NoSuchMethodException::class)
-    fun newInstance(paramTypes: ParamTypes = paramTypes(), params: Params = params()) = ClassUtils.newInstance(clazz, paramTypes, params)
+    fun newInstanceBestMatch(vararg params: Any?) = ClassUtil.newInstanceBestMatch(clazz, *params)
+
+    @Throws(NoSuchMethodException::class)
+    fun newInstance(paramTypes: ParamTypes = paramTypes(), params: Params = params()) = ClassUtil.newInstance(clazz, paramTypes, params)
 }

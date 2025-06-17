@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package io.github.kyuubiran.ezxhelper.core.extensions
+package io.github.kyuubiran.ezxhelper.core.extension
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
@@ -13,7 +13,7 @@ import java.lang.reflect.Modifier
  *
  * 为 [Member] 添加的扩展属性，用于快速检查修饰符
  */
-object MemberExtensions {
+object MemberExtension {
     val Method.isStatic: Boolean
         @JvmStatic inline get() = Modifier.isStatic(this.modifiers)
     val Method.isNotStatic: Boolean

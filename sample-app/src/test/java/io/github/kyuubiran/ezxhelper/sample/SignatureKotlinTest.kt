@@ -1,7 +1,7 @@
 package io.github.kyuubiran.ezxhelper.sample
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder
-import io.github.kyuubiran.ezxhelper.core.utils.SignatureUtils
+import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder
+import io.github.kyuubiran.ezxhelper.core.util.SignatureUtil
 import org.junit.Test
 
 class SignatureKotlinTest {
@@ -11,7 +11,7 @@ class SignatureKotlinTest {
         val mf = MethodFinder.fromClass(String::class)
 
         val m = mf.filterByName("toString").first()
-        val signature = SignatureUtils.getSignature(m)
+        val signature = SignatureUtil.getSignature(m)
         assert(signature == "Ljava/lang/String;->toString()Ljava/lang/String;") {
             "Expected signature: Ljava/lang/String;->toString()Ljava/lang/String;, but got: $signature"
         }
@@ -20,7 +20,7 @@ class SignatureKotlinTest {
 
     @Test
     fun testSignatureToTypes1() {
-        val signatures = SignatureUtils.signatureToTypes("IZ[I")
+        val signatures = SignatureUtil.signatureToTypes("IZ[I")
         assert(signatures.size == 3) {
             "Expected 3 signatures, but got: ${signatures.size}"
         }
@@ -33,7 +33,7 @@ class SignatureKotlinTest {
 
     @Test
     fun testSignatureToTypes2() {
-        val signatures = SignatureUtils.signatureToTypes("[[Ljava/lang/String;Ljava/lang/Object;")
+        val signatures = SignatureUtil.signatureToTypes("[[Ljava/lang/String;Ljava/lang/Object;")
         assert(signatures.size == 2) {
             "Expected  signatures, but got: ${signatures.size}"
         }

@@ -2,7 +2,7 @@ package io.github.kyuubiran.ezxhelper.sample;
 
 import org.junit.Test;
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder;
+import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder;
 
 public class ExampleJavaTest {
 

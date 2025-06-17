@@ -1,9 +1,9 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package io.github.kyuubiran.ezxhelper.core.finders.base
+package io.github.kyuubiran.ezxhelper.core.finder.base
 
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions
-import io.github.kyuubiran.ezxhelper.core.utils.ClassUtils
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension
+import io.github.kyuubiran.ezxhelper.core.util.ClassUtil
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
@@ -41,7 +41,7 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
             val clz1 = pt[i]
             val clz2 = paramTypes[i] ?: continue
             if (clz2.isAssignableFrom(clz1) || clz1.isAssignableFrom(clz2)) continue
-            if (ClassUtils.isPrimitiveTypeMatch(clz1, clz2)) continue
+            if (ClassUtil.isPrimitiveTypeMatch(clz1, clz2)) continue
             if (clz1 != clz2) return@f false
         }
 
@@ -118,13 +118,13 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
      * Filter if they are varargs.
      * @return [Finder] this finder
      */
-    fun filterVarargs() = filter { modifiers and MemberExtensions.VARARGS != 0 }
+    fun filterVarargs() = filter { modifiers and MemberExtension.VARARGS != 0 }
 
     /**
      * Filter if they are non-varargs.
      * @return [Finder] this finder
      */
-    fun filterNonVarargs() = filter { modifiers and MemberExtensions.VARARGS == 0 }
+    fun filterNonVarargs() = filter { modifiers and MemberExtension.VARARGS == 0 }
 
     // endregion
 

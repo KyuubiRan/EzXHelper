@@ -1,8 +1,8 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package io.github.kyuubiran.ezxhelper.core.finders.base
+package io.github.kyuubiran.ezxhelper.core.finder.base
 
-import io.github.kyuubiran.ezxhelper.core.interfaces.INamed
+import io.github.kyuubiran.ezxhelper.core.`interface`.INamed
 
 
 abstract class BaseFinder<T, Finder>(protected var sequence: Sequence<T>) : INamed {

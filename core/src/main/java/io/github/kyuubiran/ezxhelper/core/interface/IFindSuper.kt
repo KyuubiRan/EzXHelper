@@ -1,4 +1,4 @@
-package io.github.kyuubiran.ezxhelper.core.interfaces
+package io.github.kyuubiran.ezxhelper.core.`interface`
 
 interface IFindSuper<Self> {
 

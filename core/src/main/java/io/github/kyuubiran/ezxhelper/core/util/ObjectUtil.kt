@@ -1,14 +1,14 @@
 @file:Suppress("unused")
 
-package io.github.kyuubiran.ezxhelper.core.utils
+package io.github.kyuubiran.ezxhelper.core.util
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder.`-Static`.methodFinder
-import io.github.kyuubiran.ezxhelper.core.miscs.ParamTypes
-import io.github.kyuubiran.ezxhelper.core.miscs.Params
-import io.github.kyuubiran.ezxhelper.core.miscs.paramTypes
-import io.github.kyuubiran.ezxhelper.core.miscs.params
+import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder.`-Static`.methodFinder
+import io.github.kyuubiran.ezxhelper.core.misc.ParamTypes
+import io.github.kyuubiran.ezxhelper.core.misc.Params
+import io.github.kyuubiran.ezxhelper.core.misc.paramTypes
+import io.github.kyuubiran.ezxhelper.core.misc.params
 
-object ObjectUtils {
+object ObjectUtil {
 
     /**
      * Get the field object by the name in the object

@@ -1,12 +1,12 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package io.github.kyuubiran.ezxhelper.core.finders
+package io.github.kyuubiran.ezxhelper.core.finder
 
 import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isAbstract
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isFinal
-import io.github.kyuubiran.ezxhelper.core.extensions.MemberExtensions.isPublic
-import io.github.kyuubiran.ezxhelper.core.finders.base.BaseFinder
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isAbstract
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isFinal
+import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension.isPublic
+import io.github.kyuubiran.ezxhelper.core.finder.base.BaseFinder
 
 class ClassFinder private constructor(seq: Sequence<Class<*>>) : BaseFinder<Class<*>, ClassFinder>(seq) {
 

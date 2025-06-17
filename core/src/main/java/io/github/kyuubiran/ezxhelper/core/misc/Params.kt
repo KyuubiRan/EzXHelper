@@ -1,4 +1,4 @@
-package io.github.kyuubiran.ezxhelper.core.miscs
+package io.github.kyuubiran.ezxhelper.core.misc
 
 @JvmInline
 value class ParamTypes(val types: Array<out Class<*>?>)

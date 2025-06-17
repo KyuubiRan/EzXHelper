@@ -1,9 +1,9 @@
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package io.github.kyuubiran.ezxhelper.core.finders
+package io.github.kyuubiran.ezxhelper.core.finder
 
 import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider
-import io.github.kyuubiran.ezxhelper.core.finders.base.ExecutableFinder
+import io.github.kyuubiran.ezxhelper.core.finder.base.ExecutableFinder
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
 

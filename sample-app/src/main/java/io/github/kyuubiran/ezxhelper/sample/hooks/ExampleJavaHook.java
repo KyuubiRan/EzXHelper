@@ -5,7 +5,7 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.github.kyuubiran.ezxhelper.core.finders.MethodFinder;
+import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder;
 import io.github.kyuubiran.ezxhelper.xposed.dsl.HookFactory;
 
 public class ExampleJavaHook extends BaseHook {

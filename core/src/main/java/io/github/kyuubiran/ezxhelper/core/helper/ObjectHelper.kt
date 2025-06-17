@@ -1,15 +1,15 @@
-package io.github.kyuubiran.ezxhelper.core.helpers
+package io.github.kyuubiran.ezxhelper.core.helper
 
-import io.github.kyuubiran.ezxhelper.core.miscs.ParamTypes
-import io.github.kyuubiran.ezxhelper.core.miscs.Params
-import io.github.kyuubiran.ezxhelper.core.utils.ObjectUtils
+import io.github.kyuubiran.ezxhelper.core.misc.ParamTypes
+import io.github.kyuubiran.ezxhelper.core.misc.Params
+import io.github.kyuubiran.ezxhelper.core.util.ObjectUtil
 
 /**
- * Wrapper for [ObjectUtils]
+ * Wrapper for [ObjectUtil]
  *
- * [ObjectUtils] 的包装类
+ * [ObjectUtil] 的包装类
  *
- * @see ObjectUtils
+ * @see ObjectUtil
  */
 class ObjectHelper(private val target: Any) {
 
@@ -29,24 +29,24 @@ class ObjectHelper(private val target: Any) {
     }
 
     @Throws(NoSuchFieldException::class)
-    fun getObject(fieldName: String): Any? = ObjectUtils.getObject(target, fieldName)
+    fun getObject(fieldName: String): Any? = ObjectUtil.getObject(target, fieldName)
 
     @Throws(NoSuchFieldException::class)
     fun getObjectUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? =
-        ObjectUtils.getObjectUntilSuperclass(target, fieldName, untilSuperClass)
+        ObjectUtil.getObjectUntilSuperclass(target, fieldName, untilSuperClass)
 
     @Throws(NoSuchFieldException::class)
-    fun setObject(fieldName: String, value: Any?) = ObjectUtils.setObject(target, fieldName, value)
+    fun setObject(fieldName: String, value: Any?) = ObjectUtil.setObject(target, fieldName, value)
 
     @Throws(NoSuchFieldException::class)
     fun setObjectUntilSuperclass(fieldName: String, value: Any?, untilSuperClass: (Class<*>.() -> Boolean)? = null) =
-        ObjectUtils.setObjectUntilSuperclass(target, fieldName, value, untilSuperClass)
+        ObjectUtil.setObjectUntilSuperclass(target, fieldName, value, untilSuperClass)
 
     @Throws(NoSuchMethodException::class)
     fun invokeMethodBestMatch(methodName: String, returnType: Class<*>? = null, vararg params: Any?): Any? =
-        ObjectUtils.invokeMethodBestMatch(target, methodName, returnType, *params)
+        ObjectUtil.invokeMethodBestMatch(target, methodName, returnType, *params)
 
     @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
     fun invokeMethod(methodName: String, returnType: Class<*>? = null, paramTypes: ParamTypes, params: Params): Any? =
-        ObjectUtils.invokeMethod(target, methodName, returnType, paramTypes, params)
+        ObjectUtil.invokeMethod(target, methodName, returnType, paramTypes, params)
 }
