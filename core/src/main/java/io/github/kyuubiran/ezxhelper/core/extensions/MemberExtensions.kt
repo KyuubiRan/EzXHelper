@@ -9,7 +9,9 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 /**
- * The extensions for [Member] to quick check modifiers or do something easily
+ * The extensions for [Member] to quick check modifiers
+ *
+ * 为 [Member] 添加的扩展属性，用于快速检查修饰符
  */
 object MemberExtensions {
     val Method.isStatic: Boolean

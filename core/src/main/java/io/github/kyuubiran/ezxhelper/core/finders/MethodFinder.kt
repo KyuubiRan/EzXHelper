@@ -76,32 +76,43 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
     // region filter by
 
     /**
-     * Filter by method name.
-     * @param name method name
-     * @return [MethodFinder] this finder
+     * Filter by method name
+     *
+     * 过滤出名字相同的 [Method]
+     *
+     * @param name method name | 方法名称
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterByName(name: String) = filter { this.name == name }
 
-
     /**
-     * Filter by method return type.
-     * @param returnType method return type
-     * @return [MethodFinder] this finder
+     * Filter by method return type
+     *
+     * 过滤出具有指定返回类型的 [Method]
+     *
+     * @param returnType method return type | 方法返回类型
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterByReturnType(returnType: Class<*>) = filter { this.returnType == returnType }
 
     fun filterByReturnType(returnType: KClass<*>) = filterByReturnType(returnType.java)
 
     /**
-     * Filter by method returns void type.
-     * @return [MethodFinder] this finder
+     * Filter by method returns void type
+     *
+     * 过滤出返回类型为 void 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterVoidReturnType() = filterByReturnType(Void.TYPE)
 
     /**
-     * Filter by method assignable return type.
-     * @param returnType method return type
-     * @return [MethodFinder] this finder
+     * Filter by method assignable return type
+     *
+     * 过滤出返回类型继承于参数类型的 [Method]
+     *
+     * @param returnType method return type | 方法返回类型
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterByAssignableReturnType(returnType: Class<*>) = filter { this.returnType.isAssignableFrom(returnType) || returnType.isAssignableFrom(this.returnType) }
 
@@ -109,39 +120,57 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
 
 // region filter modifiers
     /**
-     * Filter if they are abstract.
-     * @return [MethodFinder] this finder.
+     * Filter if they are abstract
+     *
+     * 过滤出 abstract 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterAbstract() = filter { Modifier.isAbstract(this.modifiers) }
 
 
     /**
-     * Filter if they are non-abstract.
-     * @return [MethodFinder] this finder.
+     * Filter if they are non-abstract
+     *
+     * 过滤出非 abstract 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterNonAbstract() = filter { !Modifier.isAbstract(this.modifiers) }
 
     /**
-     * Filter if they are static.
-     * @return [MethodFinder] this finder.
+     * Filter if they are static
+     *
+     * 过滤出 static 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterStatic() = filter { Modifier.isStatic(this.modifiers) }
 
     /**
-     * Filter if they are non-static.
-     * @return [MethodFinder] this finder.
+     * Filter if they are non-static
+     *
+     * 过滤出非 static 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterNonStatic() = filter { !Modifier.isStatic(this.modifiers) }
 
     /**
-     * Filter if they are final.
-     * @return [MethodFinder] this finder.
+     * Filter if they are final
+     *
+     * 过滤出 final 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterFinal() = filter { Modifier.isFinal(this.modifiers) }
 
     /**
-     * Filter if they are non-final.
-     * @return [MethodFinder] this finder.
+     * Filter if they are non-final
+     *
+     * 过滤出非 final 的 [Method]
+     *
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
     fun filterNonFinal() = filter { !Modifier.isFinal(this.modifiers) }
 

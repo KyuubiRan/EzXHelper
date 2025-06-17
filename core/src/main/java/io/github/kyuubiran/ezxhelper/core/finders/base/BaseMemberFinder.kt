@@ -8,7 +8,7 @@ import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
-abstract class BaseMemberFinder<T, Self>(memberSequence: Sequence<T>) : BaseFinder<T, Self>(memberSequence) where T : Member {
+abstract class BaseMemberFinder<T, Finder>(memberSequence: Sequence<T>) : BaseFinder<T, Finder>(memberSequence) where T : Member {
 
     // region get elem
     final override fun first(): T = super.first().also { allowAccess(it) }
@@ -27,83 +27,124 @@ abstract class BaseMemberFinder<T, Self>(memberSequence: Sequence<T>) : BaseFind
 
     // region filter modifiers
     /**
-     * Filter by the same modifiers.
-     * @param modifiers the modifiers
-     * @return [Self] the filtered finder
+     * Filter by the same modifiers
+     *
+     * 过滤出具有相同修饰符的 [Member]
+     *
+     * @param modifiers the modifiers | 修饰符
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
-    fun filterByModifiers(modifiers: Int): Self = filter { this.modifiers == modifiers }
+    fun filterByModifiers(modifiers: Int): Finder = filter { this.modifiers == modifiers }
 
     /**
-     * Use condition to filter by the modifiers.
-     * @param predicate the condition
-     * @return [Self] the filtered finder
+     * Use condition to filter by the modifiers
+     *
+     * 过滤出满足条件的修饰符的 [Member]
+     *
+     * @param predicate the condition | 条件
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
-    fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): Self = filter { predicate(modifiers) }
+    fun filterByModifiers(predicate: (modifiers: Int) -> Boolean): Finder = filter { predicate(modifiers) }
 
     /**
-     * Filter include the modifiers.
-     * @param modifiers the modifiers.
-     * @return [Self] the filtered finder
+     * Filter include the modifiers
+     *
+     * 过滤出包含指定修饰符的 [Member]
+     *
+     * @param modifiers the modifiers. | 修饰符
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
-    fun filterIncludeModifiers(modifiers: Int): Self = filter { (this.modifiers and modifiers) != 0 }
+    fun filterIncludeModifiers(modifiers: Int): Finder = filter { (this.modifiers and modifiers) != 0 }
 
     /**
-     * Filter exclude the modifiers.
-     * @param modifiers the modifiers.
-     * @return [Self] the filtered finder
+     * Filter exclude the modifiers
+     *
+     * 过滤出不包含指定修饰符的 [Member]
+     *
+     * @param modifiers the modifiers. | 修饰符
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
-    fun filterExcludeModifiers(modifiers: Int): Self = filter { (this.modifiers and modifiers) == 0 }
+    fun filterExcludeModifiers(modifiers: Int): Finder = filter { (this.modifiers and modifiers) == 0 }
 
     /**
-     * Filter if they are public.
-     * @return [Self] the filtered finder
+     * Filter if they are public
+     *
+     * 过滤出带有 public 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterPublic() = sequence.filter { Modifier.isPublic(it.modifiers) }
 
     /**
-     * Filter if they are non-public.
-     * @return [Self] the filtered finder
+     * Filter if they are non-public
+     *
+     * 过滤出不带有 public 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterNonPublic() = filter { !Modifier.isPublic(modifiers) }
 
     /**
-     * Filter if they are protected.
-     * @return [Self] the filtered finder
+     * Filter if they are protected
+     *
+     * 过滤出带有 protected 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterProtected() = filter { Modifier.isProtected(modifiers) }
 
     /**
-     * Filter if they are non-protected.
-     * @return [Self] the filtered finder
+     * Filter if they are non-protected
+     *
+     * 过滤出不带有 protected 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterNonProtected() = filter { !Modifier.isProtected(modifiers) }
 
     /**
-     * Filter if they are private.
-     * @return [Self] the filtered finder
+     * Filter if they are private
+     *
+     * 过滤出带有 private 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterPrivate() = filter { Modifier.isPrivate(modifiers) }
 
     /**
-     * Filter if they are non-private.
-     * @return [Self] the filtered finder
+     * Filter if they are non-private
+     *
+     * 过滤出不带有 private 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterNonPrivate() = filter { !Modifier.isPrivate(modifiers) }
 
     /**
-     * Filter if they are package-private.
-     * @return [Self] the filtered finder
+     * Filter if they are package-private
+     *
+     * 过滤出带有 package-private 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterPackagePrivate() = filter { isPackagePrivate }
 
     /**
-     * Filter if they are non-package-private.
-     * @return [Self] the filtered finder
+     * Filter if they are non-package-private
+     *
+     * 过滤出不带有 package-private 修饰符的 [Member]
+     *
+     * @return [Finder] the filtered finder | 过滤后的 [Finder]
      */
     fun filterNonPackagePrivate() = filter { isNotPackagePrivate }
 
     // endregion
 
+    /**
+     * Allow access to the member.
+     *
+     * 允许访问成员
+     */
     protected fun allowAccess(member: Member) {
         if (member !is AccessibleObject) return
         member.runCatching { isAccessible = true }

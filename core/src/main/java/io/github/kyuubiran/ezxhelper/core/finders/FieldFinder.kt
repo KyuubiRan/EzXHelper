@@ -6,6 +6,7 @@ import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider
 import io.github.kyuubiran.ezxhelper.core.finders.base.BaseMemberFinder
 import io.github.kyuubiran.ezxhelper.core.interfaces.IFindSuper
 import java.lang.reflect.Field
+import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 
@@ -70,16 +71,22 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
     // region filter by
 
     /**
-     * Filter by field name.
-     * @param name The name of the field.
-     * @return [FieldFinder] this finder.
+     * Filter by field name
+     *
+     * 过滤出名字相同的 [Field]
+     *
+     * @param name The name of the field | 字段名称
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterByName(name: String) = filter { this.name == name }
 
     /**
-     * Filter by field type.
-     * @param type The type of the field.
-     * @return [FieldFinder] this finder.
+     * Filter by field type
+     *
+     * 过滤出具有指定类型的 [Field]
+     *
+     * @param type The type of the field | 字段类型
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterByType(type: Class<*>) = filter { this.type == type }
 
@@ -91,26 +98,38 @@ class FieldFinder private constructor(seq: Sequence<Field>) : BaseMemberFinder<F
     // region filter modifiers
 
     /**
-     * Filter if they are static.
-     * @return [FieldFinder] this finder.
+     * Filter if they are static
+     *
+     * 过滤出 static 的 [Field]
+     *
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterStatic() = filter { Modifier.isStatic(this.modifiers) }
 
     /**
-     * Filter if they are non-static.
-     * @return [FieldFinder] this finder.
+     * Filter if they are non-static
+     *
+     * 过滤出非 static 的 [Field]
+     *
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterNonStatic() = filter { !Modifier.isStatic(this.modifiers) }
 
     /**
-     * Filter if they are final.
-     * @return [FieldFinder] this finder.
+     * Filter if they are final
+     *
+     * 过滤出 final 的 [Field]
+     *
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterFinal() = filter { Modifier.isFinal(this.modifiers) }
 
     /**
-     * Filter if they are non-final.
-     * @return [FieldFinder] this finder.
+     * Filter if they are non-final
+     *
+     * 过滤出非 final 的 [Field]
+     *
+     * @return [FieldFinder] new finder | 过滤后的 [FieldFinder]
      */
     fun filterNonFinal() = filter { !Modifier.isFinal(this.modifiers) }
 

@@ -101,8 +101,13 @@ object SignatureUtils {
 
     /**
      * Get method by signature or throw exception
-     * @param signature signature
-     * @param clzLoader class loader
+     *
+     * 通过签名获取方法，如果未找到则抛出异常
+     *
+     * e.g.: [String.toString] `Ljava/lang/String;->toString()Ljava/lang/String;`
+     *
+     * @param signature signature | 签名
+     * @param clzLoader class loader | 类加载器
      * @return method or throw [NoSuchMethodException]
      */
     @Throws(NoSuchMethodException::class)
@@ -112,9 +117,14 @@ object SignatureUtils {
 
     /**
      * Get method by signature or null if not found
-     * @param signature signature
-     * @param clzLoader class loader
-     * @return method or null
+     *
+     * 通过签名获取方法，如果未找到则返回 null
+     *
+     * e.g.: [String.toString] `Ljava/lang/String;->toString()Ljava/lang/String;`
+     *
+     * @param signature signature | 签名
+     * @param clzLoader class loader | 类加载器
+     * @return method or null | 未找到则返回 null
      */
     @JvmStatic
     fun getMethodOrNull(signature: String, clzLoader: ClassLoader? = null): Method? =
@@ -122,9 +132,14 @@ object SignatureUtils {
 
     /**
      * Get field by signature or throw exception
-     * @param signature signature
-     * @param clzLoader class loader
-     * @return method or throw [NoSuchFieldException]
+     *
+     * 通过签名获取字段，如果未找到则抛出异常
+     *
+     * e.g.: [Integer.MAX_VALUE] `Ljava/lang/Integer;->MAX_VALUE:I`
+     *
+     * @param signature signature | 签名
+     * @param clzLoader class loader | 类加载器
+     * @return method or throw [NoSuchFieldException] | 未找到则抛出 [NoSuchFieldException]
      */
     @Throws(NoSuchFieldException::class)
     @JvmStatic
@@ -133,18 +148,25 @@ object SignatureUtils {
 
     /**
      * Get field by signature or null if not found
-     * @param signature signature
-     * @param clzLoader class loader
-     * @return field or null
+     *
+     * 通过签名获取字段，如果未找到则返回 null
+     *
+     * e.g.: [Integer.MAX_VALUE] `Ljava/lang/Integer;->MAX_VALUE:I`
+     *
+     * @param signature signature | 签名
+     * @param clzLoader class loader | 类加载器
+     * @return field or null | 未找到则返回 null
      */
     @JvmStatic
     fun getFieldOrNull(signature: String, clzLoader: ClassLoader? = null): Field? =
         SignatureDescriptor(signature, MemberType.Field).getFieldOrNull(clzLoader ?: ClassLoaderProvider.safeClassLoader)
 
     /**
-     * Get method signature.
+     * Get method signature
+     *
+     * 获取方法签名
+     *
      * @param method method
-     * e.g. [String.toString] => `Ljava/lang/String;->toString()Ljava/lang/String;`
      */
     @JvmStatic
     fun getSignature(method: Method): String = buildString {
@@ -158,9 +180,11 @@ object SignatureUtils {
     }
 
     /**
-     * Get field signature.
-     * @param field field
-     * e.g. [Integer.MAX_VALUE] => `Ljava/lang/Integer;->MAX_VALUE:I`
+     * Get field signature
+     *
+     * 获取字段签名
+     *
+     * @param field field | 字段
      */
     @JvmStatic
     fun getSignature(field: Field): String = buildString {
@@ -172,9 +196,11 @@ object SignatureUtils {
     }
 
     /**
-     * Get type signature.
-     * @param type class type
-     * e.g. [String] => `Ljava/lang/String;`, [Int] => `I`, [IntArray] => `[I`
+     * Get type signature
+     *
+     * 获取类型签名
+     *
+     * @param type class type | 类型
      */
     @JvmStatic
     fun getTypeSignature(type: Class<*>): String {
@@ -197,9 +223,13 @@ object SignatureUtils {
     }
 
     /** Convert signature to types
+     *
+     * 将签名转换为类型
+     *
+     * e.g. `IIZLjava/lang/String;` => `[Int, Int, Boolean, String]`
+     *
      *  @param signature signature
      *  @return list of types
-     *  e.g. `IIZLjava/lang/String;` => `[Int, Int, Boolean, String]`
      */
     @JvmStatic
     fun signatureToTypes(signature: String, classLoader: ClassLoader? = null): List<Class<*>> {

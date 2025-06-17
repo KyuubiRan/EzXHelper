@@ -13,9 +13,12 @@ object ClassUtils {
 
     /**
      * Load the class or null if not found
-     * @param className class name
-     * @param cl class loader
-     * @return class or null
+     *
+     * 尝试加载类，如果找不到则返回 null
+     *
+     * @param className class name | 类名
+     * @param cl class loader | 类加载器
+     * @return class or null | 失败时返回 null
      */
     @JvmStatic
     fun loadClassOrNull(className: String, cl: ClassLoader? = null): Class<*>? = try {
@@ -26,9 +29,12 @@ object ClassUtils {
 
     /**
      * Load the class or throw exception if not found
-     * @param className class name
-     * @param cl class loader
-     * @return class or throw [ClassNotFoundException]
+     *
+     * 尝试加载类，如果找不到则抛出 [ClassNotFoundException]
+     *
+     * @param className class name | 类名
+     * @param cl class loader | 类加载器
+     * @return class or throw [ClassNotFoundException] | 失败时抛出 [ClassNotFoundException]
      */
     @JvmStatic
     @Throws(ClassNotFoundException::class)
@@ -37,9 +43,12 @@ object ClassUtils {
 
     /**
      * Load the first exists class or throw exception all not found
-     * @param className class name
-     * @param cl class loader
-     * @return class or throw [ClassNotFoundException]
+     *
+     * 尝试加载第一个存在的类，如果都找不到则抛出 [ClassNotFoundException]
+     *
+     * @param className class name | 类名
+     * @param cl class loader | 类加载器
+     * @return class or throw [ClassNotFoundException] | 失败时抛出 [ClassNotFoundException]
      */
     @JvmStatic
     @Throws(ClassNotFoundException::class)
@@ -55,8 +64,11 @@ object ClassUtils {
 
     /**
      * Load the first exists class or throw exception all not found
-     * @param className class name
-     * @return class or throw [ClassNotFoundException]
+     *
+     * 尝试加载第一个存在的类，如果都找不到则抛出 [ClassNotFoundException]
+     *
+     * @param className class name | 类名
+     * @return class or throw [ClassNotFoundException] | 失败时抛出 [ClassNotFoundException]
      */
     @Throws(ClassNotFoundException::class)
     @JvmStatic
@@ -64,9 +76,12 @@ object ClassUtils {
 
     /**
      * Load the first exists class or null
-     * @param className class name
-     * @param cl class loader
-     * @return class or null
+     *
+     * 尝试加载第一个存在的类，如果都找不到则返回 null
+     *
+     * @param className class name | 类名
+     * @param cl class loader | 类加载器
+     * @return class or null | 失败时返回 null
      */
     @JvmStatic
     fun loadFirstClassOrNull(cl: ClassLoader, vararg className: String): Class<*>? {
@@ -78,47 +93,72 @@ object ClassUtils {
 
     /**
      * Load the first exists class or null
-     * @param className class name
-     * @return class or null
+     *
+     * 尝试加载第一个存在的类，如果都找不到则返回 null
+     *
+     * @param className class name | 类名
+     * @return class or null | 失败时返回 null
      */
     @JvmStatic
     fun loadFirstClassOrNull(vararg className: String): Class<*>? = loadFirstClassOrNull(ClassLoaderProvider.safeClassLoader, *className)
 
     /**
      * Get the static object
-     * @param clazz class
-     * @param fieldName field name
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
+     *
+     * 获取静态字段对象
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getStaticObjectOrNull(clazz: Class<*>, fieldName: String): Any? =
+    fun getStaticObject(clazz: Class<*>, fieldName: String): Any? =
         clazz.declaredFields.firstOrNull { it.isStatic && fieldName == it.name }
             .let {
                 it?.also { f -> f.isAccessible = true } ?: throw NoSuchFieldException("No such static field $fieldName in class ${clazz.name}.")
             }
             .get(null)
 
-
     /**
      * Get the static object
-     * @param clazz class
-     * @param fieldName field name
-     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
+     *
+     * 获取静态字段对象
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @return field object or null | 没有找到字段则返回 null
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getStaticObjectOrNullUntilSuperclass(clazz: Class<*>, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
+    fun getStaticObjectOrNull(clazz: Class<*>, fieldName: String): Any? = try {
+        getStaticObject(clazz, fieldName)
+    } catch (e: Exception) {
+        null
+    }
+
+    /**
+     * Get the static object
+     *
+     * 获取静态字段对象
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses | 直到父类(true = 中断, false = 继续), 或者为 null 如果在所有父类中查找
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
+     */
+    @JvmStatic
+    @Throws(NoSuchFieldException::class)
+    fun getStaticObjectUntilSuperclass(clazz: Class<*>, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
         var clz: Class<*>? = clazz
         while (clz != Any::class.java) {
             if (clz == null) break
             if (untilSuperClass?.invoke(clz) == true) break
 
             try {
-                return getStaticObjectOrNull(clz, fieldName)
+                return getStaticObject(clz, fieldName)
             } catch (e: NoSuchFieldException) {
                 clz = clazz.superclass
             }
@@ -127,38 +167,14 @@ object ClassUtils {
     }
 
     /**
-     * Get the static object, and trying to cast to the [T] type
-     * @param clazz class
-     * @param fieldName field name
-     * @return [T] field object or null
-     * @throws NoSuchFieldException if the field is not found
-     */
-    @JvmStatic
-    @Throws(NoSuchFieldException::class)
-    @Suppress("UNCHECKED_CAST")
-    fun <T> getStaticObjectOrNullAs(clazz: Class<*>, fieldName: String): T? =
-        getStaticObjectOrNull(clazz, fieldName) as? T?
-
-    /**
-     * Get the static object, and trying to cast to the [T] type
-     * @param clazz class
-     * @param fieldName field name
-     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
-     */
-    @JvmStatic
-    @Throws(NoSuchFieldException::class)
-    @Suppress("UNCHECKED_CAST")
-    fun <T> getStaticObjectOrNullUntilSuperclassAs(clazz: Class<*>, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): T? =
-        getStaticObjectOrNullUntilSuperclass(clazz, fieldName, untilSuperClass) as? T?
-
-    /**
      * Set the static object
-     * @param clazz class
-     * @param fieldName field name
-     * @param value field value
-     * @throws NoSuchFieldException if the field is not found
+     *
+     * 设置静态字段对象
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @param value field value | 字段值
+     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -171,11 +187,14 @@ object ClassUtils {
 
     /**
      * Set the static object
-     * @param clazz class
-     * @param fieldName field name
-     * @param value field value
-     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses
-     * @throws NoSuchFieldException if the field is not found
+     *
+     * 设置静态字段对象
+     *
+     * @param clazz class | 类
+     * @param fieldName field name | 字段名
+     * @param value field value | 字段值
+     * @param untilSuperClass until super class(true = break, false = continue), or null if find in all superclasses | 直到父类(true = 中断, false = 继续), 或者为 null 如果在所有父类中查找
+     * @throws NoSuchFieldException if the field is not found | 如果找不到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -197,12 +216,15 @@ object ClassUtils {
 
     /**
      * Invoke the static method(best match params) in the class
-     * @param clz class
-     * @param methodName method name
-     * @param returnType return type (or null if ignore)
-     * @param params method params
-     * @return method result
-     * @throws NoSuchMethodException if the method is not found
+     *
+     * 调用类中的静态方法(最佳匹配参数)
+     *
+     * @param clz class | 类
+     * @param methodName method name | 方法名
+     * @param returnType return type (or null if ignore) | 返回类型(或 null 如果忽略)
+     * @param params method params | 方法参数
+     * @return method result | 方法返回值
+     * @throws NoSuchMethodException if the method is not found | 如果找不到方法则抛出 [NoSuchMethodException]
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class)
@@ -227,14 +249,17 @@ object ClassUtils {
 
     /**
      * Invoke the static method in the class
-     * @param clz class
-     * @param methodName method name
-     * @param returnType return type (or null if ignore)
-     * @param paramTypes method param types
-     * @param params method params
-     * @return method result
-     * @throws NoSuchMethodException if the method is not found
-     * @throws IllegalArgumentException if the paramTypes size != params size
+     *
+     * 调用类中的静态方法
+     *
+     * @param clz class | 类
+     * @param methodName method name | 方法名
+     * @param returnType return type (or null if ignore) | 返回类型(或 null 如果忽略)
+     * @param paramTypes method param types | 方法参数类型
+     * @param params method params | 方法参数
+     * @return method result | 方法返回值
+     * @throws NoSuchMethodException if the method is not found | 如果找不到方法则抛出 [NoSuchMethodException]
+     * @throws IllegalArgumentException if the paramTypes size != params size | 如果 paramTypes 的大小与 params 的大小不匹配则抛出 [IllegalArgumentException]
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class, IllegalArgumentException::class)
@@ -258,9 +283,12 @@ object ClassUtils {
 
     /**
      * Check if two classes are equal or match the same primitive type
-     * @param clz1 class1
-     * @param clz2 class2
-     * @return `true` if two classes are equal or match the same primitive type, else `false`
+     *
+     * 检查两个类是否相等或匹配相同的原始类型
+     *
+     * @param clz1 class1 | 类1
+     * @param clz2 class2 | 类2
+     * @return `true` if two classes are equal or match the same primitive type, else `false` | 如果两个类相等或匹配相同的原始类型则返回 `true`，否则返回 `false`
      */
     @JvmStatic
     fun isPrimitiveTypeMatch(clz1: Class<*>, clz2: Class<*>): Boolean {
@@ -269,8 +297,11 @@ object ClassUtils {
 
     /**
      * Cast class to primitive type if possible
-     * @param clz class
-     * @return primitive type class if possible or itself
+     *
+     * 如果可能，则将类转换为原始类型
+     *
+     * @param clz class | 类
+     * @return primitive type class if possible or itself | 成功则返回原始类型类，否则返回自身
      */
     @JvmStatic
     @Suppress("RemoveRedundantQualifierName")
@@ -291,11 +322,14 @@ object ClassUtils {
 
     /**
      * Create a new instance of the class
-     * @param clz class
-     * @param paramTypes constructor param types
-     * @param params constructor params
-     * @return new instance
-     * @throws NoSuchMethodException if the constructor is not found
+     *
+     * 创建类的新实例
+     *
+     * @param clz class | 类
+     * @param paramTypes constructor param types | 构造器参数类型
+     * @param params constructor params | 构造器参数
+     * @return new instance | 新实例
+     * @throws NoSuchMethodException if the constructor is not found | 如果找不到构造器则抛出 [NoSuchMethodException]
      */
     @Throws(NoSuchMethodException::class)
     @JvmStatic
@@ -307,11 +341,14 @@ object ClassUtils {
     }
 
     /**
-     * Create a new instance of the class
-     * @param clz class
-     * @param params constructor params
-     * @return new instance
-     * @throws NoSuchMethodException if the constructor is not found
+     * Create a new instance(best match params) of the class
+     *
+     * 创建类的新实例，使用最佳匹配的构造器
+     *
+     * @param clz class | 类
+     * @param params constructor params | 构造器参数
+     * @return new instance | 新实例
+     * @throws NoSuchMethodException if the constructor is not found | 如果找不到构造器则抛出 [NoSuchMethodException]
      */
     @Throws(NoSuchMethodException::class)
     @JvmStatic

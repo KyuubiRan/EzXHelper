@@ -6,6 +6,9 @@ import io.github.kyuubiran.ezxhelper.core.utils.ObjectUtils
 
 /**
  * Wrapper for [ObjectUtils]
+ *
+ * [ObjectUtils] 的包装类
+ *
  * @see ObjectUtils
  */
 class ObjectHelper(private val target: Any) {
@@ -26,18 +29,11 @@ class ObjectHelper(private val target: Any) {
     }
 
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNull(fieldName: String): Any? = ObjectUtils.getObjectOrNull(target, fieldName)
+    fun getObject(fieldName: String): Any? = ObjectUtils.getObject(target, fieldName)
 
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNullUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? =
-        ObjectUtils.getObjectOrNullUntilSuperclass(target, fieldName, untilSuperClass)
-
-    @Throws(NoSuchFieldException::class)
-    fun <T> getObjectOrNullAs(fieldName: String): T? = ObjectUtils.getObjectOrNullAs(target, fieldName)
-
-    @Throws(NoSuchFieldException::class)
-    fun <T> getObjectOrNullUntilSuperclassAs(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): T? =
-        ObjectUtils.getObjectOrNullUntilSuperclassAs(target, fieldName, untilSuperClass)
+    fun getObjectUntilSuperclass(fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? =
+        ObjectUtils.getObjectUntilSuperclass(target, fieldName, untilSuperClass)
 
     @Throws(NoSuchFieldException::class)
     fun setObject(fieldName: String, value: Any?) = ObjectUtils.setObject(target, fieldName, value)

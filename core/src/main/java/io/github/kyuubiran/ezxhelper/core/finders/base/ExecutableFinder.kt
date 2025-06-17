@@ -7,13 +7,13 @@ import io.github.kyuubiran.ezxhelper.core.utils.ClassUtils
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
-abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMemberFinder<E, Self>(seq) {
+abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemberFinder<E, Finder>(seq) {
     // region filter by
 
     /**
      * Filter by parameter types, or if null to skip check some parameters
      * @param paramTypes parameter types
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByParamTypes(vararg paramTypes: Class<*>?) = filter f@{
         val pt = getParameterTypes(this@f)
@@ -31,7 +31,7 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
     /**
      * Filter by parameter types or subclass of types, or if null to skip check some parameters
      * @param paramTypes parameter types
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByAssignableParamTypes(vararg paramTypes: Class<*>?) = filter f@{
         val pt = getParameterTypes(this@f)
@@ -50,20 +50,20 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
 
     /**
      * Filter the executable if the parameter is empty
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterEmptyParam() = filter { getParameterTypes(this).isEmpty() }
 
     /**
      * Filter the executable if the parameter is not empty
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterNotEmptyParam() = filter { getParameterTypes(this).isNotEmpty() }
 
     /**
      * Use condition to filter parameter types
      * @param predicate condition
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByParamTypes(predicate: (Array<Class<*>>) -> Boolean) = filter { predicate(getParameterTypes(this)) }
 
@@ -71,28 +71,28 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
     /**
      * Filter by parameter count
      * @param count parameter count
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByParamCount(count: Int) = filter { getParameterTypes(this).size == count }
 
     /**
      * Use condition to filter parameter count
      * @param predicate condition
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByParamCount(predicate: (Int) -> Boolean) = filter { predicate(getParameterTypes(this).size) }
 
     /**
      * Filter by parameter count in range
      * @param range parameter count range
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByParamCount(range: IntRange) = filter { getParameterTypes(this).size in range }
 
     /**
      * Filter by exception types
      * @param exceptionTypes exception types
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterByExceptionTypes(vararg exceptionTypes: Class<*>) = exceptionTypes.toSet().let { set ->
         filter { getExceptionTypes(this).run { size == set.size && toSet() == set } }
@@ -104,25 +104,25 @@ abstract class ExecutableFinder<E : Member, Self>(seq: Sequence<E>) : BaseMember
 
     /**
      * Filter if they are native.
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterNative() = filter { Modifier.isNative(modifiers) }
 
     /**
      * Filter if they are non-native.
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterNonNative() = filter { !Modifier.isNative(modifiers) }
 
     /**
      * Filter if they are varargs.
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterVarargs() = filter { modifiers and MemberExtensions.VARARGS != 0 }
 
     /**
      * Filter if they are non-varargs.
-     * @return [Self] this finder
+     * @return [Finder] this finder
      */
     fun filterNonVarargs() = filter { modifiers and MemberExtensions.VARARGS == 0 }
 

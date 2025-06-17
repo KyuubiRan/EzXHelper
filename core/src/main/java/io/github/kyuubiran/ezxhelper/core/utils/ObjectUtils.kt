@@ -11,47 +11,56 @@ import io.github.kyuubiran.ezxhelper.core.miscs.params
 object ObjectUtils {
 
     /**
-     * Get the field object by the name in the object.
-     * @param obj object
-     * @param fieldName field name
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
+     * Get the field object by the name in the object
+     *
+     * 获取对象中指定名称的字段对象
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNull(obj: Any, fieldName: String): Any? = obj::class.java.getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
+    fun getObject(obj: Any, fieldName: String): Any? = obj::class.java.getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
 
     /**
-     * Get the field object by the name in the object.
-     * @param obj object
-     * @param fieldName field name
-     * @param clazz class where the field is declared (optional, defaults to the class of 'obj')
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
+     * Get the field object by the name in the object
+     *
+     * 获取对象中指定名称的字段对象
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param clazz class where the field is declared (optional, defaults to the class of 'obj') | 字段声明所在的类（可选，默认为 'obj' 的类）
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNull(obj: Any, fieldName: String, clazz: Class<*>? = null): Any? =
+    fun getObject(obj: Any, fieldName: String, clazz: Class<*>? = null): Any? =
         (clazz ?: obj::class.java).getDeclaredField(fieldName).also { it.isAccessible = true }.get(obj)
 
     /**
-     * Get the field object by the name in the object.
-     * @param obj object
-     * @param fieldName field name
-     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses.
-     * @return field object or null
-     * @throws NoSuchFieldException if the field is not found
+     * Get the field object by the name until the specified superclass
+     *
+     * 获取对象中指定名称的字段对象，直到指定的父类
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses | 直到父类（true = 中断，false = 继续），null = 在所有父类中查找
+     * @return field object | 字段对象
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
-    fun getObjectOrNullUntilSuperclass(obj: Any, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
+    fun getObjectUntilSuperclass(obj: Any, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): Any? {
         var clazz: Class<*>? = obj::class.java
         while (clazz != Any::class.java) {
             if (clazz == null) break
             if (untilSuperClass?.invoke(clazz) == true) break
 
             try {
-                return getObjectOrNull(obj, fieldName, clazz)
+                return getObject(obj, fieldName, clazz)
             } catch (e: NoSuchFieldException) {
                 clazz = clazz.superclass
             }
@@ -60,36 +69,14 @@ object ObjectUtils {
     }
 
     /**
-     * Get the field object by the name in the object, and trying to cast to the [T] type.
-     * @param obj object
-     * @param fieldName field name
-     * @return [T] field object, or null if is null or cast failed.
-     * @throws NoSuchFieldException if the field is not found
-     */
-    @JvmStatic
-    @Throws(NoSuchFieldException::class)
-    @Suppress("UNCHECKED_CAST")
-    fun <T> getObjectOrNullAs(obj: Any, fieldName: String): T? = getObjectOrNull(obj, fieldName) as? T?
-
-    /**
-     * Get the field object by the name in the object, and trying to cast to the [T] type.
-     * @param obj object
-     * @param fieldName field name
-     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses.
-     * @return [T] field object, or null if it is null or cast failed.
-     * @throws NoSuchFieldException if the field is not found
-     */
-    @JvmStatic
-    @Throws(NoSuchFieldException::class)
-    @Suppress("UNCHECKED_CAST")
-    fun <T> getObjectOrNullUntilSuperclassAs(obj: Any, fieldName: String, untilSuperClass: (Class<*>.() -> Boolean)? = null): T? =
-        getObjectOrNullUntilSuperclass(obj, fieldName, untilSuperClass) as? T?
-
-    /**
-     * Set the field object by the name in the object.
-     * @param obj object
-     * @param fieldName field name
-     * @throws NoSuchFieldException if the field is not found
+     * Set the field object by the name in the object
+     *
+     * 设置对象中指定名称的字段对象
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param value new value | 新值
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -97,11 +84,14 @@ object ObjectUtils {
         obj::class.java.getDeclaredField(fieldName).also { it.isAccessible = true }.set(obj, value)
 
     /**
-     * Set the field object by the name in the object.
-     * @param obj object
-     * @param fieldName field name
-     * @param clazz class where the field is declared (optional, defaults to the class of 'obj')
-     * @throws NoSuchFieldException if the field is not found
+     * Set the field object by the name in the object
+     *
+     * 设置对象中指定名称的字段对象
+     *
+     * @param obj this object | 对象
+     * @param fieldName field name | 字段名称
+     * @param clazz class where the field is declared (optional, defaults to the class of 'obj') | 字段声明所在的类（可选，默认为 'obj' 的类）
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -109,11 +99,14 @@ object ObjectUtils {
         (clazz ?: obj::class.java).getDeclaredField(fieldName).also { it.isAccessible = true }.set(obj, value)
 
     /**
-     * Set the field object by the name in the object.
-     * @param obj object
+     * Set the field object by the name until the specified superclass
+     *
+     * 设置对象中指定名称的字段对象，直到指定的父类
+     *
+     * @param obj this object | 对象
      * @param fieldName field name
-     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses.
-     * @throws NoSuchFieldException if the field is not found
+     * @param untilSuperClass until super class(true = break, false = continue), null = find in all superclasses. | 直到父类（true = 中断，false = 继续），null = 在所有父类中查找
+     * @throws NoSuchFieldException if the field is not found | 如果未找到字段则抛出 [NoSuchFieldException]
      */
     @JvmStatic
     @Throws(NoSuchFieldException::class)
@@ -134,12 +127,15 @@ object ObjectUtils {
 
     /**
      * Invoke the object method(best match params)
-     * @param obj object
-     * @param methodName method name
-     * @param returnType return type (or null if ignore)
-     * @param params method params
-     * @return method result
-     * @throws NoSuchMethodException if the method is not found
+     *
+     * 调用对象方法（最佳匹配参数）
+     *
+     * @param obj this object | 对象
+     * @param methodName method name | 方法名称
+     * @param returnType return type (or null if ignore) | 返回类型（或 null 如果忽略）
+     * @param params method params | 方法参数
+     * @return method result | 方法结果
+     * @throws NoSuchMethodException if the method is not found | 如果未找到方法则抛出 [NoSuchMethodException]
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class)
@@ -164,14 +160,17 @@ object ObjectUtils {
 
     /**
      * Invoke the object method
-     * @param obj object
-     * @param methodName method name
-     * @param returnType return type (or null if ignore)
-     * @param paramTypes method param types
-     * @param params method params
-     * @return method result
-     * @throws NoSuchMethodException if the method is not found
-     * @throws IllegalArgumentException if the paramTypes size != params size
+     *
+     * 调用对象方法
+     *
+     * @param obj this object | 对象
+     * @param methodName method name | 方法名称
+     * @param returnType return type (or null if ignore) | 返回类型（或 null 如果忽略）
+     * @param paramTypes method param types | 方法参数类型
+     * @param params method params | 方法参数
+     * @return method result | 方法结果
+     * @throws NoSuchMethodException if the method is not found | 如果未找到方法则抛出 [NoSuchMethodException]
+     * @throws IllegalArgumentException if the paramTypes size != params size | 如果 paramTypes 的大小与 params 的大小不匹配则抛出 [IllegalArgumentException]
      */
     @JvmStatic
     @Throws(NoSuchMethodException::class, IllegalArgumentException::class)

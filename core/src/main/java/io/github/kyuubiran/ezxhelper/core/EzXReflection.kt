@@ -2,10 +2,10 @@ package io.github.kyuubiran.ezxhelper.core
 
 object EzXReflection {
 
-    var classLoader by ClassLoaderProvider::classLoader
-    val safeClassLoader by ClassLoaderProvider::safeClassLoader
-
+    /**
+     * 初始化类加载器
+     */
     fun init(classLoader: ClassLoader = ClassLoader.getSystemClassLoader()) {
-        this.classLoader = classLoader
+        ClassLoaderProvider.classLoader = classLoader
     }
 }
