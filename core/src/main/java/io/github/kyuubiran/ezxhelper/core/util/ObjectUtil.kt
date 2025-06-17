@@ -203,13 +203,13 @@ object ObjectUtil {
         val mf = obj::class.java.methodFinder()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
             .firstOrNull()
         ?: throw NoSuchMethodException("No best match method $methodName in ${obj::class.java.name} and its superclasses.")
@@ -245,13 +245,13 @@ object ObjectUtil {
         val mf = obj::class.java.methodFinder()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .let { if (returnType != null) it.filterByReturnType(returnType) else it }
             .filterByParamTypes(*paramTypes.types)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterNonStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .let { if (returnType != null) it.filterByReturnType(returnType) else it }
             .filterByParamTypes(*paramTypes.types)
             .first()
 

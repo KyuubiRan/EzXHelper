@@ -254,13 +254,13 @@ object ClassUtil {
         val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByAssignableReturnType(returnType) }
+            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
             .firstOrNull()
         ?: throw NoSuchMethodException("No such best match method $methodName in ${clz.name} and its superclasses.")
@@ -288,13 +288,13 @@ object ClassUtil {
         val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .let { if (returnType != null) it.filterByReturnType(returnType) else it }
             .filterByParamTypes(*paramTypes.types)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterStatic()
             .filterByName(methodName)
-            .apply { if (returnType != null) filterByReturnType(returnType) }
+            .let { if (returnType != null) it.filterByReturnType(returnType) else it }
             .filterByParamTypes(*paramTypes.types)
             .first()
 
