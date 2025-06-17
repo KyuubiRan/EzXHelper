@@ -127,6 +127,14 @@ object EzXposed {
      *
      * 3.Invoked this function before use
      *
+     * e.g. [android.app.Activity]
+     *
+     *     init {
+     *         addModuleAssetPath(this)
+     *         Log.toast(getString(R.string.hello_world))
+     *     }
+     *
+     *
      * 添加模块资源路径到目标 Context.resources。允许直接使用模块资源，如 R.xx.xxx。
      *
      * 如果你想使用这个功能，请按照以下步骤操作：
