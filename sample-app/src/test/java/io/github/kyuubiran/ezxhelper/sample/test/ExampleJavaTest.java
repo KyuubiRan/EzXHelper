@@ -1,4 +1,4 @@
-package io.github.kyuubiran.ezxhelper.sample;
+package io.github.kyuubiran.ezxhelper.sample.test;
 
 import org.junit.Test;
 
