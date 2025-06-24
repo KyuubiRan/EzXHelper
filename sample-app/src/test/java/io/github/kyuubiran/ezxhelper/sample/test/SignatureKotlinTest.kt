@@ -1,5 +1,6 @@
 package io.github.kyuubiran.ezxhelper.sample.test
 
+import io.github.kyuubiran.ezxhelper.core.finder.ConstructorFinder
 import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder
 import io.github.kyuubiran.ezxhelper.core.util.SignatureUtil
 import org.junit.Test
@@ -42,5 +43,33 @@ class SignatureKotlinTest {
             "Expected signatures: [int, boolean, int[]], but got: $signatures"
         }
         println("signatures = $signatures")
+    }
+
+    @Test
+    fun testFinderFilterParamBySignature() {
+        val mf = MethodFinder.fromClass(String::class)
+
+        val m = mf.filterByName("substring")
+            .filterByParamSignature("II")
+            .first()
+
+        assert(m.toString() == "public java.lang.String java.lang.String.substring(int,int)")
+
+        println("Method: $m")
+
+        val cf = ConstructorFinder.fromClass(String::class)
+
+        val ctor = cf.filterByParamSignature("[BII").first()
+        val str = ctor.newInstance("Hello world".toByteArray(), 0, 5) as String
+
+        assert(str == "Hello")
+
+        println("Constructor Result: $str")
+
+        val ctor2 = cf.filterByParamSignature("").first()
+        val str2 = ctor2.newInstance() as String
+
+        assert(str2.isEmpty())
+        println("Constructor Result with no params: $str2")
     }
 }

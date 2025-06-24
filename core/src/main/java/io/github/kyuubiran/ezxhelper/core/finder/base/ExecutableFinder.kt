@@ -2,8 +2,10 @@
 
 package io.github.kyuubiran.ezxhelper.core.finder.base
 
+import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider
 import io.github.kyuubiran.ezxhelper.core.extension.MemberExtension
 import io.github.kyuubiran.ezxhelper.core.util.ClassUtil
+import io.github.kyuubiran.ezxhelper.core.util.SignatureUtil
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 
@@ -12,8 +14,10 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
 
     /**
      * Filter by parameter types, or if null to skip check some parameters
-     * @param paramTypes parameter types
-     * @return [Finder] this finder
+     *
+     * 过滤参数类型，或如果为 null 则跳过检查某些参数
+     * @param paramTypes parameter types | 参数类型
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByParamTypes(vararg paramTypes: Class<*>?) = filter f@{
         val pt = getParameterTypes(this@f)
@@ -30,8 +34,10 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
 
     /**
      * Filter by parameter types or subclass of types, or if null to skip check some parameters
-     * @param paramTypes parameter types
-     * @return [Finder] this finder
+     *
+     * 过滤参数类型或子类类型，或如果为 null 则跳过检查某些参数
+     * @param paramTypes parameter types | 参数类型
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByAssignableParamTypes(vararg paramTypes: Class<*>?) = filter f@{
         val pt = getParameterTypes(this@f)
@@ -49,50 +55,84 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
     }
 
     /**
+     * Filter by parameter signature, e.g. "IIIZ" for `(int, int, int, boolean)`
+     *
+     * 过滤参数签名 例如 "IIIZ" 表示 `(int, int, int, boolean)`
+     * @param sig parameter signature | 参数签名
+     * @param cl class loader to use for resolving types, default is [ClassLoaderProvider.safeClassLoader] | 用于解析类型的类加载器，默认为 [ClassLoaderProvider.safeClassLoader]
+     * @return [Finder] new finder | 过滤后的 [Finder]
+     */
+    fun filterByParamSignature(sig: String, cl: ClassLoader = ClassLoaderProvider.safeClassLoader) = filter {
+        val sigTypes = SignatureUtil.signatureToTypes(sig, cl)
+        val paramTypes = getParameterTypes(this)
+        if (sigTypes.isEmpty() && paramTypes.isEmpty()) return@filter true
+        if (sigTypes.size != paramTypes.size) return@filter false
+        sigTypes.indices.all { i ->
+            val clz1 = paramTypes[i]
+            val clz2 = sigTypes[i]
+            clz1 == clz2 || ClassUtil.isPrimitiveTypeMatch(clz1, clz2)
+        }
+    }
+
+    /**
      * Filter the executable if the parameter is empty
-     * @return [Finder] this finder
+     *
+     * 过滤出参数为空的可执行方法/构造器
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterEmptyParam() = filter { getParameterTypes(this).isEmpty() }
 
     /**
      * Filter the executable if the parameter is not empty
-     * @return [Finder] this finder
+     *
+     * 过滤出参数不为空的可执行方法/构造器
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterNotEmptyParam() = filter { getParameterTypes(this).isNotEmpty() }
 
     /**
      * Use condition to filter parameter types
-     * @param predicate condition
-     * @return [Finder] this finder
+     *
+     * 过滤参数类型
+     * @param predicate condition | 条件
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByParamTypes(predicate: (Array<Class<*>>) -> Boolean) = filter { predicate(getParameterTypes(this)) }
 
 
     /**
      * Filter by parameter count
-     * @param count parameter count
-     * @return [Finder] this finder
+     *
+     * 过滤参数个数
+     * @param count parameter count | 参数个数
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByParamCount(count: Int) = filter { getParameterTypes(this).size == count }
 
     /**
      * Use condition to filter parameter count
-     * @param predicate condition
-     * @return [Finder] this finder
+     *
+     * 通过条件过滤参数个数
+     * @param predicate condition | 条件
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByParamCount(predicate: (Int) -> Boolean) = filter { predicate(getParameterTypes(this).size) }
 
     /**
      * Filter by parameter count in range
-     * @param range parameter count range
-     * @return [Finder] this finder
+     *
+     * 通过范围过滤参数个数
+     * @param range parameter count range | 参数个数范围
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByParamCount(range: IntRange) = filter { getParameterTypes(this).size in range }
 
     /**
      * Filter by exception types
-     * @param exceptionTypes exception types
-     * @return [Finder] this finder
+     *
+     * 过滤异常类型，用于 Java 方法带有 throws Exception 的情况
+     * @param exceptionTypes exception types | 异常类型
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterByExceptionTypes(vararg exceptionTypes: Class<*>) = exceptionTypes.toSet().let { set ->
         filter { getExceptionTypes(this).run { size == set.size && toSet() == set } }
@@ -103,26 +143,34 @@ abstract class ExecutableFinder<E : Member, Finder>(seq: Sequence<E>) : BaseMemb
     // region filter modifiers
 
     /**
-     * Filter if they are native.
-     * @return [Finder] this finder
+     * Filter if they are native
+     *
+     * 过滤出 native 的方法
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterNative() = filter { Modifier.isNative(modifiers) }
 
     /**
-     * Filter if they are non-native.
-     * @return [Finder] this finder
+     * Filter if they are non-native
+     *
+     * 过滤出非 native 的方法
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterNonNative() = filter { !Modifier.isNative(modifiers) }
 
     /**
-     * Filter if they are varargs.
-     * @return [Finder] this finder
+     * Filter if they are varargs
+     *
+     * 过滤出 varargs 的方法
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterVarargs() = filter { modifiers and MemberExtension.VARARGS != 0 }
 
     /**
-     * Filter if they are non-varargs.
-     * @return [Finder] this finder
+     * Filter if they are non-varargs
+     *
+     * 过滤出非 varargs
+     * @return [Finder] new finder | 过滤后的 [Finder]
      */
     fun filterNonVarargs() = filter { modifiers and MemberExtension.VARARGS == 0 }
 
