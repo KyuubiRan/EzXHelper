@@ -59,6 +59,7 @@ object EzXposed {
      * @see IXposedHookLoadPackage.handleLoadPackage
      * @see XC_LoadPackage.LoadPackageParam
      */
+    @JvmStatic
     fun initHandleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         EzXReflection.init(lpparam.classLoader)
         hookedPackageName = lpparam.packageName
