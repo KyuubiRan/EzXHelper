@@ -23,7 +23,6 @@ class ConstructorFinder private constructor(seq: Sequence<Constructor<*>>) : Exe
             return ConstructorFinder(clazz.declaredConstructors.asSequence())
         }
 
-        @JvmStatic
         @JvmSynthetic
         fun fromClass(kclazz: KClass<*>): ConstructorFinder = fromClass(kclazz.java)
 

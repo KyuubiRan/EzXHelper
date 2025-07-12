@@ -32,7 +32,6 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
             }
         }
 
-        @JvmStatic
         @JvmSynthetic
         fun fromClass(kclazz: KClass<*>): MethodFinder = fromClass(kclazz.java)
 
@@ -107,14 +106,46 @@ class MethodFinder private constructor(seq: Sequence<Method>) : ExecutableFinder
     fun filterVoidReturnType() = filterByReturnType(Void.TYPE)
 
     /**
+     * DEPRECATED: Use [filterByReturnTypeExtendsFrom] instead
+     *
+     * Will be removed in future versions
+     *
      * Filter by method assignable return type
+     *
+     * 过时方法: 请使用 [filterByReturnTypeExtendsFrom] 代替
+     *
+     * 将会在未来版本中移除
      *
      * 过滤出返回类型继承于参数类型的 [Method]
      *
      * @param returnType method return type | 方法返回类型
      * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
      */
+    @Deprecated("Use filterByReturnTypeExtendsFrom instead", ReplaceWith("filterByReturnTypeExtendsFrom(superClass)"))
     fun filterByAssignableReturnType(returnType: Class<*>) = filter { this.returnType.isAssignableFrom(returnType) || returnType.isAssignableFrom(this.returnType) }
+
+    /**
+     * Filter by method return type extends from a specific class
+     *
+     * 过滤出返回类型继承自指定类的 [Method]
+     *
+     * e.g.
+     * ```kotlin
+     * fun test1() : String { return "Hello" }
+     * fun test2() : CharSequence { return "World" }
+     * ```
+     * will be filtered by | 可以通过以下方式过滤
+     * ```kotlin
+     * val methods = finder.filterByReturnTypeExtendsFrom(CharSequence::class.java).toList()
+     * ```
+     *
+     * @param superClass Class to check if the return type extends from | 要检查返回类型是否继承自的类
+     * @return [MethodFinder] new finder | 过滤后的 [MethodFinder]
+     */
+    fun filterByReturnTypeExtendsFrom(superClass: Class<*>) = filter { superClass == this.returnType ||  superClass.isAssignableFrom(this.returnType) }
+
+    @JvmSynthetic
+    fun filterByReturnTypeExtendsFrom(superClass: KClass<*>) = filterByReturnTypeExtendsFrom(superClass.java)
 
 // endregion
 

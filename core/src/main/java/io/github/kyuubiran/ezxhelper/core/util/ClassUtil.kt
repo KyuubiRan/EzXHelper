@@ -254,13 +254,13 @@ object ClassUtil {
         val mf = clz.methodFinder()
             .filterStatic()
             .filterByName(methodName)
-            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
+            .let { if (returnType != null) it.filterByReturnTypeExtendsFrom(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
 
         val m = mf.firstOrNull() ?: mf.findSuper()
             .filterStatic()
             .filterByName(methodName)
-            .let { if (returnType != null) it.filterByAssignableReturnType(returnType) else it }
+            .let { if (returnType != null) it.filterByReturnTypeExtendsFrom(returnType) else it }
             .filterByAssignableParamTypes(*paramTypes)
             .firstOrNull()
         ?: throw NoSuchMethodException("No such best match method $methodName in ${clz.name} and its superclasses.")

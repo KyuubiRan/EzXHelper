@@ -24,7 +24,7 @@ public class ExampleJavaClass {
         type = "long";
     }
 
-    private static String staticMethod(int i, CharSequence charSequence) {
+    private static String staticMethod(Number i, CharSequence charSequence) {
         return "Static method called with i: " + i + ", charSequence: " + charSequence;
     }
 

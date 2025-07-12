@@ -1,5 +1,8 @@
 package io.github.kyuubiran.ezxhelper.core
 
+import io.github.kyuubiran.ezxhelper.core.ClassLoaderProvider.classLoader
+
+
 object ClassLoaderProvider {
 
     /**
