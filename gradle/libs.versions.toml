@@ -1,15 +1,15 @@
 [versions]
-agp = "8.10.1"
+agp = "8.11.1"
 xposed-api = "82"
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.1"
 material = "1.12.0"
-jetbrainsKotlinJvm = "2.1.21"
-maven-publish = "0.32.0"
+jetbrainsKotlinJvm = "2.2.0"
+maven-publish = "0.33.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
