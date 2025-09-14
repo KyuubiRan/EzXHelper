@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google {
@@ -21,7 +23,11 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EzXHelper"
-include(":sample-app")
-include(":core")
-include(":xposed-api-82")
-include(":android-utils")
+include(
+    ":sample-app",
+    ":core",
+    ":xposed-api-82",
+    ":xposed-api-100",
+    ":libxposed:api",
+    ":android-utils"
+)
