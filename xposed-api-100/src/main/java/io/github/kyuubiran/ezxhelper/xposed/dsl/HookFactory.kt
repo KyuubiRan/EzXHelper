@@ -1,6 +1,8 @@
 package io.github.kyuubiran.ezxhelper.xposed.dsl
 
 import io.github.kyuubiran.ezxhelper.xposed.EzXposed
+import io.github.kyuubiran.ezxhelper.xposed.interfaces.AfterHookParam
+import io.github.kyuubiran.ezxhelper.xposed.interfaces.BeforeHookParam
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodAfterHookCallback
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodBeforeHookCallback
 import io.github.libxposed.api.XposedInterface
@@ -23,16 +25,16 @@ class HookFactory private constructor(private val target: Member) {
         afterHook = callback
     }
 
-    fun replace(callback: (param: XposedInterface.BeforeHookCallback) -> Any?) {
-        beforeHook = IMethodBeforeHookCallback { param -> param.returnAndSkip(callback(param)) }
+    fun replace(callback: (param: BeforeHookParam) -> Any?) {
+        beforeHook = IMethodBeforeHookCallback { param -> param.result = callback(param) }
     }
 
     fun interrupt() {
-        beforeHook = IMethodBeforeHookCallback { param -> param.returnAndSkip(null) }
+        beforeHook = IMethodBeforeHookCallback { param -> param.result = null }
     }
 
     fun returnConstant(constant: Any?) {
-        beforeHook = IMethodBeforeHookCallback { param -> param.returnAndSkip(constant) }
+        beforeHook = IMethodBeforeHookCallback { param -> param.result = constant }
     }
 
     private fun create(priority: Int = XposedInterface.PRIORITY_DEFAULT): XposedInterface.MethodUnhooker<out Member> {
@@ -70,12 +72,12 @@ class HookFactory private constructor(private val target: Member) {
             companion object {
                 @JvmStatic
                 fun before(callback: XposedInterface.BeforeHookCallback) {
-                    hooks[callback.member]?.first?.onMethodHooked(callback)
+                    hooks[callback.member]?.first?.onMethodHooked(BeforeHookParam(callback))
                 }
 
                 @JvmStatic
                 fun after(callback: XposedInterface.AfterHookCallback) {
-                    hooks[callback.member]?.second?.onMethodHooked(callback)
+                    hooks[callback.member]?.second?.onMethodHooked(AfterHookParam(callback))
                 }
             }
         }
