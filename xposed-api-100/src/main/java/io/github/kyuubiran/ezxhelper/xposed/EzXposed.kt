@@ -60,22 +60,20 @@ object EzXposed {
      * @see XposedModuleInterface.PackageLoadedParam
      */
     @JvmStatic
-    fun initHandleLoadPackage(lpparam: XposedModuleInterface.PackageLoadedParam) {
+    fun initOnPackageLoaded(lpparam: XposedModuleInterface.PackageLoadedParam) {
         EzXReflection.init(lpparam.classLoader)
         hookedPackageName = lpparam.packageName
     }
 
     /**
-     * You need to invoke this function at first in your [XposedModule] constructor.
+     * Instantiates a new Xposed module in your [XposedModule] constructor.
      *
-     * If you want to use module resources.
-     *
-     * 如果你想使用模块资源，你需要在你的 [XposedModule] 的构造函数中首先调用此函数。
+     * 在你的 [XposedModule] 构造函数中初始化。
      *
      * @see XposedModule
      */
     @JvmStatic
-    fun initZygote(base: XposedInterface) {
+    fun initXposedModule(base: XposedInterface) {
         this.base = base
         this.modulePath = base.applicationInfo.sourceDir
     }
