@@ -66,6 +66,19 @@ object EzXposed {
     }
 
     /**
+     * You need to invoke this function at first in [XposedModule.onSystemServerLoaded].
+     *
+     * 你需要在 [XposedModule.onSystemServerLoaded] 中首先调用此函数。
+     *
+     * @see XposedModule.onSystemServerLoaded
+     * @see XposedModuleInterface.SystemServerLoadedParam
+     */
+    @JvmStatic
+    fun initOnSystemServerLoaded(param: XposedModuleInterface.SystemServerLoadedParam) {
+        EzXReflection.init(param.classLoader)
+    }
+
+    /**
      * Instantiates a new Xposed module in your [XposedModule] constructor.
      *
      * 在你的 [XposedModule] 构造函数中初始化。
