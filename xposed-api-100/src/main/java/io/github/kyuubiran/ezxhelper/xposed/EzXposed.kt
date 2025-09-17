@@ -17,33 +17,25 @@ object EzXposed {
     private var _appContext: Context? = null
 
     /**
-     * Get application context
+     * Get application context.
+     * Note: Accessing this for the first time will also initialize module resources.
      *
-     * Notice: May cause NullPointerException if you get the appContext too early.
+     * 获取 application context。
+     * 注意：首次访问此属性也会初始化模块资源。
      *
-     * 获取 application context
-     *
-     * 请注意，过早地获取 appContext 可能会导致 NullPointerException
+     * @throws NullPointerException if you get the appContext too early.
      */
     @JvmStatic
     val appContext: Context
         @SuppressLint("PrivateApi")
         @Synchronized get() {
             if (_appContext == null) {
-                try {
-                    val activityThreadClass = Class.forName("android.app.ActivityThread")
-                    val currentApplicationMethod = activityThreadClass.getDeclaredMethod("currentApplication")
-                    _appContext = currentApplicationMethod.invoke(null) as? Context
-                } catch (e: Exception) {
-                    throw IllegalStateException("Failed to get application context via ActivityThread.", e)
+                _appContext = getCurrentApplicationContext()
+                if (_appContext == null) {
+                    throw NullPointerException("Cannot get application context, did application call Application.onCreate?")
                 }
             }
-            if (_appContext == null) {
-                throw NullPointerException("Cannot get application context, did application call Application.onCreate?")
-            }
-            if (!::moduleRes.isInitialized) {
-                moduleRes = _appContext!!.packageManager.getResourcesForApplication(base.applicationInfo)
-            }
+
             return _appContext!!
         }
 
@@ -90,22 +82,38 @@ object EzXposed {
 
     /**
      * Initialize the application context.
-     *
      * Recommended to be called in `Application.onCreate`.
+     * Note: This will also initialize module resources if they haven't been loaded yet.
      *
      * 初始化应用程序上下文。
-     *
      * 建议在 `Application.onCreate` 中调用。
+     * 注意：如果模块资源尚未加载，此操作也会完成其初始化。
      *
      * @param context context
      */
     @JvmStatic
-    fun initAppContext(context: Context) {
-        if (_appContext == null) {
-            _appContext = context
+    fun initAppContext(
+            context: Context? = getCurrentApplicationContext(),
+            injectResources: Boolean = false,
+        ) {
+        if (context == null) {
+            throw NullPointerException("Cannot initialize application context, context is null.")
         }
+        _appContext = context
+        if (injectResources) addModuleAssetPath(_appContext!!)
         if (!::moduleRes.isInitialized) {
             moduleRes = context.packageManager.getResourcesForApplication(base.applicationInfo)
+        }
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun getCurrentApplicationContext(): Context? {
+        return try {
+            val activityThreadClass = Class.forName("android.app.ActivityThread")
+            val currentApplicationMethod = activityThreadClass.getDeclaredMethod("currentApplication")
+            currentApplicationMethod.invoke(null) as? Context
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed to get application context", e)
         }
     }
 
