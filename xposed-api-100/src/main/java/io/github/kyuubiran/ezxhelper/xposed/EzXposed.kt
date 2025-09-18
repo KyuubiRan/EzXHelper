@@ -60,9 +60,9 @@ object EzXposed {
      * @see XposedModuleInterface.PackageLoadedParam
      */
     @JvmStatic
-    fun initOnPackageLoaded(lpparam: XposedModuleInterface.PackageLoadedParam) {
-        EzXReflection.init(lpparam.classLoader)
-        hookedPackageName = lpparam.packageName
+    fun initOnPackageLoaded(param: XposedModuleInterface.PackageLoadedParam) {
+        EzXReflection.init(param.classLoader)
+        hookedPackageName = param.packageName
     }
 
     /**
