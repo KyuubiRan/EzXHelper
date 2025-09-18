@@ -17,22 +17,58 @@ class HookFactory private constructor(private val target: Member) {
     private var beforeHook: IMethodBeforeHookCallback? = null
     private var afterHook: IMethodAfterHookCallback? = null
 
+    /**
+     * Hook method before invoke
+     *
+     * Hook 方法执行前
+     *
+     * @param callback before hook callback | 执行前回调
+     */
     fun before(callback: IMethodBeforeHookCallback?) {
         beforeHook = callback
     }
 
+    /**
+     * Hook method after invoked
+     *
+     * Hook 方法执行后
+     *
+     * @param callback after hook callback | 执行后回调
+     */
     fun after(callback: IMethodAfterHookCallback?) {
         afterHook = callback
     }
 
+    /**
+     * Replace the method, just a wrapper of [before]
+     *
+     * 替换方法，等同于 [before] 的包装
+     *
+     */
     fun replace(callback: (param: BeforeHookParam) -> Any?) {
         beforeHook = IMethodBeforeHookCallback { param -> param.result = callback(param) }
     }
 
+    /**
+     * Interrupt the method, make method return null, just a wrapper of [before] and same as [returnConstant]`(null)`
+     *
+     * 中断方法，使方法返回 null，等同于 [before] 的包装，并且与 [returnConstant]`(null)` 相同
+     *
+     * **WARNING: MAY CAUSE EXCEPTION IF METHOD RETURNS NON-NULL TYPE**
+     *
+     * **警告：如果方法返回非 null 类型，可能会导致异常**
+     */
     fun interrupt() {
         beforeHook = IMethodBeforeHookCallback { param -> param.result = null }
     }
 
+    /**
+     * Replace the result of the method, just a wrapper of [before]
+     *
+     * 替换方法的返回值，等同于 [before] 的包装
+     *
+     * @param constant the constant value to replace | 要替换的常量值
+     */
     fun returnConstant(constant: Any?) {
         beforeHook = IMethodBeforeHookCallback { param -> param.result = constant }
     }
