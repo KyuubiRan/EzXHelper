@@ -40,13 +40,9 @@ class HookFactory private constructor(private val target: Member) {
     private fun create(priority: Int = XposedInterface.PRIORITY_DEFAULT): XposedInterface.MethodUnhooker<out Member> {
         hooks[target] = beforeHook to afterHook
 
-        fun <T> doHookConstructor(constructor: Constructor<T>): XposedInterface.MethodUnhooker<Constructor<T>> {
-            return EzXposed.hook(constructor, priority, GenericHooker::class.java)
-        }
-
         val unhooker = when (target) {
             is Method -> EzXposed.hook(target, priority, GenericHooker::class.java)
-            is Constructor<*> -> doHookConstructor(target)
+            is Constructor<*> -> EzXposed.hook(target, priority, GenericHooker::class.java)
             else -> throw IllegalStateException("Unsupported member type: $target")
         }
 
