@@ -1,8 +1,8 @@
 package io.github.kyuubiran.ezxhelper.xposed.dsl
 
 import io.github.kyuubiran.ezxhelper.xposed.EzXposed
-import io.github.kyuubiran.ezxhelper.xposed.interfaces.AfterHookParam
-import io.github.kyuubiran.ezxhelper.xposed.interfaces.BeforeHookParam
+import io.github.kyuubiran.ezxhelper.xposed.common.AfterHookParam
+import io.github.kyuubiran.ezxhelper.xposed.common.BeforeHookParam
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodAfterHookCallback
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodBeforeHookCallback
 import io.github.libxposed.api.XposedInterface
