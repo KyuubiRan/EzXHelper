@@ -7,6 +7,7 @@ import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodAfterHookCallback
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodBeforeHookCallback
 import io.github.libxposed.api.XposedInterface
 import java.lang.reflect.Constructor
+import java.lang.reflect.Executable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -95,11 +96,6 @@ class HookFactory private constructor(private val target: Member) {
     companion object `-Static` {
         internal val hooks = ConcurrentHashMap<Member, Pair<IMethodBeforeHookCallback?, IMethodAfterHookCallback?>>()
 
-        @JvmStatic
-        fun getHooksForTest(): ConcurrentHashMap<Member, Pair<IMethodBeforeHookCallback?, IMethodAfterHookCallback?>> {
-            return hooks
-        }
-
         class GenericHooker : XposedInterface.Hooker {
             companion object {
                 @JvmStatic
@@ -114,53 +110,73 @@ class HookFactory private constructor(private val target: Member) {
             }
         }
 
+        // region Internal-API
+        @JvmSynthetic
+        private fun <T : Executable> T.internalCreateHook(
+            priority: Int,
+            block: HookFactory.() -> Unit
+        ): XposedInterface.MethodUnhooker<out Member> = HookFactory(this).also(block).create(priority)
+
+        @JvmSynthetic
+        private fun <T : Executable> T.internalCreateHook(
+            priority: Int,
+            block: Consumer<HookFactory>
+        ): XposedInterface.MethodUnhooker<out Member> = HookFactory(this).also { block.accept(it) }.create(priority)
+
+        @JvmSynthetic
+        private fun <T : Executable> T.internalCreateBeforeHook(
+            priority: Int,
+            block: IMethodBeforeHookCallback
+        ): XposedInterface.MethodUnhooker<out Member> = HookFactory(this).apply { beforeHook = block }.create(priority)
+
+        @JvmSynthetic
+        private fun <T : Executable> T.internalCreateAfterHook(
+            priority: Int,
+            block: IMethodAfterHookCallback
+        ): XposedInterface.MethodUnhooker<out Member> = HookFactory(this).apply { afterHook = block }.create(priority)
+        // endregion
+
         @JvmName("-createMethodHook")
         @JvmSynthetic
         fun Method.createHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: HookFactory.() -> Unit
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).also(block).create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateHook(priority, block)
 
         @JvmName("-createMethodBeforeHook")
         @JvmSynthetic
         fun Method.createBeforeHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: IMethodBeforeHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).apply { beforeHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateBeforeHook(priority, block)
 
         @JvmName("-createMethodAfterHook")
         @JvmSynthetic
         fun Method.createAfterHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: IMethodAfterHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).apply { afterHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateAfterHook(priority, block)
 
         @JvmName("-createConstructorHook")
         @JvmSynthetic
         fun Constructor<*>.createHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: HookFactory.() -> Unit
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).also(block).create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateHook(priority, block)
 
         @JvmName("-createConstructorBeforeHook")
         @JvmSynthetic
         fun Constructor<*>.createBeforeHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: IMethodBeforeHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).apply { beforeHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateBeforeHook(priority, block)
 
         @JvmName("-createConstructorAfterHook")
         @JvmSynthetic
         fun Constructor<*>.createAfterHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             block: IMethodAfterHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(this).apply { afterHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = internalCreateAfterHook(priority, block)
 
         @JvmName("-createMethodHooks")
         @JvmSynthetic
@@ -265,8 +281,7 @@ class HookFactory private constructor(private val target: Member) {
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             method: Method,
             block: Consumer<HookFactory>
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(method).also { block.accept(it) }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = method.internalCreateHook(priority, block)
 
         @JvmName("createMethodBeforeHook")
         @JvmStatic
@@ -274,8 +289,7 @@ class HookFactory private constructor(private val target: Member) {
         fun createBeforeHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             method: Method, block: IMethodBeforeHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(method).apply { beforeHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = method.internalCreateBeforeHook(priority, block)
 
         @JvmName("createMethodAfterHook")
         @JvmStatic
@@ -284,8 +298,7 @@ class HookFactory private constructor(private val target: Member) {
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             method: Method,
             block: IMethodAfterHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(method).apply { afterHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = method.internalCreateAfterHook(priority, block)
 
         @JvmName("createConstructorHook")
         @JvmStatic
@@ -294,8 +307,7 @@ class HookFactory private constructor(private val target: Member) {
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             ctor: Constructor<*>,
             block: Consumer<HookFactory>
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(ctor).also { block.accept(it) }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = ctor.internalCreateHook(priority, block)
 
         @JvmName("createConstructorBeforeHook")
         @JvmStatic
@@ -303,8 +315,7 @@ class HookFactory private constructor(private val target: Member) {
         fun createBeforeHook(
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             ctor: Constructor<*>, block: IMethodBeforeHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(ctor).apply { beforeHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = ctor.internalCreateBeforeHook(priority, block)
 
         @JvmName("createConstructorAfterHook")
         @JvmStatic
@@ -313,8 +324,7 @@ class HookFactory private constructor(private val target: Member) {
             priority: Int = XposedInterface.PRIORITY_DEFAULT,
             ctor: Constructor<*>,
             block: IMethodAfterHookCallback
-        ): XposedInterface.MethodUnhooker<out Member> =
-            HookFactory(ctor).apply { afterHook = block }.create(priority)
+        ): XposedInterface.MethodUnhooker<out Member> = ctor.internalCreateAfterHook(priority, block)
 
         @JvmName("createMethodHooks")
         @JvmStatic
