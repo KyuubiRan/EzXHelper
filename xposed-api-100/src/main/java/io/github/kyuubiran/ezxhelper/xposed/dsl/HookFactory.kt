@@ -1,6 +1,6 @@
 package io.github.kyuubiran.ezxhelper.xposed.dsl
 
-import io.github.kyuubiran.ezxhelper.xposed.EzXposed
+import io.github.kyuubiran.ezxhelper.xposed.api.XposedApi.hook
 import io.github.kyuubiran.ezxhelper.xposed.common.AfterHookParam
 import io.github.kyuubiran.ezxhelper.xposed.common.BeforeHookParam
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodAfterHookCallback
@@ -78,8 +78,8 @@ class HookFactory private constructor(private val target: Member) {
         hooks[target] = beforeHook to afterHook
 
         val unhooker = when (target) {
-            is Method -> EzXposed.hook(target, priority, GenericHooker::class.java)
-            is Constructor<*> -> EzXposed.hook(target, priority, GenericHooker::class.java)
+            is Method -> hook(target, priority, GenericHooker::class.java)
+            is Constructor<*> -> hook(target, priority, GenericHooker::class.java)
             else -> throw IllegalStateException("Unsupported member type: $target")
         }
 

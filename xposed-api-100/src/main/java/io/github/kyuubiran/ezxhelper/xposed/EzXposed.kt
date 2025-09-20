@@ -12,7 +12,8 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
 object EzXposed {
-    private lateinit var base: XposedInterface
+    internal lateinit var base: XposedInterface
+        private set
 
     private var _appContext: Context? = null
 
@@ -52,6 +53,19 @@ object EzXposed {
         private set
 
     /**
+     * Instantiates a new Xposed module in your [XposedModule] constructor.
+     *
+     * 在你的 [XposedModule] 构造函数中初始化。
+     *
+     * @see XposedModule
+     */
+    @JvmStatic
+    fun initXposedModule(base: XposedInterface) {
+        this.base = base
+        this.modulePath = base.applicationInfo.sourceDir
+    }
+
+    /**
      * You need to invoke this function at first in [XposedModule.onPackageLoaded].
      *
      * 你需要在 [XposedModule.onPackageLoaded] 中首先调用此函数。
@@ -76,19 +90,6 @@ object EzXposed {
     @JvmStatic
     fun initOnSystemServerLoaded(param: XposedModuleInterface.SystemServerLoadedParam) {
         EzXReflection.init(param.classLoader)
-    }
-
-    /**
-     * Instantiates a new Xposed module in your [XposedModule] constructor.
-     *
-     * 在你的 [XposedModule] 构造函数中初始化。
-     *
-     * @see XposedModule
-     */
-    @JvmStatic
-    fun initXposedModule(base: XposedInterface) {
-        this.base = base
-        this.modulePath = base.applicationInfo.sourceDir
     }
 
     /**
@@ -117,7 +118,7 @@ object EzXposed {
         }
     }
 
-    @SuppressLint("PrivateApi")
+    @SuppressLint("PrivateApi", "DiscouragedPrivateApi")
     private fun getCurrentApplicationContext(): Context? {
         return try {
             val activityThreadClass = Class.forName("android.app.ActivityThread")
@@ -187,15 +188,5 @@ object EzXposed {
     @JvmStatic
     fun addModuleAssetPath(resources: Resources) {
         mAddAddAssertPath.invoke(resources.assets, modulePath)
-    }
-
-    @JvmStatic
-    fun hook(method: Method, priority: Int, hooker: Class<out XposedInterface.Hooker>): XposedInterface.MethodUnhooker<Method> {
-        return base.hook(method, priority, hooker)
-    }
-
-    @JvmStatic
-    fun <T> hook(constructor: Constructor<T>, priority: Int, hooker: Class<out XposedInterface.Hooker>): XposedInterface.MethodUnhooker<Constructor<T>> {
-        return base.hook(constructor, priority, hooker)
     }
 }
