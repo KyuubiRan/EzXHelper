@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "io.github.libxposed.api"
-    compileSdk = 34
+    compileSdk = 36
 
     sourceSets {
         val main by getting
