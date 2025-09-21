@@ -43,4 +43,5 @@ mavenPublishing {
 dependencies {
     api(project(":libxposed:api"))
     implementation(project(":core"))
+    implementation(libs.androidx.annotation)
 }
