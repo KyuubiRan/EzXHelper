@@ -1,15 +1,15 @@
 package io.github.kyuubiran.ezxhelper.xposed
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
 import io.github.kyuubiran.ezxhelper.core.EzXReflection
+import io.github.kyuubiran.ezxhelper.xposed.common.ModuleResources
 import io.github.libxposed.api.XposedInterface
 import io.github.libxposed.api.XposedModule
 import io.github.libxposed.api.XposedModuleInterface
-import java.lang.reflect.Constructor
-import java.lang.reflect.Method
 
 object EzXposed {
     internal lateinit var base: XposedInterface
@@ -62,7 +62,6 @@ object EzXposed {
     @JvmStatic
     fun initXposedModule(base: XposedInterface) {
         this.base = base
-        this.modulePath = base.applicationInfo.sourceDir
     }
 
     /**
@@ -93,15 +92,32 @@ object EzXposed {
     }
 
     /**
+     * Resolve the module APK path and prepare module-scoped Resources for immediate R access.
+     * Call after initXposedModule so the base interface is already captured.
+     * Optionally pass the original target Resources so locale, density, and theme mirror the hooked app.
+     *
+     * 解析模块 APK 路径并准备模块级 Resources，方便直接访问模块 R 资源。
+     * 可选地传入目标应用的 Resources，以沿用其语言、分辨率等配置；需在 initXposedModule 之后调用。
+     */
+    @JvmStatic
+    fun initModuleResources(origRes: Resources? = null) {
+        this.modulePath = base.applicationInfo.sourceDir
+        this.moduleRes = ModuleResources.create(modulePath, origRes)
+    }
+
+    /**
      * Initialize the application context.
-     * Recommended to be called in `Application.onCreate`.
-     * Note: This will also initialize module resources if they haven't been loaded yet.
+     *
+     * Recommended invoke this after [Application.onCreate].
      *
      * 初始化应用程序上下文。
-     * 建议在 `Application.onCreate` 中调用。
-     * 注意：如果模块资源尚未加载，此操作也会完成其初始化。
+     *
+     * 推荐在 [Application.onCreate] 之后调用此方法。
      *
      * @param context context
+     * @param injectResources add module resources path to target [Context.resources]
+     *                       | 是否将模块资源路径添加到目标 Context.resources
+     * @throws NullPointerException if context is null | 若 context 为空则抛出异常
      */
     @JvmStatic
     fun initAppContext(
@@ -113,9 +129,6 @@ object EzXposed {
         }
         _appContext = context
         if (injectResources) addModuleAssetPath(_appContext!!)
-        if (!::moduleRes.isInitialized) {
-            moduleRes = context.packageManager.getResourcesForApplication(base.applicationInfo)
-        }
     }
 
     @SuppressLint("PrivateApi", "DiscouragedPrivateApi")
@@ -190,3 +203,6 @@ object EzXposed {
         mAddAddAssertPath.invoke(resources.assets, modulePath)
     }
 }
+
+
+
