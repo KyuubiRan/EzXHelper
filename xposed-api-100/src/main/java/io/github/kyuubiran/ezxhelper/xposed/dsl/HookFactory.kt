@@ -11,6 +11,7 @@ import java.lang.reflect.Executable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 class HookFactory private constructor(private val target: Member) {
@@ -75,7 +76,8 @@ class HookFactory private constructor(private val target: Member) {
     }
 
     private fun create(priority: Int = XposedInterface.PRIORITY_DEFAULT): XposedInterface.MethodUnhooker<out Member> {
-        hooks[target] = beforeHook to afterHook
+        val callbackPair = beforeHook to afterHook
+        hooks.computeIfAbsent(target) { CopyOnWriteArrayList() }.add(callbackPair)
 
         val unhooker = when (target) {
             is Method -> hook(target, priority, GenericHooker::class.java)
@@ -86,26 +88,34 @@ class HookFactory private constructor(private val target: Member) {
         return object : XposedInterface.MethodUnhooker<Member> {
             override fun getOrigin(): Member = target
             override fun unhook() {
-                unhooker.unhook()
-                hooks.remove(target)
+                val callbackList = hooks[target]
+                callbackList?.remove(callbackPair)
+                if (callbackList?.isEmpty() == true) {
+                    unhooker.unhook()
+                    hooks.remove(target)
+                }
             }
         }
     }
 
     @Suppress("ClassName")
     companion object `-Static` {
-        internal val hooks = ConcurrentHashMap<Member, Pair<IMethodBeforeHookCallback?, IMethodAfterHookCallback?>>()
+        internal val hooks = ConcurrentHashMap<Member, CopyOnWriteArrayList<Pair<IMethodBeforeHookCallback?, IMethodAfterHookCallback?>>>()
 
         class GenericHooker : XposedInterface.Hooker {
             companion object {
                 @JvmStatic
                 fun before(callback: XposedInterface.BeforeHookCallback) {
-                    hooks[callback.member]?.first?.onMethodHooked(BeforeHookParam(callback))
+                    hooks[callback.member]?.forEach { pair ->
+                        pair.first?.onMethodHooked(BeforeHookParam(callback))
+                    }
                 }
 
                 @JvmStatic
                 fun after(callback: XposedInterface.AfterHookCallback) {
-                    hooks[callback.member]?.second?.onMethodHooked(AfterHookParam(callback))
+                    hooks[callback.member]?.asReversed()?.forEach { pair ->
+                        pair.second?.onMethodHooked(AfterHookParam(callback))
+                    }
                 }
             }
         }
