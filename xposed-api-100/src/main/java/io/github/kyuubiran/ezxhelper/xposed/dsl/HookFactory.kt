@@ -1,8 +1,8 @@
 package io.github.kyuubiran.ezxhelper.xposed.dsl
 
 import io.github.kyuubiran.ezxhelper.xposed.api.XposedApi.hook
-import io.github.kyuubiran.ezxhelper.xposed.common.AfterHookParam
 import io.github.kyuubiran.ezxhelper.xposed.common.BeforeHookParam
+import io.github.kyuubiran.ezxhelper.xposed.common.HookCallback
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodAfterHookCallback
 import io.github.kyuubiran.ezxhelper.xposed.interfaces.IMethodBeforeHookCallback
 import io.github.libxposed.api.XposedInterface
@@ -11,7 +11,6 @@ import java.lang.reflect.Executable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 class HookFactory private constructor(private val target: Member) {
@@ -76,46 +75,42 @@ class HookFactory private constructor(private val target: Member) {
     }
 
     private fun create(priority: Int = XposedInterface.PRIORITY_DEFAULT): XposedInterface.MethodUnhooker<out Member> {
-        val callbackPair = beforeHook to afterHook
-        hooks.computeIfAbsent(target) { CopyOnWriteArrayList() }.add(callbackPair)
-
-        val unhooker = when (target) {
-            is Method -> hook(target, priority, GenericHooker::class.java)
-            is Constructor<*> -> hook(target, priority, GenericHooker::class.java)
-            else -> throw IllegalStateException("Unsupported member type: $target")
-        }
-
-        return object : XposedInterface.MethodUnhooker<Member> {
-            override fun getOrigin(): Member = target
-            override fun unhook() {
-                val callbackList = hooks[target]
-                callbackList?.remove(callbackPair)
-                if (callbackList?.isEmpty() == true) {
-                    unhooker.unhook()
-                    hooks.remove(target)
+        val callback = hooks.computeIfAbsent(target) { member ->
+            HookCallback.forMember(member) { desiredPriority ->
+                when (member) {
+                    is Method -> hook(member, desiredPriority, GenericHooker::class.java)
+                    is Constructor<*> -> hook(member, desiredPriority, GenericHooker::class.java)
+                    else -> throw IllegalStateException("Unsupported member type: $member")
                 }
             }
         }
+
+        val unhooker = callback.register(priority, beforeHook, afterHook) {
+            if (callback.isEmpty()) {
+                hooks.remove(target, callback)
+            }
+        }
+
+        beforeHook = null
+        afterHook = null
+
+        return unhooker
     }
 
     @Suppress("ClassName")
     companion object `-Static` {
-        internal val hooks = ConcurrentHashMap<Member, CopyOnWriteArrayList<Pair<IMethodBeforeHookCallback?, IMethodAfterHookCallback?>>>()
+        private val hooks = ConcurrentHashMap<Member, HookCallback>()
 
         class GenericHooker : XposedInterface.Hooker {
             companion object {
                 @JvmStatic
                 fun before(callback: XposedInterface.BeforeHookCallback) {
-                    hooks[callback.member]?.forEach { pair ->
-                        pair.first?.onMethodHooked(BeforeHookParam(callback))
-                    }
+                    hooks[callback.member]?.dispatchBefore(callback)
                 }
 
                 @JvmStatic
                 fun after(callback: XposedInterface.AfterHookCallback) {
-                    hooks[callback.member]?.asReversed()?.forEach { pair ->
-                        pair.second?.onMethodHooked(AfterHookParam(callback))
-                    }
+                    hooks[callback.member]?.dispatchAfter(callback)
                 }
             }
         }
