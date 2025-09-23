@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">EzXHelper</string>
+    <string name="xposed_desc">EzXHelper sample app api 100</string>
+</resources>
