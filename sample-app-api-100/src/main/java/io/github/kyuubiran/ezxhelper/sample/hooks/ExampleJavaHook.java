@@ -1,11 +1,12 @@
 package io.github.kyuubiran.ezxhelper.sample.hooks;
 
+import static io.github.kyuubiran.ezxhelper.xposed.api.XposedApi.log;
+
 import android.app.Application;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder;
-import io.github.kyuubiran.ezxhelper.xposed.api.XposedApi;
 import io.github.kyuubiran.ezxhelper.xposed.dsl.HookFactory;
 
 public class ExampleJavaHook extends BaseHook {
@@ -25,11 +26,11 @@ public class ExampleJavaHook extends BaseHook {
 
         HookFactory.createMethodHook(onCreate, hookFactory -> {
             hookFactory.before(param -> {
-                XposedApi.INSTANCE.log("Hello, Java before hook!");
+                log("Hello, Java before hook!");
             });
 
             hookFactory.after(param -> {
-                XposedApi.INSTANCE.log("Hello, Java after hook!");
+                log("Hello, Java after hook!");
             });
         });
     }
