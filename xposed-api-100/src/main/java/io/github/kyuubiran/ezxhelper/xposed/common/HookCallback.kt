@@ -25,8 +25,29 @@ internal class HookCallback private constructor(
 
     private val buckets = TreeMap<Int, Bucket>()
     private val lock = Any()
-    private val beforeOrder = ThreadLocal<ArrayDeque<Int>?>()
-    private val afterOrder = ThreadLocal<ArrayDeque<Int>?>()
+    private val invocationStates = ThreadLocal<ArrayDeque<InvocationState>>()
+
+    private class InvocationState(
+        private val beforeQueue: ArrayDeque<Array<Entry>>,
+    ) {
+        private val executedStack = ArrayDeque<Array<Entry>>()
+        var beforeActive: Int = 0
+        var afterActive: Int = 0
+
+        fun consumeNextBeforeSnapshot(): Array<Entry>? = beforeQueue.removeFirstOrNull()
+
+        fun pushExecution(snapshot: Array<Entry>) {
+            executedStack.addLast(snapshot)
+        }
+
+        fun popExecution(): Array<Entry>? = if (executedStack.isEmpty()) null else executedStack.removeLast()
+
+        fun markSkip() {
+            beforeQueue.clear()
+        }
+
+        fun shouldRelease(): Boolean = beforeQueue.isEmpty() && executedStack.isEmpty() && beforeActive == 0 && afterActive == 0
+    }
 
     fun register(
         priority: Int,
@@ -93,32 +114,131 @@ internal class HookCallback private constructor(
     }
 
     fun dispatchBefore(callback: XposedInterface.BeforeHookCallback) {
-        while (true) {
-            val priority = nextBeforePriority() ?: return
-            val entries = synchronized(lock) {
-                buckets[priority]?.entries?.toTypedArray()
-            } ?: continue
-            if (entries.isEmpty()) continue
-            entries.forEach { it.before?.onMethodHooked(BeforeHookParam(callback)) }
+        val state = obtainStateForBefore() ?: return
+        val snapshot = state.consumeNextBeforeSnapshot() ?: run {
+            releaseStateIfDone(state)
             return
+        }
+
+        state.pushExecution(snapshot)
+        val param = BeforeHookParam(callback) { state.markSkip() }
+        state.beforeActive++
+        try {
+            for (entry in snapshot) {
+                val before = entry.before ?: continue
+                try {
+                    before.onMethodHooked(param)
+                } catch (_: Throwable) {
+                    // Ignore callback errors to keep the chain alive.
+                }
+                if (param.isSkipped) {
+                    break
+                }
+            }
+        } finally {
+            state.beforeActive--
+            releaseStateIfDone(state)
         }
     }
 
     fun dispatchAfter(callback: XposedInterface.AfterHookCallback) {
-        while (true) {
-            val priority = nextAfterPriority() ?: return
-            val entries = synchronized(lock) {
-                buckets[priority]?.entries?.toTypedArray()
-            } ?: continue
-            if (entries.isEmpty()) continue
-            for (index in entries.indices.reversed()) {
-                entries[index].after?.onMethodHooked(AfterHookParam(callback))
-            }
+        val state = obtainStateForAfter() ?: return
+        val execution = state.popExecution() ?: run {
+            releaseStateIfDone(state)
             return
+        }
+
+        if (execution.isEmpty()) {
+            releaseStateIfDone(state)
+            return
+        }
+
+        val param = AfterHookParam(callback)
+        if (param.isSkipped) {
+            state.markSkip()
+        }
+        state.afterActive++
+        try {
+            for (index in execution.indices.reversed()) {
+                val after = execution[index].after ?: continue
+                val lastResult = param.result
+                val lastThrowable = param.throwable
+                try {
+                    after.onMethodHooked(param)
+                } catch (_: Throwable) {
+                    if (lastThrowable == null) {
+                        param.result = lastResult
+                    } else {
+                        param.throwable = lastThrowable
+                    }
+                }
+            }
+        } finally {
+            state.afterActive--
+            releaseStateIfDone(state)
         }
     }
 
     fun isEmpty(): Boolean = synchronized(lock) { buckets.isEmpty() }
+
+    private fun obtainStateForBefore(): InvocationState? {
+        val stack = invocationStates.get()
+        val current = stack?.lastOrNull()
+        if (current == null || current.beforeActive > 0 || current.afterActive > 0) {
+            val newState = createState() ?: return null
+            val targetStack = stack ?: ArrayDeque<InvocationState>().also { invocationStates.set(it) }
+            targetStack.addLast(newState)
+            return newState
+        }
+        if (current.shouldRelease()) {
+            releaseState(current)
+            return obtainStateForBefore()
+        }
+        return current
+    }
+
+    private fun obtainStateForAfter(): InvocationState? {
+        val stack = invocationStates.get() ?: return null
+        val current = stack.lastOrNull() ?: return null
+        if (current.shouldRelease()) {
+            releaseState(current)
+            return null
+        }
+        return current
+    }
+
+    private fun createState(): InvocationState? = synchronized(lock) {
+        if (buckets.isEmpty()) return null
+        val snapshots = ArrayDeque<Array<Entry>>()
+        for (bucket in buckets.descendingMap().values) {
+            val entries = bucket.entries.toTypedArray()
+            if (entries.isNotEmpty()) {
+                snapshots.addLast(entries)
+            }
+        }
+        if (snapshots.isEmpty()) return null
+        InvocationState(snapshots)
+    }
+
+    private fun releaseState(state: InvocationState) {
+        val stack = invocationStates.get() ?: return
+        val iterator = stack.iterator()
+        while (iterator.hasNext()) {
+            if (iterator.next() === state) {
+                iterator.remove()
+                break
+            }
+        }
+        if (stack.isEmpty()) {
+            invocationStates.remove()
+        }
+    }
+
+    private fun releaseStateIfDone(state: InvocationState) {
+        if (state.shouldRelease()) {
+            releaseState(state)
+        }
+    }
 
     private fun XposedInterface.MethodUnhooker<out Member>?.unhookQuietly() {
         this ?: return
@@ -133,51 +253,5 @@ internal class HookCallback private constructor(
         fun forMember(member: Member, hooker: (priority: Int) -> XposedInterface.MethodUnhooker<out Member>): HookCallback {
             return HookCallback(hooker, member)
         }
-    }
-
-    private fun nextBeforePriority(): Int? {
-        var queue = beforeOrder.get()
-        if (queue == null || queue.isEmpty()) {
-            queue = synchronized(lock) {
-                if (buckets.isEmpty()) {
-                    ArrayDeque()
-                } else {
-                    ArrayDeque<Int>().apply { addAll(buckets.descendingKeySet()) }
-                }
-            }
-            if (queue.isEmpty()) {
-                beforeOrder.remove()
-                return null
-            }
-            beforeOrder.set(queue)
-        }
-        val priority = queue.removeFirstOrNull()
-        if (queue.isEmpty()) {
-            beforeOrder.remove()
-        }
-        return priority
-    }
-
-    private fun nextAfterPriority(): Int? {
-        var queue = afterOrder.get()
-        if (queue == null || queue.isEmpty()) {
-            queue = synchronized(lock) {
-                if (buckets.isEmpty()) {
-                    ArrayDeque()
-                } else {
-                    ArrayDeque<Int>().apply { addAll(buckets.keys) }
-                }
-            }
-            if (queue.isEmpty()) {
-                afterOrder.remove()
-                return null
-            }
-            afterOrder.set(queue)
-        }
-        val priority = queue.removeFirstOrNull()
-        if (queue.isEmpty()) {
-            afterOrder.remove()
-        }
-        return priority
     }
 }
