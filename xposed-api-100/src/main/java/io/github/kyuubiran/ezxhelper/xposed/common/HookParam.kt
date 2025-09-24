@@ -2,7 +2,22 @@ package io.github.kyuubiran.ezxhelper.xposed.common
 
 import io.github.libxposed.api.XposedInterface
 
-class BeforeHookParam(private val original: XposedInterface.BeforeHookCallback) {
+class BeforeHookParam(
+    private val original: XposedInterface.BeforeHookCallback,
+    private val onSkip: () -> Unit = {},
+) {
+
+    private var skipped: Boolean = false
+
+    val isSkipped: Boolean
+        get() = skipped
+
+    private fun markSkipped() {
+        if (!skipped) {
+            skipped = true
+            onSkip()
+        }
+    }
 
     val thisObject: Any
         get() = original.thisObject
@@ -17,12 +32,14 @@ class BeforeHookParam(private val original: XposedInterface.BeforeHookCallback) 
     var result: Any?
         get() = null
         set(value) {
+            markSkipped()
             original.returnAndSkip(value)
         }
 
     var throwable: Throwable?
         get() = null
         set(value) {
+            markSkipped()
             original.throwAndSkip(value)
         }
 }
