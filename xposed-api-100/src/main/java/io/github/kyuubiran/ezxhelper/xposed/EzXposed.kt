@@ -1,7 +1,6 @@
-@file:Suppress("unused")
+@file:Suppress("unused","PrivateApi", "DiscouragedPrivateApi")
 package io.github.kyuubiran.ezxhelper.xposed
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.res.AssetManager
@@ -20,16 +19,13 @@ object EzXposed {
 
     /**
      * Get application context.
-     * Note: Accessing this for the first time will also initialize module resources.
      *
      * 获取 application context。
-     * 注意：首次访问此属性也会初始化模块资源。
      *
      * @throws NullPointerException if you get the appContext too early.
      */
     @JvmStatic
     val appContext: Context
-        @SuppressLint("PrivateApi")
         @Synchronized get() {
             if (_appContext == null) {
                 _appContext = getCurrentApplicationContext()
@@ -132,7 +128,6 @@ object EzXposed {
         if (injectResources) addModuleAssetPath(_appContext!!)
     }
 
-    @SuppressLint("PrivateApi", "DiscouragedPrivateApi")
     private fun getCurrentApplicationContext(): Context? {
         return try {
             val activityThreadClass = Class.forName("android.app.ActivityThread")
@@ -192,7 +187,6 @@ object EzXposed {
     }
 
     private val mAddAddAssertPath by lazy {
-        @Suppress("DiscouragedPrivateApi", "PrivateApi")
         AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java).also { it.isAccessible = true }
     }
 
