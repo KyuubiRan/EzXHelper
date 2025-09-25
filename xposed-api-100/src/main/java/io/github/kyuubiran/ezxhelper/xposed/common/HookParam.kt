@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.kyuubiran.ezxhelper.xposed.common
 
 import io.github.libxposed.api.XposedInterface

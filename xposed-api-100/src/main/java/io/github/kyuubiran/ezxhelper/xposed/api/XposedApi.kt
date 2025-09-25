@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.kyuubiran.ezxhelper.xposed.api
 
 import android.content.SharedPreferences
