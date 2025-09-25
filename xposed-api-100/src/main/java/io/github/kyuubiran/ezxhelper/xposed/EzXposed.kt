@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.kyuubiran.ezxhelper.xposed
 
 import android.annotation.SuppressLint

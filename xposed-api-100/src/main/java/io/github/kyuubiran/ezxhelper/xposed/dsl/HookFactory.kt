@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.kyuubiran.ezxhelper.xposed.dsl
 
 import io.github.kyuubiran.ezxhelper.xposed.api.XposedApi.hook
