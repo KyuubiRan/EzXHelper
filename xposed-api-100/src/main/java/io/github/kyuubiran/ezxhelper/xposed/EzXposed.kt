@@ -104,11 +104,9 @@ object EzXposed {
 
     /**
      * Initialize the application context.
-     *
      * Recommended invoke this after [Application.onCreate].
      *
      * 初始化应用程序上下文。
-     *
      * 推荐在 [Application.onCreate] 之后调用此方法。
      *
      * @param context context
