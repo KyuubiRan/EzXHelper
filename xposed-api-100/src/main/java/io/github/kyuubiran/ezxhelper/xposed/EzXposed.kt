@@ -91,15 +91,14 @@ object EzXposed {
     /**
      * Resolve the module APK path and prepare module-scoped Resources for immediate R access.
      * Call after initXposedModule so the base interface is already captured.
-     * Optionally pass the original target Resources so locale, density, and theme mirror the hooked app.
      *
      * 解析模块 APK 路径并准备模块级 Resources，方便直接访问模块 R 资源。
-     * 可选地传入目标应用的 Resources，以沿用其语言、分辨率等配置；需在 initXposedModule 之后调用。
+     * 需在 initXposedModule 之后调用。
      */
     @JvmStatic
-    fun initModuleResources(origRes: Resources? = null) {
+    fun initModuleResources() {
         this.modulePath = base.applicationInfo.sourceDir
-        this.moduleRes = ModuleResources.create(modulePath, origRes)
+        this.moduleRes = ModuleResources.create(modulePath)
     }
 
     /**
