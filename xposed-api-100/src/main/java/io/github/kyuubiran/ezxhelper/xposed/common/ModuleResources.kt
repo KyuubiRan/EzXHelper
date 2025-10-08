@@ -16,10 +16,10 @@ import java.io.IOException
 
 internal object ModuleResources {
 
-    fun create(modulePath: String, origRes: Resources? = null): Resources {
+    fun create(modulePath: String): Resources {
         require(modulePath.isNotBlank()) { "modulePath must not be blank" }
 
-        val baseResources = origRes ?: Resources.getSystem()
+        val baseResources = Resources.getSystem()
         val metrics = DisplayMetrics().also { it.setTo(baseResources.displayMetrics) }
         val configuration = Configuration(baseResources.configuration)
 
