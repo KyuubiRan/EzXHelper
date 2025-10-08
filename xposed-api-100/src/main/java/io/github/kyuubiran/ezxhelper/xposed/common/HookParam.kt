@@ -30,6 +30,14 @@ class BeforeHookParam(
     }
 
     /**
+     * Gets the method / constructor to be hooked.
+     *
+     * 获取被 hook 的方法 / 构造器
+     */
+    val member
+        get() = original.member
+
+    /**
      * Non-null receiver instance for instance methods.
      *
      * 实例方法对应的非空 this 对象。
@@ -112,6 +120,14 @@ class BeforeHookParam(
  * @param original callback supplied by the runtime. | 运行时提供的回调。
  */
 class AfterHookParam(private val original: AfterHookCallback) {
+
+    /**
+     * Gets the method / constructor to be hooked.
+     *
+     * 获取被 hook 的方法 / 构造器
+     */
+    val member
+        get() = original.member
 
     /**
      * Non-null receiver instance for instance methods.
