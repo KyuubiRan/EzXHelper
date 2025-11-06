@@ -120,11 +120,12 @@ internal class HookCallback private constructor(
             return
         }
 
-        state.pushExecution(snapshot)
+        val executedSnapshot = mutableListOf<HookCallback.Entry>()
         val param = BeforeHookParam(callback) { state.markSkip() }
         state.beforeActive++
         try {
             for (entry in snapshot) {
+                executedSnapshot.add(entry)
                 val before = entry.before ?: continue
                 try {
                     before.onMethodHooked(param)
@@ -137,6 +138,7 @@ internal class HookCallback private constructor(
             }
         } finally {
             state.beforeActive--
+            state.pushExecution(executedSnapshot.toTypedArray())
             releaseStateIfDone(state)
         }
     }
