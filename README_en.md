@@ -7,47 +7,68 @@
 A library to make Xposed modules development easier.     
 Version 3.x has split the reflection part into a separate library, which can support running on JVM.
 
-[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) group to get helps.
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/EzXHelper) group to get
+helps.
 
 ### Quick start
 
 `build.gradle`
+
 ```groovy
 dependencies {
     def ezxhelperVersion = '<version>'
     implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
     // Xposed api 82
     implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+    // Xposed api 100
+    // implementation "io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion"
     // If you need to use Android related utility extensions, you can include it
     implementation "io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion"
 }
 ```
 
 `build.gradle.kts`
+
 ```kotlin
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
     // Xposed api 82
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+    // Xposed api 100
+    // implementation("io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion")
     // If you need to use Android related utility extensions, you can include it
     implementation("io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion")
 }
 ```
 
 `xposed-api-82`
+
 ```kotlin
 override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
     // ...
     EzXposed.initHandleLoadPackage(lpparam)
 }
+
 // Optional
 override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
     EzXposed.initZygote(startupParam)
 }
 ```
 
+`xposed-api-100`
+
+```kotlin
+
+override fun onPackageLoaded(param: PackageLoadedParam) {
+    // ...
+    EzXposed.initOnPackageLoaded(param)
+}
+
+```
+
 `reflection-only`
+
 ```kotlin
 // Optional
 // Invoke this before use reflection utils

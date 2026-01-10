@@ -1,6 +1,6 @@
 # EzXHelper
 
-[English](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README_en.md)  
+[English](https://github.com/KyuubiRan/EzXHelper/blob/3.x/README_en.md)
 
 ![Maven Central Version](https://img.shields.io/maven-central/v/io.github.kyuubiran.ezxhelper/core)
 
@@ -12,42 +12,62 @@
 ### 快速开始
 
 `build.gradle`
+
 ```groovy
 dependencies {
     def ezxhelperVersion = '<version>'
     implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
     // Xposed api 82
     implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
+    // Xposed api 100
+    // implementation "io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion"
     // 如果你需要使用Android相关的工具类扩展 可以引入
     implementation "io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion"
 }
 ```
 
 `build.gradle.kts`
+
 ```kotlin
 dependencies {
     val ezxhelperVersion = "<version>"
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
     // Xposed api 82
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
+    // Xposed api 100
+    // implementation("io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion")
     // 如果你需要使用Android相关的工具类扩展 可以引入
     implementation("io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion")
 }
 ```
 
 `xposed-api-82`
+
 ```kotlin
 override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
     // ...
     EzXposed.initHandleLoadPackage(lpparam)
 }
+
 // 可选
 override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
     EzXposed.initZygote(startupParam)
 }
 ```
 
+`xposed-api-100`
+
+```kotlin
+
+override fun onPackageLoaded(param: PackageLoadedParam) {
+    // ...
+    EzXposed.initOnPackageLoaded(param)
+}
+
+```
+
 `reflection-only`
+
 ```kotlin
 // 可选
 // 在使用本库之前，调用此函数设置默认的 ClassLoader
@@ -77,7 +97,6 @@ EzXReflection.init(yourClassLoader)
 ### 星路历程
 
 ![Star History Chart](https://api.star-history.com/svg?repos=kyuubiran/ezxhelper&type=Date)
-
 
 ### 友情链接
 
