@@ -27,20 +27,25 @@ internal class HookCallback private constructor(
     private val lock = Any()
     private val invocationStates = ThreadLocal<ArrayDeque<InvocationState>>()
 
+    private class ExecutionFrame(
+        val snapshot: Array<Entry>,
+        val maxIndex: Int
+    )
+
     private class InvocationState(
         private val beforeQueue: ArrayDeque<Array<Entry>>,
     ) {
-        private val executedStack = ArrayDeque<Array<Entry>>()
+        private val executedStack = ArrayDeque<ExecutionFrame>()
         var beforeActive: Int = 0
         var afterActive: Int = 0
 
         fun consumeNextBeforeSnapshot(): Array<Entry>? = beforeQueue.removeFirstOrNull()
 
-        fun pushExecution(snapshot: Array<Entry>) {
-            executedStack.addLast(snapshot)
+        fun pushExecution(snapshot: Array<Entry>, maxIndex: Int) {
+            executedStack.addLast(ExecutionFrame(snapshot, maxIndex))
         }
 
-        fun popExecution(): Array<Entry>? = if (executedStack.isEmpty()) null else executedStack.removeLast()
+        fun popExecution(): ExecutionFrame? = if (executedStack.isEmpty()) null else executedStack.removeLast()
 
         fun markSkip() {
             beforeQueue.clear()
@@ -120,22 +125,27 @@ internal class HookCallback private constructor(
             return
         }
 
-        state.pushExecution(snapshot)
+        var executedIndex = -1
         val param = BeforeHookParam(callback) { state.markSkip() }
         state.beforeActive++
         try {
-            for (entry in snapshot) {
-                val before = entry.before ?: continue
-                try {
-                    before.onMethodHooked(param)
-                } catch (_: Throwable) {
-                    // Ignore callback errors to keep the chain alive.
+            for (i in snapshot.indices) {
+                executedIndex = i
+                val entry = snapshot[i]
+                val before = entry.before
+                if (before != null) {
+                    try {
+                        before.onMethodHooked(param)
+                    } catch (_: Throwable) {
+                        // Ignore callback errors to keep the chain alive.
+                    }
                 }
                 if (param.isSkipped) {
                     break
                 }
             }
         } finally {
+            state.pushExecution(snapshot, executedIndex)
             state.beforeActive--
             releaseStateIfDone(state)
         }
@@ -143,12 +153,13 @@ internal class HookCallback private constructor(
 
     fun dispatchAfter(callback: XposedInterface.AfterHookCallback) {
         val state = obtainStateForAfter() ?: return
-        val execution = state.popExecution() ?: run {
+        val frame = state.popExecution() ?: run {
             releaseStateIfDone(state)
             return
         }
 
-        if (execution.isEmpty()) {
+        val execution = frame.snapshot
+        if (execution.isEmpty() || frame.maxIndex < 0) {
             releaseStateIfDone(state)
             return
         }
@@ -159,7 +170,7 @@ internal class HookCallback private constructor(
         }
         state.afterActive++
         try {
-            for (index in execution.indices.reversed()) {
+            for (index in frame.maxIndex downTo 0) {
                 val after = execution[index].after ?: continue
                 val lastResult = param.result
                 val lastThrowable = param.throwable
