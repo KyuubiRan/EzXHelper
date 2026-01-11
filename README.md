@@ -58,6 +58,9 @@ override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
 `xposed-api-100`
 
 ```kotlin
+init {
+    EzXposed.initXposedModule(xposedInterface)
+}
 
 override fun onPackageLoaded(param: PackageLoadedParam) {
     // ...
