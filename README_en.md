@@ -20,8 +20,8 @@ dependencies {
     implementation "io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion"
     // Xposed api 82
     implementation "io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion"
-    // Xposed api 100
-    // implementation "io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion"
+    // Xposed api 101
+    // implementation "io.github.kyuubiran.ezxhelper:xposed-api-101:$ezxhelperVersion"
     // If you need to use Android related utility extensions, you can include it
     implementation "io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion"
 }
@@ -35,8 +35,8 @@ dependencies {
     implementation("io.github.kyuubiran.ezxhelper:core:$ezxhelperVersion")
     // Xposed api 82
     implementation("io.github.kyuubiran.ezxhelper:xposed-api-82:$ezxhelperVersion")
-    // Xposed api 100
-    // implementation("io.github.kyuubiran.ezxhelper:xposed-api-100:$ezxhelperVersion")
+    // Xposed api 101
+    // implementation("io.github.kyuubiran.ezxhelper:xposed-api-101:$ezxhelperVersion")
     // If you need to use Android related utility extensions, you can include it
     implementation("io.github.kyuubiran.ezxhelper:android-utils:$ezxhelperVersion")
 }
@@ -56,18 +56,47 @@ override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
 }
 ```
 
-`xposed-api-100`
+`xposed-api-101`
 
 ```kotlin
-init {
-    EzXposed.initXposedModule(xposedInterface)
+override fun onModuleLoaded(param: ModuleLoadedParam) {
+    EzXposed.initOnModuleLoaded(this, param)
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 override fun onPackageLoaded(param: PackageLoadedParam) {
-    // ...
     EzXposed.initOnPackageLoaded(param)
 }
 
+override fun onPackageReady(param: PackageReadyParam) {
+    EzXposed.initOnPackageReady(param)
+}
+
+```
+
+`xposed-api-101`
+
+```kotlin
+method.createHook {
+    before { param ->
+        param.args[0] = "before"
+    }
+
+    after { param ->
+        android.util.Log.i("sample", "result=${param.result}")
+    }
+}
+
+method.hook { chain ->
+    val args = chain.args.toTypedArray()
+    args[0] = "chain"
+    chain.proceed(args)
+}
+
+// Java
+// Object[] args = chain.getArgs().toArray();
+// args[0] = "chain";
+// return chain.proceed(args);
 ```
 
 `reflection-only`

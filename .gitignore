@@ -15,3 +15,8 @@
 local.properties
 /.idea/
 /mavenpush.properties
+
+**/bin
+**.project
+**.settings
+**.classpath

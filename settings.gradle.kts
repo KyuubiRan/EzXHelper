@@ -25,10 +25,9 @@ dependencyResolutionManagement {
 rootProject.name = "EzXHelper"
 include(
     ":sample-app",
-    ":sample-app-api-100",
+    ":sample-app-api-101",
     ":core",
     ":xposed-api-82",
-    ":xposed-api-100",
-    ":libxposed:api",
+    ":xposed-api-101",
     ":android-utils"
 )
