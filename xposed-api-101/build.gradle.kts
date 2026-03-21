@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "io.github.kyuubiran.ezxhelper.android"
+    namespace = "io.github.kyuubiran.ezxhelper.xposed"
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -37,4 +37,10 @@ kotlin {
 
 mavenPublishing {
     configure(AndroidSingleVariantLibrary(publishJavadocJar = false))
+}
+
+dependencies {
+    compileOnly(libs.libxposed.api)
+    implementation(project(":core"))
+    implementation(libs.androidx.annotation)
 }

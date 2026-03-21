@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,8 +10,8 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.kyuubiran.ezxhelper.sample"
-        minSdk = 24
+        applicationId = "io.github.kyuubiran.ezxhelper.sample.api100"
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -20,8 +21,15 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+
+        packaging {
+            resources {
+                excludes += "**"
+                merges += "META-INF/xposed/*"
+            }
         }
     }
     compileOptions {
@@ -41,9 +49,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    compileOnly(libs.xposed.api)
+    compileOnly(libs.libxposed.api)
     implementation(project(":core"))
-    implementation(project(":xposed-api-82"))
+    implementation(project(":xposed-api-101"))
     implementation(project(":android-utils"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
