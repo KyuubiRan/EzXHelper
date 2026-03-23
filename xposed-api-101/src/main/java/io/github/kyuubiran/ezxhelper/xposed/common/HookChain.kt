@@ -38,7 +38,7 @@ internal class HookChain(private val stages: List<ChainStage>) {
     fun invoke(chain: XposedInterface.Chain): Any? {
         val context = InvocationContext(chain)
         val beforeStages = stages.filterIsInstance<BeforeChainStage>()
-        val interceptStages = stages.filterIsInstance<InterceptChainStage>()
+        val aroundStages = stages.filter { it !is BeforeChainStage && it !is AfterChainStage }
         val afterStages = stages.filterIsInstance<AfterChainStage>()
 
         for (stage in beforeStages) {
@@ -49,11 +49,11 @@ internal class HookChain(private val stages: List<ChainStage>) {
         }
 
         fun proceed(index: Int) {
-            if (index >= interceptStages.size) {
+            if (index >= aroundStages.size) {
                 context.proceedOriginal()
                 return
             }
-            interceptStages[index].intercept(context) { proceed(index + 1) }
+            aroundStages[index].intercept(context) { proceed(index + 1) }
         }
 
         if (!context.skipped) {
