@@ -179,6 +179,38 @@ class HookFactory private constructor(private val target: Executable) {
             block: (XposedInterface.Chain) -> Any?,
         ): HookHandle = internalCreateIntercept(priority, exceptionMode, block)
 
+        @JvmName("-hookMethods")
+        @JvmSynthetic
+        fun Iterable<Method>.hooks(
+            priority: Int = XposedInterface.PRIORITY_DEFAULT,
+            exceptionMode: XposedInterface.ExceptionMode = XposedInterface.ExceptionMode.DEFAULT,
+            block: (XposedInterface.Chain) -> Any?,
+        ): List<HookHandle> = map { it.hook(priority, exceptionMode, block) }
+
+        @JvmName("-hookMethodArray")
+        @JvmSynthetic
+        fun Array<Method>.hooks(
+            priority: Int = XposedInterface.PRIORITY_DEFAULT,
+            exceptionMode: XposedInterface.ExceptionMode = XposedInterface.ExceptionMode.DEFAULT,
+            block: (XposedInterface.Chain) -> Any?,
+        ): List<HookHandle> = map { it.hook(priority, exceptionMode, block) }
+
+        @JvmName("-hookConstructors")
+        @JvmSynthetic
+        fun Iterable<Constructor<*>>.hooks(
+            priority: Int = XposedInterface.PRIORITY_DEFAULT,
+            exceptionMode: XposedInterface.ExceptionMode = XposedInterface.ExceptionMode.DEFAULT,
+            block: (XposedInterface.Chain) -> Any?,
+        ): List<HookHandle> = map { it.hook(priority, exceptionMode, block) }
+
+        @JvmName("-hookConstructorArray")
+        @JvmSynthetic
+        fun Array<Constructor<*>>.hooks(
+            priority: Int = XposedInterface.PRIORITY_DEFAULT,
+            exceptionMode: XposedInterface.ExceptionMode = XposedInterface.ExceptionMode.DEFAULT,
+            block: (XposedInterface.Chain) -> Any?,
+        ): List<HookHandle> = map { it.hook(priority, exceptionMode, block) }
+
         @JvmName("-createMethodHooks")
         @JvmSynthetic
         fun Iterable<Method>.createHooks(
