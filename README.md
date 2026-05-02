@@ -75,6 +75,8 @@ override fun onPackageReady(param: PackageReadyParam) {
 
 `xposed-api-101`
 
+感谢 [@re-zero001](https://github.com/re-zero001) 提供的 Xposed API-101 支持
+
 ```kotlin
 method.createHook {
     before { param ->

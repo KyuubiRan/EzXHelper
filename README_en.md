@@ -58,6 +58,8 @@ override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
 
 `xposed-api-101`
 
+Thanks to [@re-zero001](https://github.com/re-zero001) for implementation of Xposed API 101.
+
 ```kotlin
 override fun onModuleLoaded(param: ModuleLoadedParam) {
     EzXposed.initOnModuleLoaded(this, param)
